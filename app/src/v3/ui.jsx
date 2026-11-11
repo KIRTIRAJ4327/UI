@@ -4,7 +4,8 @@ import { cn } from '@/lib/utils';
 import { CommandPalette, Notifications } from './overlays';
 import { useProto } from './store';
 import { TourBar, Welcome } from './tour';
-import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale, Contact, Plug, KeyRound, History } from 'lucide-react';
+import { PrototypeMenu } from './protomenu';
+import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, X, LayoutDashboard, UsersRound, Scale, Contact, Plug, KeyRound, History } from 'lucide-react';
 
 export const PEOPLE = {
   priya: { name: 'Priya Nair', role: 'Product Owner', init: 'PN', hue: '#7c5cc4' },
@@ -20,7 +21,7 @@ export const PEOPLE = {
   ana:   { name: 'Ana Costa', role: 'Quality Lead', init: 'AC', hue: '#a84a1f' },
 };
 export const STAGES = [
-  ['Plan','priya'],['Specify','priya'],['Impact',null],['Design','alex'],['Build','jon'],['Integrate','jon'],['Validate','mara'],['Release','sam'],
+  ['Plan','priya'],['Specify','priya'],['Impact',null],['Design','alex'],['Build','jon'],['Integrate','tom'],['Validate','mara'],['Release','sam'],
 ];
 
 export const Avatar = ({ p, size = 28, ring }) => {
@@ -64,10 +65,11 @@ export function Stepper({ s, compact, label }) {
               k === 'd' && 'border-[var(--v-green)] bg-[var(--v-green)] text-white',
               k === 'w' && 'border-[#e0a000] bg-[var(--v-amber-soft)] text-[var(--v-amber)] ring-4 ring-[#e0a000]/20',
               k === 'a' && 'border-[var(--v-blue)] bg-white text-[var(--v-blue)]',
+              k === 'f' && 'border-[var(--v-red)] bg-[var(--v-red)] text-white ring-4 ring-[var(--v-red)]/20',
               !k && 'border-[var(--v-line)] bg-white text-[var(--v-ink-3)]')}>
-              {k === 'd' ? <Check className="size-4" strokeWidth={3} /> : i + 1}
+              {k === 'd' ? <Check className="size-4" strokeWidth={3} /> : k === 'f' ? <X className="size-4" strokeWidth={3} /> : i + 1}
             </span>
-            <span className={cn('text-[13px]', k === 'w' ? 'font-semibold' : 'text-[var(--v-ink-2)]')}>{n}</span>
+            <span className={cn('text-[13px]', k === 'w' ? 'font-semibold' : k === 'f' ? 'font-semibold text-[var(--v-red)]' : 'text-[var(--v-ink-2)]')}>{n}{k === 'f' && <span className="sr-only"> (failed)</span>}</span>
             {who ? <span className="flex items-center gap-1 text-[11.5px] text-[var(--v-ink-3)]"><Avatar p={who} size={16} />{PEOPLE[who].name.split(' ')[0]}</span> : <span className="text-[11.5px] text-[var(--v-ink-3)]">Automatic</span>}
           </li>
         );
@@ -79,7 +81,7 @@ export function Stepper({ s, compact, label }) {
 export const Card = ({ className, children, ...r }) => <section className={cn('rounded-2xl border border-[var(--v-line)] bg-[var(--v-surface)] shadow-[0_1px_2px_rgba(16,20,41,.04),0_8px_24px_-12px_rgba(16,20,41,.10)]', className)} {...r}>{children}</section>;
 export const CardHead = ({ title, sub, right }) => <header className="flex items-start gap-3 px-5 pt-4 pb-3"><div className="min-w-0 flex-1"><h2 className="text-[15px] font-semibold">{title}</h2>{sub && <p className="text-[13px] text-[var(--v-ink-3)]">{sub}</p>}</div>{right}</header>;
 
-const CRUMB = { Home: '#v3-home', Requests: '#v3-runs', Runs: '#v3-runs', Approvals: '#v3-approvals', Admin: '#v3-admin', Squads: '#v3-squad', 'Business rules': '#v3-rules', 'WI-4821': '#v3-run-wi-4821', 'WI-4807': '#v3-run-wi-4807', 'WI-4772': '#v3-run-wi-4772', 'WI-4799': '#v3-run-wi-4799' };
+const CRUMB = { Home: '#v3-home', Requests: '#v3-runs', Runs: '#v3-runs', Approvals: '#v3-approvals', Admin: '#v3-admin', Squads: '#v3-squads', 'Business rules': '#v3-rules', 'WI-4821': '#v3-run-wi-4821', 'WI-4807': '#v3-run-wi-4807', 'WI-4772': '#v3-run-wi-4772', 'WI-4799': '#v3-run-wi-4799' };
 const NAV = [['home','Home',Home],['new','New request',FilePlus2],['approvals','Approvals',Inbox,3],['run','Runs',Rocket],['rules','Business rules',BookCheck],['artifacts','Artifacts',ShieldCheck]];
 const ADMIN_NAV = [['admin','Governance',LayoutDashboard,'squads.manage'],['squads','Squads',UsersRound,'squads.manage'],['people','People and access',Contact,'people.manage'],['roles','Roles and permissions',KeyRound,'roles.manage'],['policies','Policies',Scale,'policies.manage'],['connections','Connections',Plug,'connections.manage'],['audit','Audit log',History,'audit.view']];
 export function Shell({ active, crumbs = [], actions, children, admin, user }) {
@@ -97,11 +99,12 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
   return (
     <div className="v3 grid min-h-screen grid-cols-[248px_1fr]">
       <a href="#v3main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
-      <nav aria-label="Primary" className="sticky top-0 flex h-screen flex-col gap-1 bg-[var(--v-ink)] px-3 py-4 text-[#c8cde0]">
+      <aside aria-label="Sidebar" className="sticky top-0 flex h-screen flex-col gap-1 bg-[var(--v-ink)] px-3 py-4 text-[#c8cde0]">
         <div className="mb-5 flex items-center gap-2.5 px-2.5">
           <span className="grid size-8 place-items-center rounded-lg bg-[var(--v-blue)]"><svg viewBox="0 0 20 20" className="size-5" aria-hidden="true"><path d="M4 15V5l6 5 6-5v10" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round"/></svg></span>
           <div className="leading-tight"><div className="font-display text-[15px] font-semibold text-white">Delivery Platform</div><div className="text-[12px] text-[#8f97b3]">Full Application team</div></div>
         </div>
+        <nav aria-label="Primary" className="-mx-1 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-1 pb-3">
         {NAV.map(([k, l, I, n0]) => { const n = k === 'approvals' ? proto.mine.length : n0; return (
           <a key={k} href={{run:'#v3-runs'}[k] || `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}>
             <I className="size-[18px]" strokeWidth={1.8} />{l}{n > 0 && <span className="ml-auto rounded-full bg-[#e0a000] px-1.5 text-[11.5px] font-semibold text-[var(--v-ink)]">{n}</span>}
@@ -111,14 +114,16 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
           {ADMIN_NAV.filter(x => proto.can(x[3])).map(([k, l, I]) => (
             <a key={k} href={`#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}><I className="size-[18px]" strokeWidth={1.8} />{l}</a>))}
         </>}
-        <div className="mt-auto flex flex-col gap-1.5 rounded-xl bg-white/5 px-2.5 py-2">
+        </nav>
+        <PrototypeMenu />
+        <div className="flex shrink-0 flex-col gap-1.5 rounded-xl bg-white/5 px-2.5 py-2">
           <div className="flex items-center gap-2.5"><Avatar p={me} size={32} /><div className="min-w-0 leading-tight"><div className="truncate text-[14px] font-medium text-white">{PEOPLE[me].name}</div><div className="truncate text-[12px] text-[#8f97b3]">{proto.myRole}</div></div></div>
           <label htmlFor="viewas" className="text-[11.5px] text-[#8f97b3]">View as</label>
           <select id="viewas" value={me} onChange={e => { proto.setMe(e.target.value); location.hash = 'v3-home'; }} className="h-8 rounded-md border border-white/15 bg-[#1c2140] px-2 text-[13px] text-white">
             <option value="alex">Alex Kim · Solution Architect</option><option value="priya">Priya Nair · Product Owner</option><option value="sam">Sam Okafor · Release Manager</option><option value="dana">Dana Whitfield · Platform Admin</option>
           </select>
         </div>
-      </nav>
+      </aside>
       <div className="flex min-w-0 flex-col">
         <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[var(--v-line)] bg-[var(--v-bg)]/90 px-8 backdrop-blur">
           <nav aria-label="Breadcrumb"><ol className="flex min-w-0 items-center gap-2 text-[14px] text-[var(--v-ink-3)]">{crumbs.map((c, i) => { const last = i === crumbs.length - 1; const href = CRUMB[c]; return <li key={c} className="flex items-center gap-2">{i > 0 && <span aria-hidden="true">/</span>}{last ? <span aria-current="page" className="font-medium text-[var(--v-ink)]">{c}</span> : href ? <a href={href} className="rounded hover:text-[var(--v-ink)] hover:underline">{c}</a> : <span>{c}</span>}</li>; })}</ol></nav>

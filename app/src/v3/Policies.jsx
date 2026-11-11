@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill } from './ui';
 import { useToast } from '@/components/friendly';
+import { useProto } from './store';
 import { Plus, Trash2 } from 'lucide-react';
 
 const Toggle = ({ on, onChange, label }) => <button type="button" role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? 'bg-[var(--v-blue)]' : 'bg-[#c3ccc5]'}`}><span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition-all ${on ? 'left-[18px]' : 'left-0.5'}`} /></button>;
@@ -13,6 +14,7 @@ const START = { targets: { 'Product Owner': 4, 'Solution Architect': 4, 'Enginee
 
 export default function V3Policies() {
   const toast = useToast();
+  const proto = useProto();
   const [p, setP] = useState(START);
   const [freezes, setFreezes] = useState([['Month-end close', '1–3 Dec 2026', 'All applications'], ['Year-end', '22 Dec – 2 Jan', 'All applications'], ['Pricing review', '15 Jan 2027', 'Full Application']]);
   const changed = JSON.stringify(p) !== JSON.stringify(START);
@@ -27,7 +29,7 @@ export default function V3Policies() {
             <Row title="Escalate to the platform admin after" sub="Dana Whitfield is notified and can reassign"><NumIn id="esc" label="Escalation in hours" value={p.escalate} unit="hours" onChange={v => up('escalate', v)} /></Row></div></Card>
 
         <Card><CardHead title="Separation of duties" sub="Who may not approve their own work" />
-          <div className="border-t border-[var(--v-line)]">{[['design', 'The requester cannot approve the Design'], ['release', 'The requester cannot approve the Release'], ['review', 'A person cannot review code they asked the agent to change']].map(([k, t]) => <Row key={k} title={t}><Toggle label={t} on={p.sod[k]} onChange={v => up('sod', { ...p.sod, [k]: v })} /></Row>)}</div></Card>
+          <div className="border-t border-[var(--v-line)]"><Row title="The requester cannot approve their own plan" sub="Applies straight away to every run"><Toggle label="The requester cannot approve their own plan" on={proto.policy.planSoD} onChange={v => { proto.setPolicy('planSoD', v); toast(v ? 'Requesters can no longer approve their own plans.' : 'Requesters can now approve their own plans.'); }} /></Row>{[['design', 'The requester cannot approve the Design'], ['release', 'The requester cannot approve the Release'], ['review', 'A person cannot review code they asked the agent to change']].map(([k, t]) => <Row key={k} title={t}><Toggle label={t} on={p.sod[k]} onChange={v => up('sod', { ...p.sod, [k]: v })} /></Row>)}</div></Card>
 
         <Card><CardHead title="Change freezes" sub="No releases are scheduled inside these windows without an exception" right={<Button size="sm" variant="outline" className="rounded-lg" onClick={() => setFreezes(f => [...f, ['New freeze', 'Choose dates', 'All applications']])}><Plus className="size-4" />Add freeze</Button>} />
           <table className="w-full border-t border-[var(--v-line)] text-[13.5px]"><caption className="sr-only">Change freezes</caption><tbody>{freezes.map(([n, d, a], i) => <tr key={i} className="border-b border-[var(--v-line)] last:border-0"><td className="py-3 pl-5 font-medium">{n}</td><td className="tnum pr-4">{d}</td><td className="pr-4 text-[var(--v-ink-2)]">{a}</td><td className="pr-5 text-right"><button aria-label={`Remove ${n}`} onClick={() => setFreezes(f => f.filter((_, j) => j !== i))} className="rounded-md p-1.5 text-[var(--v-ink-3)] hover:bg-[var(--v-red-soft)] hover:text-[var(--v-red)]"><Trash2 className="size-4" /></button></td></tr>)}</tbody></table></Card>

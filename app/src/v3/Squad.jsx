@@ -77,7 +77,7 @@ export default function V3Squad({ id = 'WI-4836' }) {
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right"><div className="tnum font-display text-[22px] font-semibold">{filled} of {ROLES.length}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">roles filled</div></div>
-            <Button disabled={blocking} onClick={() => { if (run.squadGap) resolve('squad'); else if (run.id === 'WI-4807' && attention.includes('leave')) resolve('leave'); toast('Squad saved. New approvers have been notified.', undo); location.hash = 'v3-squads'; }} className="h-10 rounded-lg px-5">Save squad</Button>
+            <Button disabled={blocking} onClick={() => { const t = run.squadGap ? resolve('squad') : run.id === 'WI-4807' && attention.includes('leave') ? resolve('leave') : null; toast('Squad saved. New approvers have been notified.', t ? () => undo(t) : undefined); location.hash = 'v3-squads'; }} className="h-10 rounded-lg px-5">Save squad</Button>
           </div>
         </div>
 

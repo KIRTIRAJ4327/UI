@@ -1,13 +1,12 @@
 // Super admin · Governance: everything running, what needs attention, where work waits, who is overloaded.
 import { Button } from '@/components/ui/button';
-import CountUp from '@/components/CountUp';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE } from './ui';
 import { useToast } from '@/components/friendly';
 import { useProto, runHref } from './store';
 import { AlertTriangle, Clock, UserX, ShieldAlert, FlaskConical, Download, ArrowRight } from 'lucide-react';
 
 const KPIS = [
-  ['Active work items', 14, 0, '', '', 'mute'],
+  ['In progress', 14, 0, '', '', 'mute'],
   ['Waiting on a person', 5, 0, '', '', 'wait'],
   ['Over approval target', 2, 0, '', '', 'bad'],
   ['Agent spend this week', 48.2, 2, '$', '', 'mute'],
@@ -29,7 +28,8 @@ export default function V3Admin() {
   const toast = useToast();
   const { list, attention, resolve, undo } = useProto();
   const open = ATTENTION.filter(a => attention.includes(a.key));
-  const kpi = [list.filter(r => r.state !== 'done').length, list.filter(r => r.state === 'you' || r.state === 'wait').length, (attention.includes('leave') ? 1 : 0) + list.filter(r => r.state === 'bad').length, 48.2];
+  const { kpi: K } = useProto();
+  const kpi = [K.inProgress, list.filter(r => r.state === 'you' || r.state === 'wait').length, (attention.includes('leave') ? 1 : 0) + list.filter(r => r.state === 'bad').length, 48.2];
   const ITEMS = list.map(r => ({ id: r.id, t: r.t, app: r.app, s: r.s, holder: r.holder, wait: r.wait || '—', squad: r.squadGap ? '5/6' : '6/6', health: r.state === 'bad' ? ['Blocked', 'bad'] : r.squadGap ? ['Squad gap', 'wait'] : r.freeze ? ['Freeze risk', 'wait'] : r.state === 'done' ? ['Done', 'done'] : ['On track', 'done'] }));
   return (
     <Shell admin active="admin" crumbs={['Admin', 'Governance']} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={() => toast('Audit pack for this week is being prepared.')}><Download className="size-4" />Export audit pack</Button>}>
@@ -42,7 +42,7 @@ export default function V3Admin() {
         <div className="grid grid-cols-4 gap-4">
           {KPIS.map(([l, v0, d, pre, suf, tone], ki) => { const v = kpi[ki]; return (
             <Card key={l} className="px-5 py-4"><div className="flex items-center justify-between text-[13px] text-[var(--v-ink-3)]">{l}{tone !== 'mute' && <span className={`size-2 rounded-full ${tone === 'bad' ? 'bg-[var(--v-red)]' : 'bg-[#e0a000]'}`} />}</div>
-              <div className={`tnum mt-0.5 font-display text-[26px] font-semibold ${tone === 'bad' ? 'text-[var(--v-red)]' : ''}`}><CountUp to={v} decimals={d} prefix={pre} suffix={suf} duration={1.1} trigger="load" /></div></Card>); })}
+              <div className={`tnum mt-0.5 font-display text-[26px] font-semibold ${tone === 'bad' ? 'text-[var(--v-red)]' : ''}`}>{pre}{d ? v.toFixed(d) : v}{suf}</div></Card>); })}
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_340px] items-start gap-6">
@@ -55,7 +55,7 @@ export default function V3Admin() {
                   <li key={a.id} className="flex items-start gap-4 px-5 py-4">
                     <span className={`grid size-9 shrink-0 place-items-center rounded-full ${a.tone === 'bad' ? 'bg-[var(--v-red-soft)] text-[var(--v-red)]' : 'bg-[var(--v-amber-soft)] text-[var(--v-amber)]'}`}><a.icon className="size-[18px]" /></span>
                     <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><b className="font-semibold">{a.title}</b><span className="font-mono text-[12px] text-[var(--v-ink-3)]">{a.id}</span></div><p className="mt-0.5 max-w-[70ch] text-[13.5px] text-[var(--v-ink-2)]">{a.text}</p></div>
-                    {a.href ? <Button asChild variant="outline" className="h-9 shrink-0 rounded-lg"><a href={a.href}>{a.action}<ArrowRight className="size-4" /></a></Button> : <Button variant="outline" className="h-9 shrink-0 rounded-lg" onClick={() => { resolve(a.key); toast(a.done, undo); }}>{a.action}</Button>}
+                    {a.href ? <Button asChild variant="outline" className="h-9 shrink-0 rounded-lg"><a href={a.href}>{a.action}<ArrowRight className="size-4" /></a></Button> : <Button variant="outline" className="h-9 shrink-0 rounded-lg" onClick={() => { const t = resolve(a.key); toast(a.done, () => undo(t)); }}>{a.action}</Button>}
                   </li>))}
               </ul>
             </Card>
@@ -73,7 +73,7 @@ export default function V3Admin() {
                       <td className="tnum pr-4">{r.wait}</td>
                       <td className={`tnum pr-4 ${r.squad !== '6/6' ? 'font-semibold text-[var(--v-amber)]' : ''}`}>{r.squad}</td>
                       <td className="pr-4"><Pill tone={r.health[1]}>{r.health[0]}</Pill></td>
-                      <td className="pr-5 text-right"><a href={`#v3-squad-${r.id.toLowerCase()}`} className="text-[13px] font-medium text-[var(--v-blue)] hover:underline">Manage squad</a></td>
+                      <td className="pr-5 text-right"><a href={`#v3-squad-${r.id.toLowerCase()}`} className="whitespace-nowrap text-[13px] font-medium text-[var(--v-blue)] hover:underline">Manage squad</a></td>
                     </tr>))}</tbody>
                 </table>
               </div>

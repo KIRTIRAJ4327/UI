@@ -14,10 +14,14 @@ const ITEMS = [
 ];
 
 export function CommandPalette({ open, onClose }) {
+  const { list, can } = useProto();
+  // Static destinations plus every run in the prototype state, so new runs are searchable too. Admin pages only for people who can open them.
+  const ADMIN = { 'Governance (admin)': 'squads.manage', 'Policies (admin)': 'policies.manage', 'Connections (admin)': 'connections.manage', 'Squads (admin)': 'squads.manage', 'Roles and permissions (admin)': 'roles.manage', 'Audit log (admin)': 'audit.view' };
+  const ALLITEMS = useMemo(() => [...ITEMS.filter(x => x[0] !== 'Runs' && (!ADMIN[x[1]] || can(ADMIN[x[1]]))), ...list.map(r => ['Runs', `${r.id} ${r.t}`, `#v3-run-${r.id.toLowerCase()}`, Rocket])], [list, can]);
   const [q, setQ] = useState('');
   const [i, setI] = useState(0);
   const input = useRef(null);
-  const res = useMemo(() => { const t = q.trim().toLowerCase(); return t ? ITEMS.filter(x => `${x[0]} ${x[1]}`.toLowerCase().includes(t)) : ITEMS.filter(x => x[0] === 'Go to' || x[0] === 'Runs'); }, [q]);
+  const res = useMemo(() => { const t = q.trim().toLowerCase(); return t ? ALLITEMS.filter(x => `${x[0]} ${x[1]}`.toLowerCase().includes(t)) : ALLITEMS.filter(x => x[0] === 'Go to' || x[0] === 'Runs').slice(0, 14); }, [q, ALLITEMS]);
   useEffect(() => { if (open) { setQ(''); setI(0); setTimeout(() => input.current?.focus(), 0); } }, [open]);
   useEffect(() => setI(0), [q]);
   if (!open) return null;
@@ -59,7 +63,7 @@ export function CommandPalette({ open, onClose }) {
 
 export function Notifications() {
   const [open, setOpen] = useState(false);
-  const { notes, unread, markRead } = useProto();
+  const { notes, unread, markRead, markOne } = useProto();
   const ref = useRef(null);
   useEffect(() => {
     if (!open) return;
@@ -77,7 +81,7 @@ export function Notifications() {
         <div role="dialog" aria-label="Notifications" className="absolute right-0 top-11 z-40 w-[380px] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10">
           <div className="flex items-center justify-between border-b border-[var(--v-line)] px-4 py-3"><b className="font-semibold">Notifications</b><div className="flex items-center gap-1"><button onClick={markRead} className="rounded-md px-2 py-1 text-[13px] font-medium text-[var(--v-blue)] hover:bg-[var(--v-blue-soft)]">Mark all read</button><button aria-label="Close notifications" onClick={() => setOpen(false)} className="rounded-md p-1 hover:bg-[var(--v-sunken)]"><X className="size-4" /></button></div></div>
           <ul className="max-h-[400px] overflow-y-auto">{notes.map(({ id, t, s, a, href, unread: u }) => (
-            <li key={id}><a href={href} onClick={() => setOpen(false)} className="flex gap-3 border-b border-[var(--v-line)] px-4 py-3 last:border-0 hover:bg-[var(--v-sunken)]">
+            <li key={id}><a href={href} onClick={() => { markOne(id); setOpen(false); }} className="flex gap-3 border-b border-[var(--v-line)] px-4 py-3 last:border-0 hover:bg-[var(--v-sunken)]">
               <span className={cn('mt-1.5 size-2 shrink-0 rounded-full', u ? 'bg-[var(--v-blue)]' : 'bg-transparent')} aria-hidden="true" />
               <span className="min-w-0 flex-1"><span className={cn('block text-[14px]', u && 'font-semibold')}>{t}</span><span className="block truncate text-[12.5px] text-[var(--v-ink-3)]">{s}</span></span>
               <span className="shrink-0 text-[12px] text-[var(--v-ink-3)]">{a}</span>{u && <span className="sr-only">Unread</span>}</a></li>))}</ul>

@@ -17,10 +17,12 @@ const INITIAL = {
   },
   order: ['WI-4836', 'WI-4830', 'WI-4821', 'WI-4807', 'WI-4799', 'WI-4790', 'WI-4772', 'WI-4751'],
   notes: [
-    { id: 'n1', t: 'Design waiting for your approval', s: 'WI-4821 · from the delivery agent', a: '12 min', href: '#v3-approve', unread: true },
-    { id: 'n2', t: 'Completion report reassigned to you', s: 'WI-4807 · Jon Reyes is on leave', a: '3 h', href: '#v3-review', unread: true },
-    { id: 'n3', t: 'Priya replied to your question', s: 'WI-4821 · “Can we add the server check…”', a: '10 min', href: '#v3-approve', unread: true },
-    { id: 'n4', t: 'Teams notifications are failing', s: 'Connections · sign-in expired at 08:12', a: '2 h', href: '#v3-connections', unread: false },
+    { id: 'n6', to: ['sam'], t: 'Release waiting for your sign-off', s: 'WI-4772 · validation and UAT are done', a: '5 h', href: '#v3-release', unread: true },
+    { id: 'n7', to: ['dana'], t: 'Approver on leave is holding a review', s: 'WI-4807 · Jon Reyes is away until Friday', a: '3 h', href: '#v3-admin', unread: true },
+    { id: 'n1', to: ['alex'], t: 'Design waiting for your approval', s: 'WI-4821 · from the delivery agent', a: '12 min', href: '#v3-approve', unread: true },
+    { id: 'n2', to: ['alex'], t: 'Completion report reassigned to you', s: 'WI-4807 · Jon Reyes is on leave', a: '3 h', href: '#v3-review', unread: true },
+    { id: 'n3', to: ['alex'], t: 'Priya replied to your question', s: 'WI-4821 · “Can we add the server check…”', a: '10 min', href: '#v3-approve', unread: true },
+    { id: 'n4', to: ['dana'], t: 'Teams notifications are failing', s: 'Connections · sign-in expired at 08:12', a: '2 h', href: '#v3-connections', unread: false },
     { id: 'n5', t: 'Fee schedule update released', s: 'WI-4751 · Sam Okafor', a: 'Tue', href: '#v3-runs', unread: false },
   ],
   feed: [
@@ -33,6 +35,9 @@ const INITIAL = {
   attention: ['leave', 'agent', 'freeze', 'squad'],
   nextId: 4841,
   me: 'alex',
+  v: 0,
+  policy: { planSoD: true },
+  comments: { 'WI-4821': [{ who: 'priya', text: 'Can we add the server check as a follow-up request?', at: '2026-11-11T09:32:00Z' }] },
   tour: false,
   welcomed: false,
   roles: {
@@ -47,16 +52,19 @@ const INITIAL = {
     'Requester': ['request.create', 'artifacts.own'],
   },
   audit: [
-    { t: '09:42', who: 'agent', action: 'Saved document', target: 'ADR-0173 · WI-4821', cat: 'artifact' },
-    { t: '09:40', who: 'agent', action: 'Opened approval gate (Solution Architect)', target: 'WI-4821', cat: 'gate' },
-    { t: '09:31', who: 'dana', action: 'Viewed document', target: 'Impact assessment · WI-4821', cat: 'access' },
-    { t: '09:12', who: 'priya', action: 'Approved plan', target: 'WI-4830', cat: 'gate' },
-    { t: '08:12', who: 'system', action: 'Connection failed: Microsoft Teams sign-in expired', target: 'Connections', cat: 'system' },
-    { t: 'Mon 17:20', who: 'dana', action: 'Changed role: Lena Brooks can approve as Integration Lead', target: 'People and access', cat: 'rbac' },
-    { t: 'Mon 16:05', who: 'sam', action: 'Released', target: 'WI-4751', cat: 'gate' },
-    { t: 'Mon 11:02', who: 'dana', action: 'Exported audit pack (week 45)', target: 'Governance', cat: 'access' },
+    { t: '08:40', at: '2026-11-11T08:40:00Z', ip: '10.20.4.2', who: 'agent', action: 'Validation failed after 3 attempts: 2 tests', target: 'WI-4790', cat: 'gate' },
+    { t: '08:05', at: '2026-11-11T08:05:00Z', ip: '10.20.4.2', who: 'agent', action: 'Retried validation (attempt 2 of 3)', target: 'WI-4790', cat: 'gate' },
+    { t: '09:42', at: '2026-11-11T09:42:00Z', ip: '10.20.4.148', who: 'agent', action: 'Saved document', target: 'ADR-0173 · WI-4821', cat: 'artifact' },
+    { t: '09:40', at: '2026-11-11T09:40:00Z', ip: '10.20.4.102', who: 'agent', action: 'Opened approval gate (Solution Architect)', target: 'WI-4821', cat: 'gate' },
+    { t: '09:31', at: '2026-11-11T09:31:00Z', ip: '10.20.4.185', who: 'dana', action: 'Viewed document', target: 'Impact assessment · WI-4821', cat: 'access' },
+    { t: '09:12', at: '2026-11-11T09:12:00Z', ip: '10.20.4.197', who: 'priya', action: 'Approved plan', target: 'WI-4830', cat: 'gate' },
+    { t: '08:12', at: '2026-11-11T08:12:00Z', ip: '10.20.4.112', who: 'system', action: 'Connection failed: Microsoft Teams sign-in expired', target: 'Connections', cat: 'system' },
+    { t: 'Mon 17:20', at: '2026-11-09T17:20:00Z', ip: '10.20.4.135', who: 'dana', action: 'Changed role: Lena Brooks can approve as Integration Lead', target: 'People and access', cat: 'rbac' },
+    { t: 'Mon 16:05', at: '2026-11-09T16:05:00Z', ip: '10.20.4.143', who: 'sam', action: 'Released', target: 'WI-4751', cat: 'gate' },
+    { t: 'Mon 11:02', at: '2026-11-09T11:02:00Z', ip: '10.20.4.129', who: 'dana', action: 'Exported audit pack (week 45)', target: 'Governance', cat: 'access' },
   ],
 };
+export const STAGE_APPROVER = ['priya', 'priya', null, 'alex', 'jon', 'tom', 'mara', 'sam'];
 export const ROLE_OF = { alex: 'Solution Architect', priya: 'Product Owner', sam: 'Release Manager', dana: 'Platform Admin', jon: 'Engineering Lead', lena: 'Engineering Lead', tom: 'Integration Lead', mara: 'Quality Lead', ana: 'Quality Lead', ravi: 'Solution Architect' };
 export const PERMS = [
   ['Delivery', [['request.create', 'Start requests'], ['runs.pause', 'Pause and resume runs']]],
@@ -68,7 +76,7 @@ export const PERMS = [
 const titleFrom = text => { let t = (text.split('.')[0] || '').replace(/^\s*(in|on|for|within)\b[^,]{0,60},\s*/i, '').trim(); t = t.charAt(0).toUpperCase() + t.slice(1); if (t.length > 56) t = t.slice(0, 56).replace(/\s+\S*$/, '') + '…'; return t || 'New request'; };
 const NAME = { alex: 'Alex Kim', priya: 'Priya Nair', sam: 'Sam Okafor', dana: 'Dana Whitfield', agent: 'The agent', jon: 'Jon Reyes', lena: 'Lena Brooks' };
 
-const KEY = 'delivery-prototype-v5';
+const KEY = 'delivery-prototype-v7';
 const load = () => { try { const s = sessionStorage.getItem(KEY); return s ? JSON.parse(s) : INITIAL; } catch { return INITIAL; } };
 
 const Ctx = createContext(null);
@@ -76,10 +84,11 @@ export function PrototypeProvider({ children }) {
   const [st, setSt] = useState(load);
   useEffect(() => { try { sessionStorage.setItem(KEY, JSON.stringify(st)); } catch { /* storage unavailable: demo still works in memory */ } }, [st]);
 
-  const prev = useRef(null);
-  const upd = useCallback(fn => setSt(s => { prev.current = s; return fn(structuredClone(s)); }), []);
-  const note = (s, t, sub, href) => s.notes.unshift({ id: 'n' + Date.now() + Math.random(), t, s: sub, a: 'now', href, unread: true });
-  const log = (s, action, target, cat = 'gate', who = s.me) => s.audit.unshift({ t: 'just now', who, action, target, cat });
+  // Every change gets a version number. An action returns a token; Undo only works while nothing else has changed since.
+  const stRef = useRef(st); stRef.current = st;
+  const upd = useCallback(fn => { const before = stRef.current; const next = fn(structuredClone(before)); next.v = (before.v || 0) + 1; stRef.current = next; setSt(next); return { before, v: next.v }; }, []);
+  const note = (s, t, sub, href, to) => s.notes.unshift({ id: 'n' + Date.now() + Math.random(), to, t, s: sub, a: 'now', href, unread: true });
+  const log = (s, action, target, cat = 'gate', who = s.me, detail) => s.audit.unshift({ t: 'just now', at: new Date().toISOString(), ip: '10.20.4.' + (who === 'agent' ? 2 : 37), live: true, who, action, target, cat, detail });
   const feed = (s, p, title, who) => { s.feed.unshift({ p: s.me, title, who: NAME[s.me], t: 'just now' }); log(s, title.split(' · ')[0], title.split(' · ')[1] || ''); };
   const advance = (r, now, holder = 'agent', state = 'work') => { r.s = r.s.slice(0, -1) + 'd' + 'a'; r.state = state; r.now = now; r.holder = holder; r.wait = undefined; r.decidedAt = 'just now'; };
 
@@ -92,7 +101,7 @@ export function PrototypeProvider({ children }) {
     scheduleRelease: when => upd(s => { const r = s.runs['WI-4772']; r.s = 'dddddddd'; r.state = 'done'; r.now = when === 'Now' ? 'Released' : `Release scheduled ${when}`; r.eta = when === 'Now' ? 'Released today' : when; r.holder = 'sam'; r.decidedAt = 'just now'; feed(s, 'sam', (when === 'Now' ? 'Released' : 'Release scheduled') + ' · WI-4772', 'Sam Okafor'); return s; }),
     holdRelease: () => upd(s => { const r = s.runs['WI-4772']; r.now = 'Release on hold'; r.state = 'bad'; r.decidedAt = 'just now'; return s; }),
     createRequest: (id, text, app) => upd(s => { s.nextId++; s.runs[id] = { id, t: titleFrom(text), app, by: s.me, s: 'a', state: 'work', now: 'Agent drafting the plan', holder: 'agent', age: 'just now', eta: 'About 3 days', fresh: true }; s.order.unshift(id); feed(s, 'alex', `Request started · ${id}`, 'Alex Kim'); return s; }),
-    finishPlan: id => upd(s => { const r = s.runs[id]; if (r && r.s === 'a') { r.s = 'w'; r.state = 'wait'; r.now = 'Plan waiting for approval'; r.holder = 'priya'; r.ask = 'Approve the delivery plan'; r.why = 'The agent turned the request into 1 objective and 2 stories.'; r.wait = 'just now'; log(s, 'Opened approval gate (Product Owner)', id, 'gate', 'agent'); note(s, `Plan drafted for ${id}`, 'Priya Nair has been asked to approve it', `#v3-run-${id.toLowerCase()}`); } return s; }),
+    finishPlan: id => upd(s => { const r = s.runs[id]; if (r && r.s === 'a') { r.s = 'w'; r.state = 'wait'; r.now = 'Plan waiting for approval'; r.holder = 'priya'; r.ask = 'Approve the delivery plan'; r.why = 'The agent turned the request into 1 objective and 2 stories.'; r.wait = 'just now'; log(s, 'Opened approval gate (Product Owner)', id, 'gate', 'agent'); note(s, `Plan waiting for your approval`, `${id} · drafted by the agent`, `#v3-run-${id.toLowerCase()}`, ['priya']); note(s, `Plan drafted for ${id}`, 'Priya Nair has been asked to approve it', `#v3-run-${id.toLowerCase()}`, [s.runs[id].by]); } return s; }),
     approvePlan: id => upd(s => { const r = s.runs[id]; advance(r, 'Agent writing the specification'); feed(s, s.me, `Plan approved · ${id}`); return s; }),
     requestPlanChanges: id => upd(s => { const r = s.runs[id]; r.state = 'work'; r.now = 'Agent revising the plan'; r.holder = 'agent'; r.s = 'a'; r.decidedAt = 'just now'; feed(s, s.me, `Plan sent back · ${id}`); return s; }),
     setMe: p => upd(s => { log(s, `Signed in as ${NAME[p]}`, 'Demo role switch', 'access', p); s.me = p; return s; }),
@@ -101,11 +110,17 @@ export function PrototypeProvider({ children }) {
     exportArtifacts: what => upd(s => { log(s, `Exported ${what}`, 'Artifact library', 'access'); return s; }),
     resolve: key => upd(s => { s.attention = s.attention.filter(a => a !== key); log(s, { leave: 'Reassigned WI-4807 to Lena Brooks', agent: 'Assigned an engineer to WI-4790', freeze: 'Approved freeze exception for WI-4830', squad: 'Completed squad for WI-4836' }[key], 'Governance', 'admin'); if (key === 'leave') { s.runs['WI-4807'].holder = 'lena'; } if (key === 'squad') s.runs['WI-4836'].squadGap = false; if (key === 'freeze') { s.runs['WI-4830'].freeze = false; s.runs['WI-4830'].eta = 'Thu 4 Dec'; } return s; }),
     fixTeams: () => upd(s => { s.teamsOk = true; log(s, 'Signed in to Microsoft Teams again', 'Connections', 'admin'); s.notes = s.notes.map(n => n.id === 'n4' ? { ...n, unread: false } : n); return s; }),
-    markRead: () => upd(s => { s.notes.forEach(n => { n.unread = false; }); return s; }),
+    markRead: () => upd(s => { s.notes.forEach(n => { if (!n.to || n.to.includes(s.me)) n.unread = false; }); return s; }),
     togglePause: id => upd(s => { const r = s.runs[id]; r.paused = !r.paused; feed(s, s.me, `${r.paused ? 'Paused' : 'Resumed'} · ${id}`); return s; }),
     setTour: on => setSt(s => ({ ...s, tour: on })),
     setWelcomed: () => setSt(s => ({ ...s, welcomed: true })),
-    undo: () => { if (prev.current) { setSt(prev.current); prev.current = null; } },
+    undo: token => { const cur = stRef.current; if (!token || cur.v !== token.v) return false; const back = { ...token.before, tour: cur.tour, welcomed: cur.welcomed }; stRef.current = back; setSt(back); return true; },
+    markOne: id => upd(s => { s.notes.forEach(n => { if (n.id === id) n.unread = false; }); return s; }),
+    addComment: (id, text) => upd(s => { (s.comments[id] ||= []).push({ who: s.me, text, at: new Date().toISOString() }); log(s, 'Commented', id, 'gate'); return s; }),
+    setPolicy: (k, val) => upd(s => { s.policy[k] = val; log(s, `${val ? 'Turned on' : 'Turned off'} policy “${k === 'planSoD' ? 'Requester cannot approve their own plan' : k}”`, 'Policies', 'admin'); return s; }),
+    retryRun: id => upd(s => { const r = s.runs[id]; r.s = r.s.replace('f', 'a'); r.state = 'work'; r.now = 'Agent re-running validation with the updated tests'; r.holder = 'agent'; r.retrying = true; r.eta = 'Fri 14 Nov'; feed(s, s.me, `Validation re-run · ${id}`); return s; }),
+    finishRetry: id => upd(s => { const r = s.runs[id]; if (!r.retrying) return s; r.retrying = false; r.s = r.s.replace('a', 'w'); r.state = 'wait'; r.holder = 'mara'; r.now = 'Validation waiting for approval'; r.ask = 'Approve validation'; r.why = 'All 214 regression tests now pass.'; r.wait = 'just now'; log(s, 'Validation passed after retry', id, 'gate', 'agent'); return s; }),
+    assignEngineer: id => upd(s => { const r = s.runs[id]; r.holder = 'lena'; r.state = 'wait'; r.s = r.s.replace('f', 'w'); r.now = 'Engineer investigating the failed tests'; s.attention = s.attention.filter(a => a !== 'agent'); log(s, `Assigned Lena Brooks to investigate failed tests`, id, 'admin'); return s; }),
     reset: () => setSt(s => ({ ...INITIAL, welcomed: true, tour: s.tour })),
   }), [upd]);
 
@@ -113,11 +128,16 @@ export function PrototypeProvider({ children }) {
     const view = r => ({ ...r, state: r.state === 'wait' && r.holder === st.me ? 'you' : r.state, now: r.state === 'wait' ? (r.holder === st.me ? r.now.replace('waiting for approval', 'waiting for your approval').replace('waiting for an answer', 'waiting for your answer') : r.now) : r.now });
     const runs = Object.fromEntries(Object.entries(st.runs).map(([k, r]) => [k, view(r)]));
     const list = st.order.map(id => runs[id]);
-    const mine = list.filter(r => r.state === 'you');
+    const mins = w => { const m = /(\d+)\s*(min|h|d)/.exec(w || ''); return m ? +m[1] * ({ min: 1, h: 60, d: 1440 })[m[2]] : 0; };
+    const mine = list.filter(r => r.state === 'you').sort((a, b) => mins(b.wait) - mins(a.wait));
+    const myNotes = st.notes.filter(n => !n.to || n.to.includes(st.me));
     const myRole = ROLE_OF[st.me];
     const perms = st.roles[myRole] || [];
     const can = p => perms.includes(p);
-    return { raw: st.runs, runs, list, mine, myRole, can, unread: st.notes.filter(n => n.unread).length };
+    // One answer to "who approves stage i of this run", used by every screen.
+    const approver = (r, i) => { if (r.s[i] === 'w' && r.holder !== 'agent') return r.holder; if (r.id === 'WI-4807' && i === 4) return st.attention.includes('leave') ? 'alex' : 'lena'; return STAGE_APPROVER[i]; };
+    const kpi = { inProgress: list.filter(r => r.state !== 'done').length, waitingPeople: list.filter(r => r.state === 'you' || r.state === 'wait').length, released: list.filter(r => r.state === 'done').length };
+    return { raw: st.runs, runs, list, mine, myRole, can, approver, kpi, notes: myNotes, unread: myNotes.filter(n => n.unread).length };
   }, [st]);
 
   return <Ctx.Provider value={{ ...st, ...derived, ...actions, STAGE, NAME }}>{children}</Ctx.Provider>;

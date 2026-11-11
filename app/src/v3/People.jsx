@@ -1,6 +1,11 @@
 // Admin · People and access: who can approve what, in which application, and who is away.
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { Shell, Card, CardHead, Pill, Avatar, PEOPLE } from './ui';
+import { Search, AlertTriangle } from 'lucide-react';
+// Role pairs one person should not hold together on the same work item.
+const CONFLICTS = [['Product Owner', 'Quality Lead'], ['Engineering Lead', 'Quality Lead'], ['Solution Architect', 'Release Manager']];
+const conflictOf = roles => CONFLICTS.find(([a, b]) => roles.includes(a) && roles.includes(b));
 import { useToast } from '@/components/friendly';
 import { UserPlus, ArrowRight } from 'lucide-react';
 
@@ -20,18 +25,20 @@ const COVER = [['Product Owner', [2, 1, 2]], ['Solution Architect', [2, 2, 1]], 
 
 export default function V3People() {
   const toast = useToast();
+  const [q, setQ] = useState('');
   return (
     <Shell admin active="people" crumbs={['Admin', 'People and access']} actions={<Button className="h-9 rounded-lg px-4" onClick={() => toast('Invitation form opened.')}><UserPlus className="size-4" />Invite person</Button>}>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
-        <div><h1 className="font-display text-[28px] font-semibold">People and access</h1><p className="mt-1 text-[15px] text-[var(--v-ink-2)]">Who can approve which stages, in which applications. Squads can only use people listed here.</p></div>
+        <div className="flex flex-wrap items-end gap-4"><div className="min-w-0 flex-1"><h1 className="font-display text-[28px] font-semibold">People and access</h1><p className="mt-1 text-[15px] text-[var(--v-ink-2)]">Who can approve which stages, in which applications. People and groups are synced from your identity provider every hour.</p></div><Pill tone="done">SSO and SCIM: Microsoft Entra ID · synced 14 min ago</Pill></div>
+        <label htmlFor="pq" className="flex h-9 w-72 items-center gap-2 rounded-lg border border-[var(--v-line)] bg-white px-3 text-[13.5px]"><Search className="size-4 text-[var(--v-ink-3)]" /><span className="sr-only">Search people</span><input id="pq" value={q} onChange={e => setQ(e.target.value)} placeholder="Search by name or role" className="w-full bg-transparent outline-none" /></label>
         <div className="grid grid-cols-[minmax(0,1fr)_360px] items-start gap-6">
           <Card className="overflow-hidden">
             <table className="w-full text-[13.5px]"><caption className="sr-only">People</caption>
               <thead><tr className="border-b border-[var(--v-line)] bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]"><th className="py-2.5 pl-5 font-medium">Person</th><th className="pr-4 font-medium">Can approve as</th><th className="pr-4 font-medium">Applications</th><th className="pr-4 font-medium">Open</th><th className="pr-5 font-medium">Availability</th></tr></thead>
-              <tbody>{DIR.map(([p, roles, apps, open, avail, seen]) => (
+              <tbody>{DIR.filter(([p, roles]) => `${PEOPLE[p].name} ${roles.join(' ')}`.toLowerCase().includes(q.toLowerCase())).map(([p, roles, apps, open, avail, seen]) => (
                 <tr key={p} className="border-b border-[var(--v-line)] align-top last:border-0">
                   <td className="py-3 pl-5"><span className="flex items-center gap-3"><Avatar p={p} size={30} /><span><b className="block font-medium">{PEOPLE[p].name}</b><span className="text-[12.5px] text-[var(--v-ink-3)]">Active {seen.toLowerCase()}</span></span></span></td>
-                  <td className="py-3 pr-4"><div className="flex flex-wrap gap-1">{roles.map(r => <span key={r} className="rounded-md bg-[var(--v-sunken)] px-2 py-0.5 text-[12.5px] ring-1 ring-[var(--v-line)]">{r}</span>)}</div></td>
+                  <td className="py-3 pr-4"><div className="flex flex-wrap gap-1">{roles.map(r => <span key={r} className="rounded-md bg-[var(--v-sunken)] px-2 py-0.5 text-[12.5px] ring-1 ring-[var(--v-line)]">{r}</span>)}</div>{conflictOf(roles) && <p className="mt-1.5 flex items-center gap-1 text-[12px] text-[var(--v-amber)]"><AlertTriangle className="size-3.5" />{conflictOf(roles).join(" and ")} on one work item is blocked by policy</p>}</td>
                   <td className="py-3 pr-4"><div className="flex gap-1">{APPS.map((a, i) => <span key={a} title={`${a}: ${apps[i] ? 'has access' : 'no access'}`} className={`grid size-6 place-items-center rounded-md text-[11px] font-semibold ${apps[i] ? 'bg-[var(--v-blue-soft)] text-[var(--v-blue)]' : 'bg-[var(--v-sunken)] text-[var(--v-ink-3)] line-through'}`}>{a.split(' ').map(w => w[0]).join('')}<span className="sr-only">{apps[i] ? ' has access' : ' no access'}</span></span>)}</div></td>
                   <td className="tnum py-3 pr-4">{open}</td>
                   <td className="py-3 pr-5">{avail === 'Available' ? <Pill tone="done">Available</Pill> : <Pill tone="bad">{avail}</Pill>}</td>

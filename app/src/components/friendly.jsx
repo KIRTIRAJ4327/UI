@@ -1,6 +1,6 @@
 // Friendliness helpers used across concepts: a clear next step, plain-language terms,
 // a how-to-read legend, and feedback with undo for every decision.
-import { createContext, useContext, useState, useCallback, Fragment } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, Fragment } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { HelpCircle, ArrowRight } from 'lucide-react';
@@ -36,12 +36,14 @@ export function HowToRead({ items, className }) {
 const ToastCtx = createContext(() => {});
 export function ToastProvider({ children }) {
   const [t, setT] = useState(null);
-  const show = useCallback((msg, undo) => { setT({ msg, undo }); clearTimeout(window.__toast); window.__toast = setTimeout(() => setT(null), 6000); }, []);
+  const show = useCallback((msg, undo) => { setT({ msg, undo, at: Date.now() }); clearTimeout(window.__toast); window.__toast = setTimeout(() => setT(null), undo ? 8000 : 5000); }, []);
+  // A toast belongs to the page it was raised on: leaving that page (other than the action's own redirect) dismisses it.
+  useEffect(() => { const f = () => setT(x => x && Date.now() - x.at > 1500 ? null : x); addEventListener('hashchange', f); return () => removeEventListener('hashchange', f); }, []);
   return (
     <ToastCtx.Provider value={show}>
       {children}
       <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex justify-center">
-        {t && <div className="pointer-events-auto flex items-center gap-4 rounded-lg bg-[#101429] px-4 py-2.5 text-white shadow-lg"><span>{t.msg}</span>{t.undo && <button onClick={() => { t.undo(); setT({ msg: 'Undone.' }); }} className="font-semibold text-[#9cc3ff] underline underline-offset-2">Undo</button>}</div>}
+        {t && <div className="pointer-events-auto flex items-center gap-4 rounded-lg bg-[#101429] px-4 py-2.5 text-white shadow-lg"><span>{t.msg}</span>{t.undo && <button onClick={() => { const ok = t.undo(); setT({ msg: ok === false ? 'Cannot undo: something else has changed since.' : 'Undone.', at: Date.now() }); }} className="font-semibold text-[#9cc3ff] underline underline-offset-2">Undo</button>}</div>}
       </div>
     </ToastCtx.Provider>
   );

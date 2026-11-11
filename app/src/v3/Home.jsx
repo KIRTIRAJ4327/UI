@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import SplitText from '@/components/SplitText';
-import CountUp from '@/components/CountUp';
 import AnimatedList from '@/components/AnimatedList';
 import SpotlightCard from '@/components/SpotlightCard';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE } from './ui';
@@ -8,7 +7,7 @@ import { useProto, runHref } from './store';
 import { Clock, ArrowRight, Plus, PartyPopper } from 'lucide-react';
 
 export default function V3Home() {
-  const { mine, list, feed, me, can, attention, myRole } = useProto();
+  const { mine, list, feed, me, can, attention, myRole, kpi } = useProto();
   const isAdmin = can('squads.manage');
   const myRequests = list.filter(r => r.by === me).slice(0, 4);
   const inProgress = list.filter(r => r.state !== 'done').length;
@@ -22,8 +21,8 @@ export default function V3Home() {
             <SplitText key={heading} text={heading} tag="h1" splitType="words" effect="fade" delay={45} duration={0.5} textAlign="left" trigger="load" className="font-display text-[30px] font-semibold leading-tight" />
           </div>
           <div className="flex gap-3">
-            {[['In progress', inProgress, 0, '', '#v3-runs'], ['Released this week', list.filter(r => r.state === 'done').length + 3, 0, '', '#v3-runs'], ['Average time to release', 3.2, 1, ' days', '#v3-admin']].map(([l, v, d, suf, href]) => (
-              <a key={l} href={href} className="rounded-xl border border-[var(--v-line)] bg-white px-4 py-2.5 hover:border-[#b9c4bb]"><span className="block text-[12.5px] text-[var(--v-ink-3)]">{l}</span><span className="tnum block font-display text-[20px] font-semibold"><CountUp to={v} decimals={d} suffix={suf} duration={1.2} trigger="load" /></span></a>))}
+            {[['In progress', kpi.inProgress, 'Work items that are not yet released', '#v3-runs'], ['Released', kpi.released, 'Work items released or scheduled for release', '#v3-runs'], ['Average time to release', '3.2 days', 'From request to release, last 30 days', '#v3-admin']].map(([l, v, tip, href]) => (
+              <a key={l} href={href} title={tip} className="rounded-xl border border-[var(--v-line)] bg-white px-4 py-2.5 hover:border-[#b9c4bb]"><span className="block text-[12.5px] text-[var(--v-ink-3)]">{l}</span><span className="tnum block font-display text-[20px] font-semibold">{v}</span></a>))}
           </div>
         </div>
 
@@ -67,7 +66,7 @@ export default function V3Home() {
             </Card>
             <Card>
               <CardHead title="Recent activity" />
-              <div className="px-2 pb-3"><AnimatedList key={feed.length} ariaLabel="Recent activity" theme="light" frame={false} showGradients={false} displayScrollbar={false} selectOnHover={false} enableArrowNavigation={false} animateOnce width="100%" maxHeight={400} gap={2} radius={10} accentColor="#2469bc"
+              <div className="px-2 pb-3"><AnimatedList key={feed.length} ariaLabel="Recent activity" onItemSelect={item => { const id = /WI-\d+/.exec(item.title)?.[0]; if (id) location.hash = `v3-run-${id.toLowerCase()}`; }} theme="light" frame={false} showGradients={false} displayScrollbar={false} selectOnHover={false} enableArrowNavigation={false} animateOnce width="100%" maxHeight={400} gap={2} radius={10} accentColor="#2469bc"
                 items={feed.slice(0, 5).map(f => ({ icon: <Avatar p={f.p} size={30} />, title: f.title, description: `${f.who} · ${f.t}` }))} /></div>
             </Card>
           </div>

@@ -42,7 +42,7 @@ export default function V3Clarify() {
         {sent && <div className="flex items-center gap-3 rounded-2xl border border-[var(--v-line)] bg-[var(--v-green-soft)] px-5 py-3.5 text-[14px]"><CheckCircle2 className="size-5 text-[var(--v-green)]" />Your answers were sent. The agent is writing the specification.<a href="#v3-run-wi-4799" className="ml-auto font-medium text-[var(--v-blue)]">Open the run</a></div>}
         {!sent && !g.blocked && <div className="sticky bottom-4 flex items-center gap-4 rounded-2xl border border-[var(--v-line)] bg-white/95 px-5 py-3.5 shadow-lg backdrop-blur">
           <span className="text-[14px]"><b className="tnum">{Object.keys(a).length} of {QS.length}</b> answered</span>
-          <Button disabled={!done} onClick={() => { answerQuestions(); toast('Answers sent. The agent is writing the specification.', undo); location.hash = 'v3-run-wi-4799'; }} className="ml-auto h-10 rounded-lg px-5">Send answers</Button>
+          <Button disabled={!done} onClick={() => { const t = answerQuestions(); toast('Answers sent. The agent is writing the specification.', () => undo(t)); location.hash = 'v3-run-wi-4799'; }} className="ml-auto h-10 rounded-lg px-5">Send answers</Button>
         </div>}
       </div>
     </Shell>

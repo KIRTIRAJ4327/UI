@@ -136,6 +136,6 @@ export default function App() {
   if (h === 'mockups') return <Gallery/>;
   if (!C && !runId && !squadId) return <NotFound />;
   const page = runId ? <V3Run key={runId} id={runId} /> : squadId ? <V3Squad key={squadId} id={squadId} /> : <C/>;
-  const body = <>{GUARD[guardKey] ? <RequirePerm perm={GUARD[guardKey]} active={guardKey.slice(3)} crumbs={['Admin']}>{page}</RequirePerm> : page}<DemoMenu h={h} ALL={ALL} /></>;
+  const body = <>{GUARD[guardKey] ? <RequirePerm perm={GUARD[guardKey]} active={guardKey.slice(3)} crumbs={['Admin']}>{page}</RequirePerm> : page}{!h.startsWith('v3') && <DemoMenu h={h} ALL={ALL} />}</>;
   return narrow ? <div style={{ overflowX: 'auto', maxWidth: '100vw' }}><div style={{ minWidth: 1280 }}>{body}</div></div> : body;
 }

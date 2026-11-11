@@ -1,5 +1,5 @@
 // Release gate: the release manager confirms everything is ready, picks a window and releases.
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper } from './ui';
 import { useToast } from '@/components/friendly';
@@ -13,6 +13,27 @@ const READY = [
   ['Integration pipeline', 'Merge commit 7c2e1fa built and deployed to staging', 'tom', 'Tom Iverson · Mon 17:05'],
   ['Rollback plan', 'Previous fee table v6 stays available; switch back takes about 2 minutes', 'agent', 'Prepared by the agent'],
 ];
+function ConfirmRelease({ why, ticket, onCancel, onConfirm }) {
+  const cancel = useRef(null);
+  useEffect(() => { cancel.current?.focus(); }, []);
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-[#101429]/45 p-6" onMouseDown={e => e.target === e.currentTarget && onCancel()}>
+      <div role="alertdialog" aria-modal="true" aria-labelledby="rc-t" aria-describedby="rc-d" onKeyDown={e => e.key === 'Escape' && onCancel()} className="w-full max-w-[480px] rounded-2xl bg-white p-6 shadow-2xl">
+        <h2 id="rc-t" className="font-display text-[20px] font-semibold">Release to production now?</h2>
+        <p id="rc-d" className="mt-1 text-[14px] text-[var(--v-ink-2)]">This goes live immediately, outside a release window. It cannot be undone from here; use the rollback plan if something goes wrong.</p>
+        <dl className="mt-4 grid grid-cols-[120px_1fr] gap-y-1.5 rounded-xl bg-[var(--v-sunken)] p-4 text-[13.5px]">
+          <dt className="text-[var(--v-ink-3)]">Environment</dt><dd className="font-medium">Production</dd>
+          <dt className="text-[var(--v-ink-3)]">Version</dt><dd>2026.11.3 · commit <span className="font-mono">7c2e1fa</span></dd>
+          <dt className="text-[var(--v-ink-3)]">Change ticket</dt><dd className="font-mono">{ticket}</dd>
+          <dt className="text-[var(--v-ink-3)]">Reason</dt><dd>{why}</dd>
+          <dt className="text-[var(--v-ink-3)]">Rollback</dt><dd>Switch back to fee table v6, about 2 minutes</dd>
+        </dl>
+        <div className="mt-5 flex justify-end gap-2"><Button ref={cancel} variant="outline" className="h-10 rounded-lg" onClick={onCancel}>Cancel</Button><Button className="h-10 rounded-lg bg-[var(--v-red)] hover:bg-[#93201a]" onClick={onConfirm}>Release to production</Button></div>
+      </div>
+    </div>
+  );
+}
+
 const WINDOWS = [['Thu 13 Nov, 18:00', 'Standard evening window · no conflicts'], ['Fri 14 Nov, 18:00', 'Standard evening window · 1 other release'], ['Now', 'Outside a release window · needs a reason']];
 
 export default function V3Release() {
@@ -23,14 +44,20 @@ export default function V3Release() {
   const decided = g.decided;
   const go = () => { location.hash = 'v3-run-wi-4772'; };
   const [w, setW] = useState(0);
+  const [why, setWhy] = useState('');
+  const [ticket, setTicket] = useState('CHG0041872');
+  const [confirm, setConfirm] = useState(false);
+  const canAct = !decided && !g.blocked;
+  const needWhy = w === 2 && why.trim().length < 10;
+  const doRelease = () => { const t = scheduleRelease(WINDOWS[w][0]); setConfirm(false); if (w === 2) toast('Released to production. The team has been notified.'); else toast(`Release scheduled for ${WINDOWS[w][0]}. You can cancel it until then.`, () => undo(t)); go(); };
   return (
-    <Shell user="sam" active="approvals" crumbs={['Approvals', 'WI-4772', 'Release']}>
+    <Shell active="approvals" crumbs={['Approvals', 'WI-4772', 'Release']}>
       <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
         <div className="flex flex-wrap items-start gap-6">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2"><span className="font-mono text-[12.5px] text-[var(--v-ink-3)]">WI-4772 · Full Application</span><Pill tone="you">Release · waiting for you</Pill></div>
+            <div className="flex items-center gap-2"><span className="font-mono text-[12.5px] text-[var(--v-ink-3)]">WI-4772 · Full Application</span><Pill tone={canAct ? 'you' : decided ? 'done' : 'wait'}>{canAct ? 'Release · waiting for you' : decided ? run.now : 'Release · waiting for Sam Okafor'}</Pill><Pill tone="mute" dot={false}>Production</Pill></div>
             <h1 className="mt-1 font-display text-[28px] font-semibold">Release the fee schedule update</h1>
-            <p className="mt-1 max-w-[70ch] text-[15px] text-[var(--v-ink-2)]">Everything before release is done. Check the list, choose when it goes live, and release.</p>
+            <p className="mt-1 max-w-[70ch] text-[15px] text-[var(--v-ink-2)]">Everything before release is done. Check the list, choose when it goes live, and release to <b>production</b> (version 2026.11.3, merge commit 7c2e1fa).</p>
           </div>
           <div className="w-56 pt-2"><Stepper s="dddddddw" compact /><div className="mt-1.5 text-[12.5px] text-[var(--v-ink-3)]">Stage 8 of 8 · Release</div></div>
         </div>
@@ -43,7 +70,7 @@ export default function V3Release() {
             <Card>
               <CardHead title="Release notes" sub="Written by the agent from the approved documents. Edit before sending." right={<FileText className="size-4 text-[var(--v-ink-3)]" />} />
               <label htmlFor="notes" className="sr-only">Release notes</label>
-              <textarea id="notes" rows={5} defaultValue={'Fee schedule v7 is now live in the Full Application.\n\n• Advisors see the new fee table on Product Selection.\n• Applications started before release keep the v6 fees.\n• No action is needed from advisors.'} className="mx-5 mb-5 w-[calc(100%-40px)] rounded-xl border border-[var(--v-line)] bg-[var(--v-sunken)] p-4 text-[14px] leading-relaxed outline-none focus:border-[var(--v-blue)] focus:bg-white" />
+              <textarea id="notes" rows={5} readOnly={!canAct} aria-readonly={!canAct} defaultValue={'Fee schedule v7 is now live in the Full Application.\n\n• Advisors see the new fee table on Product Selection.\n• Applications started before release keep the v6 fees.\n• No action is needed from advisors.'} className="mx-5 mb-5 w-[calc(100%-40px)] rounded-xl border border-[var(--v-line)] bg-[var(--v-sunken)] p-4 text-[14px] leading-relaxed outline-none focus:border-[var(--v-blue)] focus:bg-white" />
             </Card>
           </div>
           <aside className="flex flex-col gap-4">
@@ -54,13 +81,15 @@ export default function V3Release() {
               <fieldset className="mt-3 flex flex-col gap-2"><legend className="sr-only">Release window</legend>
                 {WINDOWS.map(([t, d], i) => <label key={t} className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3.5 py-3 ${w === i ? 'border-[var(--v-blue)] bg-[var(--v-blue-soft)]' : 'border-[var(--v-line)]'}`}><input type="radio" name="win" checked={w === i} onChange={() => setW(i)} className="mt-1 accent-[var(--v-blue)]" /><span><b className="block font-medium">{t}</b><span className="text-[12.5px] text-[var(--v-ink-2)]">{d}</span></span></label>)}
               </fieldset>
-              {w === 2 && <><label htmlFor="why" className="mt-3 block text-[13.5px] font-medium">Reason for releasing outside a window</label><input id="why" className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 text-[14px]" placeholder="e.g. regulatory deadline" /></>}
+              {w === 2 && <><label htmlFor="why" className="mt-3 block text-[13.5px] font-medium">Reason for releasing outside a window</label><input id="why" className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 text-[14px]" value={why} onChange={e => setWhy(e.target.value)} aria-invalid={needWhy} aria-describedby="why-help" placeholder="e.g. regulatory deadline" /><p id="why-help" className={`mt-1 text-[12.5px] ${needWhy ? 'text-[var(--v-red)]' : 'text-[var(--v-ink-3)]'}`}>Required. At least 10 characters, recorded in the audit log.</p></>}
+              <label htmlFor="chg" className="mt-4 block text-[13.5px] font-medium">Change ticket</label><input id="chg" value={ticket} onChange={e => setTicket(e.target.value)} className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 font-mono text-[13.5px]" /><p className="mt-1 text-[12.5px] text-[var(--v-ink-3)]">ServiceNow change request, approved by the change board on Mon 10 Nov.</p>
               <div className="mt-4 flex items-start gap-2 rounded-lg bg-[var(--v-sunken)] p-3 text-[12.5px] text-[var(--v-ink-2)]"><RotateCcw className="mt-0.5 size-3.5 shrink-0" />You can roll back for 24 hours after release from the run page.</div>
-              <div className="mt-4 flex flex-col gap-2"><Button onClick={() => { scheduleRelease(WINDOWS[w][0]); toast(w === 2 ? 'Released. The team has been notified.' : `Release scheduled for ${WINDOWS[w][0]}. The team has been notified.`, undo); go(); }} className="h-11 rounded-lg text-[15px]">{w === 2 ? 'Release now' : 'Schedule release'}</Button><Button variant="outline" onClick={() => { holdRelease(); toast('Release held. Priya and Mara have been told why.', undo); go(); }} className="h-11 rounded-lg text-[15px]">Hold release</Button></div>
+              <div className="mt-4 flex flex-col gap-2"><Button disabled={needWhy || !ticket.trim()} onClick={() => w === 2 ? setConfirm(true) : doRelease()} className="h-11 rounded-lg text-[15px]">{w === 2 ? 'Release now' : 'Schedule release'}</Button><Button variant="outline" onClick={() => { const t = holdRelease(); toast('Release held. Priya and Mara have been told why.', () => undo(t)); go(); }} className="h-11 rounded-lg text-[15px]">Hold release</Button></div>
             </Card>}
           </aside>
         </div>
       </div>
+      {confirm && <ConfirmRelease why={why} ticket={ticket} onCancel={() => setConfirm(false)} onConfirm={doRelease} />}
     </Shell>
   );
 }

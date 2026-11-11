@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, Pill, Avatar, PEOPLE, STAGES } from './ui';
 import { useProto, runHref } from './store';
+import { useTable, SortTh, Pager } from './table';
 import { useToast } from '@/components/friendly';
 import { FileText, Search, Download, X, ShieldCheck, Lock, History, Link2 } from 'lucide-react';
 
@@ -44,6 +45,7 @@ export default function V3Artifacts() {
   }), [list]);
   const mineOnly = a => a.owner === me || a.holder === me || a.approver === me;
   const visible = items.filter(a => (all || mineOnly(a)) && (type === 'All types' || a.t === type) && (status === 'all' || a.st === status) && `${a.name} ${a.run} ${a.runTitle}`.toLowerCase().includes(q.toLowerCase()));
+  const tb = useTable(visible, { pageSize: 12 });
   const types = ['All types', ...new Set(items.map(a => a.t))];
   const open = a => { setSel(a); viewArtifact(a.name, a.run); };
   const access = sel ? audit.filter(e => e.target.includes(sel.run) && (e.cat === 'access' || e.target.includes(sel.name))).slice(0, 5) : [];
@@ -64,8 +66,8 @@ export default function V3Artifacts() {
         <div className={`grid items-start gap-6 ${sel ? 'grid-cols-[minmax(0,1fr)_420px]' : 'grid-cols-1'}`}>
           <Card className="overflow-hidden">
             <table className="w-full text-[13.5px]"><caption className="sr-only">Artifacts</caption>
-              <thead><tr className="border-b border-[var(--v-line)] bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]"><th className="py-2.5 pl-5 font-medium">Artifact</th><th className="pr-4 font-medium">Work item</th><th className="pr-4 font-medium">Stage</th><th className="pr-4 font-medium">Status</th><th className="pr-5 font-medium">Version</th></tr></thead>
-              <tbody>{visible.map(a => (
+              <thead><tr className="border-b border-[var(--v-line)] bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]"><SortTh label="Artifact" s={tb.by('name')} className="py-2.5 pl-5" /><SortTh label="Work item" s={tb.by('run')} className="pr-4" /><SortTh label="Stage" s={tb.by('stage')} className="pr-4" /><SortTh label="Status" s={tb.by('st')} className="pr-4" /><th className="pr-5 font-medium">Version</th></tr></thead>
+              <tbody>{tb.view.map(a => (
                 <tr key={a.id} onClick={() => open(a)} className={`cursor-pointer border-b border-[var(--v-line)] last:border-0 hover:bg-[var(--v-sunken)] ${sel?.id === a.id ? 'bg-[var(--v-blue-soft)]' : ''}`}>
                   <td className="py-3 pl-5"><button onClick={e => { e.stopPropagation(); open(a); }} className="flex items-center gap-2.5 text-left font-medium hover:text-[var(--v-blue)]"><FileText className="size-4 shrink-0 text-[var(--v-ink-3)]" />{a.name}</button><div className="pl-[26px] text-[12px] text-[var(--v-ink-3)]">{a.t}</div></td>
                   <td className="pr-4"><span className="font-mono text-[12px]">{a.run}</span><div className="max-w-[220px] truncate text-[12px] text-[var(--v-ink-3)]">{a.runTitle}</div></td>
@@ -75,7 +77,7 @@ export default function V3Artifacts() {
                 </tr>))}
                 {!visible.length && <tr><td colSpan={5} className="px-5 py-12 text-center text-[var(--v-ink-2)]">No artifacts match. <button onClick={() => { setQ(''); setType('All types'); setStatus('all'); }} className="font-medium text-[var(--v-blue)] underline">Clear filters</button></td></tr>}
               </tbody></table>
-            <p className="border-t border-[var(--v-line)] px-5 py-3 text-[12.5px] text-[var(--v-ink-3)]">{visible.length} of {all ? items.length : items.filter(mineOnly).length} artifacts{!all && ' you can see'}</p>
+            <Pager t={tb} noun={all ? 'artifacts' : 'artifacts you can see'} />
           </Card>
           {sel && (
             <aside aria-label="Artifact details" className="sticky top-24 flex flex-col gap-4">

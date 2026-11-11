@@ -73,7 +73,7 @@ export default function V3Review() {
               <p className="mt-1 text-[13.5px] text-[var(--v-ink-2)]">Next: Tom Iverson runs integration on the merge commit.</p>
               <label htmlFor="rnote" className="mt-4 block text-[13.5px] font-medium">Comment <span className="font-normal text-[var(--v-ink-3)]">(optional)</span></label>
               <textarea id="rnote" rows={2} className="mt-1.5 w-full rounded-lg border border-[var(--v-line)] p-2.5 text-[14px] outline-none focus:border-[var(--v-blue)] focus:ring-4 focus:ring-[var(--v-blue)]/15" />
-              <div className="mt-4 flex flex-col gap-2"><Button onClick={() => { approveBuild(); toast('Build approved. Integration has started.', undo); go(); }} className="h-11 rounded-lg text-[15px]">Approve build</Button><Button variant="outline" onClick={() => { requestBuildChanges(); toast('Sent back to the agent with your comment.', undo); go(); }} className="h-11 rounded-lg text-[15px]">Request changes</Button></div>
+              <div className="mt-4 flex flex-col gap-2"><Button onClick={() => { const t = approveBuild(); toast('Build approved. Integration has started.', () => undo(t)); go(); }} className="h-11 rounded-lg text-[15px]">Approve build</Button><Button variant="outline" onClick={() => { const t = requestBuildChanges(); toast('Sent back to the agent with your comment.', () => undo(t)); go(); }} className="h-11 rounded-lg text-[15px]">Request changes</Button></div>
             </Card>}
           </aside>
         </div>
