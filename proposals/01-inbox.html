@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>A · Inbox-first</title><link rel="stylesheet" href="base.css"><style>
+.split{display:grid;grid-template-columns:400px 1fr;min-height:calc(100vh - 56px)}
+.list{border-right:1px solid var(--line);background:var(--panel)}
+.list .hd{padding:14px 16px;display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+.item{display:grid;grid-template-columns:10px 1fr auto;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer}
+.item.sel{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.item b{display:block}.item p{margin:2px 0 6px;color:var(--muted)}
+.reader{padding:24px 32px;display:flex;flex-direction:column;gap:16px;max-width:980px}
+.bar{position:sticky;bottom:0;margin:0 -32px;padding:14px 32px;background:var(--panel);border-top:1px solid var(--line);display:flex;gap:10px;align-items:center}
+.sec{display:flex;gap:8px;margin:0 16px 10px;flex-wrap:wrap}
+</style></head><body data-active="inbox"><div class="app"><main class="main">
+<div class="top"><h1>Inbox</h1><span class="crumb">3 need you · 2 waiting on others</span><div class="sp"></div><div class="search">Search runs, stories, documents <kbd>⌘K</kbd></div><button class="btn pri">New delivery request</button></div>
+<div class="split"><aside class="list"><div class="hd"><span class="chip">Needs me 3</span><span class="chip mute">Mentioned 1</span><span class="chip mute">Watching 6</span></div>
+<div class="item sel"><span class="dot w" style="margin-top:6px"></span><div><b>Approve solution design</b><p>Block Registered Amortization above 310</p><span class="chip warn">Solution Architect gate</span></div><span class="faint">12m</span></div>
+<div class="item"><span class="dot w" style="margin-top:6px"></span><div><b>Answer 2 clarification questions</b><p>Does 310 apply to renewals as well?</p><span class="chip warn">Blocks Define specification</span></div><span class="faint">1h</span></div>
+<div class="item"><span class="dot w" style="margin-top:6px"></span><div><b>Review developer completion</b><p>Story 2 · validation message copy</p><span class="chip warn">Engineering Lead gate</span></div><span class="faint">3h</span></div>
+<div class="item"><span class="dot a pulse" style="margin-top:6px"></span><div><b>Build in progress</b><p>Story 1 · running unit tests</p><span class="chip">Agent working · no action</span></div><span class="faint">now</span></div>
+<div class="item"><span class="dot d" style="margin-top:6px"></span><div><b>Release complete</b><p>Advisor eligibility banner</p><span class="chip ok">Done</span></div><span class="faint">Tue</span></div>
+</aside>
+<section class="reader"><div style="display:flex;gap:10px;align-items:center"><span class="chip warn">Stage 4 of 8 · Design</span><span class="mono muted">WI-4821</span><div class="sp" style="flex:1"></div><span class="faint">Requested by Priya N. · Product Owner approved plan &amp; spec</span></div>
+<div><h2 style="font-size:24px;margin:0 0 4px">Solution design is ready for your decision</h2><p class="muted" style="margin:0;max-width:70ch">The agent proposes a client-side limit on the Product Selection page. It reuses the existing validator and adds no new service. Two risks need your judgment.</p></div>
+<div class="grid" style="grid-template-columns:1fr 1fr">
+<div class="card pad"><div class="lbl">What changes</div><ul style="padding-left:18px;margin:8px 0 0"><li>Registered Amortization field blocks values above 310</li><li>Inline message explains the maximum</li><li>No change to other portals</li></ul></div>
+<div class="card pad"><div class="lbl">Why you are asked</div><p style="margin:8px 0 0">Design changes a business rule enforced in the UI only. Policy requires Architect sign-off before build.</p><p class="faint" style="margin:6px 0 0">Evidence: 9 sources · quality check passed · 2 risks</p></div></div>
+<div class="card"><header><h3>Decision document · ADR-0173</h3><div class="sp" style="flex:1"></div><button class="btn ghost">Open full view</button></header>
+<div class="pad doc"><h4 style="margin-top:0">Decision</h4><p>Enforce the maximum in the Product Selection form using the shared amortization validator. <span class="hl">The server-side maximum is not changed in this story.</span></p><h4>Risks</h4><ul><li><b>Medium</b> – Server does not re-validate; a direct API call can bypass the limit.</li><li><b>Low</b> – Message copy has not been approved by Compliance.</li></ul></div></div>
+<div class="bar"><button class="btn ok">Approve &amp; continue <kbd>A</kbd></button><button class="btn">Request changes <kbd>R</kbd></button><button class="btn ghost">Ask a question <kbd>C</kbd></button><div style="flex:1"></div><span class="faint"><kbd>J</kbd> <kbd>K</kbd> next / previous item</span></div>
+</section></div></main></div><script src="app.js"></script></body></html>

@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>B · Mission control</title><link rel="stylesheet" href="base.css"><style>
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.kpi{padding:16px}.kpi b{font-size:30px;letter-spacing:-.02em;display:block}.spark{height:30px;margin-top:6px}
+.cols{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+.step{display:flex;gap:10px;padding:8px 0}.step .dot{margin-top:6px}
+</style></head><body data-active="runs"><div class="app"><main class="main">
+<div class="top"><h1>Runs</h1><span class="crumb">All workspaces</span><div class="sp"></div><div class="search">Filter by status, owner, stage <kbd>/</kbd></div><button class="btn pri">New request</button></div>
+<div class="page"><div class="kpis">
+<div class="card kpi"><span class="lbl">Active runs</span><b>14</b><span class="muted">3 started today</span></div>
+<div class="card kpi"><span class="lbl">Waiting on a person</span><b style="color:var(--warn)">5</b><span class="muted">oldest: 6h</span></div>
+<div class="card kpi"><span class="lbl">Median request → release</span><b>3.2 d</b><svg class="spark" viewBox="0 0 120 30" width="100%"><polyline fill="none" stroke="var(--accent)" stroke-width="2" points="0,22 20,18 40,20 60,12 80,14 100,8 120,6"/></svg></div>
+<div class="card kpi"><span class="lbl">First-pass approval rate</span><b>82%</b><span class="muted">18% sent back for changes</span></div></div>
+<div class="cols"><div class="card"><div class="tabs"><a class="on">All 14</a><a>Needs a person 5</a><a>Agent working 7</a><a>Blocked 1</a><a>Done</a></div>
+<table><thead><tr><th>Run</th><th style="width:230px">Progress (8 stages)</th><th>Now</th><th>Owner</th><th>Age</th></tr></thead><tbody>
+<tr class="sel"><td><b>Registered Amortization limit</b><div class="mono faint">WI-4821 · Full Application</div></td><td><div class="seg"><i class="d"></i><i class="d"></i><i class="d"></i><i class="w"></i><i></i><i></i><i></i><i></i></div></td><td><span class="chip warn">Design · needs approval</span></td><td>Priya N.</td><td>1d</td></tr>
+<tr><td><b>Advisor eligibility banner</b><div class="mono faint">WI-4807 · Advisor Portal</div></td><td><div class="seg"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="a"></i><i></i><i></i><i></i></div></td><td><span class="chip">Build · agent working</span></td><td>Jon R.</td><td>2d</td></tr>
+<tr><td><b>Statement export format</b><div class="mono faint">WI-4799 · Client Services</div></td><td><div class="seg"><i class="d"></i><i class="d"></i><i class="w"></i><i></i><i></i><i></i><i></i><i></i></div></td><td><span class="chip warn">Spec · 2 questions</span></td><td>Mara L.</td><td>3d</td></tr>
+<tr><td><b>Session timeout copy</b><div class="mono faint">WI-4790 · Advisor Portal</div></td><td><div class="seg"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i></i></div></td><td><span class="chip bad">Validate · 2 tests failed</span></td><td>Jon R.</td><td>4d</td></tr>
+<tr><td><b>Fee schedule update</b><div class="mono faint">WI-4772 · Full Application</div></td><td><div class="seg"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i></div></td><td><span class="chip ok">Released</span></td><td>Priya N.</td><td>5d</td></tr></tbody></table></div>
+<aside class="card"><header><h3>Registered Amortization limit</h3><span class="chip warn">Needs you</span></header><div class="pad">
+<div class="lbl">Timeline</div>
+<div class="step"><span class="dot d"></span><div><b>Plan approved</b><div class="muted">Priya N. · yesterday 14:02</div></div></div>
+<div class="step"><span class="dot d"></span><div><b>Specification approved</b><div class="muted">2 questions answered</div></div></div>
+<div class="step"><span class="dot d"></span><div><b>Impact assessed</b><div class="muted">3 components · 1 repository</div></div></div>
+<div class="step"><span class="dot w"></span><div><b>Design waiting for Alex K.</b><div class="muted">12 minutes</div></div></div>
+<div style="display:flex;gap:8px;margin-top:10px"><button class="btn pri">Review design</button><button class="btn">Open run</button></div>
+<div class="note warn" style="margin-top:16px"><b>Heads up</b><br>Server-side validation is outside this story's scope.</div></div></aside></div></div></main></div><script src="app.js"></script></body></html>

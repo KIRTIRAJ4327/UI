@@ -1,0 +1,25 @@
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>E · Document workbench</title><link rel="stylesheet" href="base.css"><style>
+.wb{display:grid;grid-template-columns:230px 1fr 340px;height:calc(100vh - 56px)}
+.stg{border-right:1px solid var(--line);background:var(--panel);padding:14px 10px;overflow:auto}
+.stg a{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:9px;color:var(--muted);font-weight:500}
+.stg a.on{background:var(--accent-soft);color:var(--ink);font-weight:650}.stg small{margin-left:auto;font-size:12px;color:var(--faint)}
+.doc-wrap{overflow:auto;padding:28px 40px}.paper{max-width:780px;margin:auto}
+.toc{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.rr{border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.cmt{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px}
+table.d td,table.d th{padding:7px 10px}
+</style></head><body data-active="docs" data-norail="1"><div class="app" style="grid-template-columns:1fr"><main class="main">
+<div class="top"><span class="crumb">Runs /</span><h1>Registered Amortization limit</h1><span class="mono muted">WI-4821</span><div class="sp"></div><span class="chip warn">Design · in review</span></div>
+<div class="wb"><nav class="stg" aria-label="Stages"><div class="lbl" style="padding:4px 10px 8px">Stages</div>
+<a><span class="dot d"></span>1 Plan<small>✓</small></a><a><span class="dot d"></span>2 Specification<small>✓</small></a><a><span class="dot d"></span>3 Impact<small>✓</small></a><a class="on"><span class="dot w"></span>4 Design<small>review</small></a><a><span class="dot"></span>5 Build</a><a><span class="dot"></span>6 Integrate</a><a><span class="dot"></span>7 Validate</a><a><span class="dot"></span>8 Release</a>
+<div class="lbl" style="padding:18px 10px 8px">Documents · Design</div><a style="font-weight:650;color:var(--ink)">ADR-0173</a><a>Solution design</a><a>Developer handoff</a><a>Tester handoff</a></nav>
+<section class="doc-wrap"><div class="paper"><div class="toc"><span class="chip">Summary</span><span class="chip mute">Decision</span><span class="chip mute">Impact</span><span class="chip mute">Risks</span><span class="chip mute">Evidence</span><div style="flex:1"></div><span class="chip mute">Stakeholder ⇄ Technical</span></div>
+<div class="doc"><h3>ADR-0173 · Enforce Registered Amortization maximum in the UI</h3><p class="muted">Status: Proposed · Author: Design agent · Reviewed by quality check ✓</p>
+<h4>Decision</h4><p>Use the shared amortization validator on Product Selection to reject values above 310 and show an inline message. <span class="hl">The API continues to accept any value.</span></p>
+<h4>Impact</h4><table class="d card"><thead><tr><th>Component</th><th>Change</th><th>Tests</th></tr></thead><tbody><tr><td>ProductSelection</td><td>Add validation</td><td>3 new</td></tr><tr><td>amortizationValidator</td><td>Add max constant</td><td>1 updated</td></tr><tr><td>Messages</td><td>New string</td><td>—</td></tr></tbody></table>
+<h4>Risks</h4><ul><li><b>Medium</b> Direct API calls bypass the limit.</li><li><b>Low</b> Copy needs Compliance sign-off.</li></ul></div></div></section>
+<aside class="rr"><div><div class="lbl">Your decision</div><h3 style="margin:4px 0 0">Solution Architect gate</h3></div>
+<div class="card pad"><div class="check"><b class="y">✓</b><span>Scope matches the approved specification</span></div><div class="check"><b class="y">✓</b><span>Reuses existing approved pattern</span></div><div class="check"><b></b><span>I accept the API-bypass risk</span></div><div class="check"><b></b><span>Copy sign-off is tracked</span></div></div>
+<div style="display:flex;flex-direction:column;gap:8px"><button class="btn ok" style="justify-content:center">Approve &amp; continue <kbd>⌘↵</kbd></button><button class="btn" style="justify-content:center">Request changes</button></div>
+<div><div class="lbl">Comments · 1</div><div class="cmt" style="margin-top:8px"><b>Priya N.</b> <span class="faint">· 10m</span><br>Can we add the server check as a follow-up story?</div></div>
+<div><div class="lbl">Audit · this document</div><div class="muted" style="margin-top:6px">Generated 14:31 · Quality pass 14:33 · Opened by you 14:40</div></div></aside></div></main></div><script src="app.js"></script></body></html>
