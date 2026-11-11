@@ -1,5 +1,12 @@
 # Clickable prototype
 
+**Shareable link:** https://claude.ai/artifact/TywKummPrCWYpBe6uRLQTJ
+It is private until you share it: open the link, use **Share**, and add the client. Each visitor gets their own copy of the demo data in their browser, so clients cannot affect each other.
+
+First-time visitors see a short welcome and can take the **8-step guided tour**. Steps tick off automatically, and the tour switches person for you (Alex → Priya → Sam → Dana). A recorded run of the full tour is in `demo/demo-run.webm`.
+
+To update the link after changes: `npm run build:share && python3 scripts/make-share-page.py <file.html>`, then republish that file.
+
 Two versions of the same 19-screen product.
 
 ## 1. Working prototype (React), the one to demo

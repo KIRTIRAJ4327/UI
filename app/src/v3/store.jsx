@@ -33,6 +33,8 @@ const INITIAL = {
   attention: ['leave', 'agent', 'freeze', 'squad'],
   nextId: 4841,
   me: 'alex',
+  tour: false,
+  welcomed: false,
   roles: {
     'Platform Admin': ['request.create', 'gate.plan', 'gate.design', 'gate.build', 'gate.integrate', 'gate.validate', 'gate.release', 'runs.pause', 'artifacts.own', 'artifacts.all', 'artifacts.export', 'audit.view', 'squads.manage', 'people.manage', 'roles.manage', 'policies.manage', 'connections.manage'],
     'Product Owner': ['request.create', 'gate.plan', 'runs.pause', 'artifacts.own'],
@@ -66,7 +68,7 @@ export const PERMS = [
 const titleFrom = text => { let t = (text.split('.')[0] || '').replace(/^\s*(in|on|for|within)\b[^,]{0,60},\s*/i, '').trim(); t = t.charAt(0).toUpperCase() + t.slice(1); if (t.length > 56) t = t.slice(0, 56).replace(/\s+\S*$/, '') + '…'; return t || 'New request'; };
 const NAME = { alex: 'Alex Kim', priya: 'Priya Nair', sam: 'Sam Okafor', dana: 'Dana Whitfield', agent: 'The agent', jon: 'Jon Reyes', lena: 'Lena Brooks' };
 
-const KEY = 'delivery-prototype-v4';
+const KEY = 'delivery-prototype-v5';
 const load = () => { try { const s = sessionStorage.getItem(KEY); return s ? JSON.parse(s) : INITIAL; } catch { return INITIAL; } };
 
 const Ctx = createContext(null);
@@ -101,8 +103,10 @@ export function PrototypeProvider({ children }) {
     fixTeams: () => upd(s => { s.teamsOk = true; log(s, 'Signed in to Microsoft Teams again', 'Connections', 'admin'); s.notes = s.notes.map(n => n.id === 'n4' ? { ...n, unread: false } : n); return s; }),
     markRead: () => upd(s => { s.notes.forEach(n => { n.unread = false; }); return s; }),
     togglePause: id => upd(s => { const r = s.runs[id]; r.paused = !r.paused; feed(s, s.me, `${r.paused ? 'Paused' : 'Resumed'} · ${id}`); return s; }),
+    setTour: on => setSt(s => ({ ...s, tour: on })),
+    setWelcomed: () => setSt(s => ({ ...s, welcomed: true })),
     undo: () => { if (prev.current) { setSt(prev.current); prev.current = null; } },
-    reset: () => setSt(INITIAL),
+    reset: () => setSt(s => ({ ...INITIAL, welcomed: true, tour: s.tour })),
   }), [upd]);
 
   const derived = useMemo(() => {

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CommandPalette, Notifications } from './overlays';
 import { useProto } from './store';
+import { TourBar, Welcome } from './tour';
 import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale, Contact, Plug, KeyRound, History } from 'lucide-react';
 
 export const PEOPLE = {
@@ -126,7 +127,9 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
           <Notifications />
           {actions}
         </header>
+        <TourBar />
         <main id="v3main" className="flex-1 px-8 py-7">{children}</main>
+        <Welcome />
         <CommandPalette open={cp} onClose={() => setCp(false)} />
       </div>
     </div>
