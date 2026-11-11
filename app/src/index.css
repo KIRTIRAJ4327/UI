@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/jetbrains-mono/400.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource/ibm-plex-sans/400.css";
@@ -151,3 +155,17 @@
   --background: #f7f6f2; --border: #e3e1da; --foreground: #101429;
 }
 body { font-size: 13.5px; color: var(--ink); }
+
+/* v3: evolution of the client's console tokens (bg #eef1ed, ink #101429, blue #2469bc, green #4fae58) */
+.v3 {
+  --radius: 0.625rem;
+  --v-bg: #eef1ed; --v-surface: #ffffff; --v-sunken: #f5f7f4; --v-line: #dfe5df; --v-ink: #101429; --v-ink-2: #4a5550; --v-ink-3: #56615a;
+  --v-blue: #2469bc; --v-blue-soft: #e8f0fb; --v-green: #23703a; --v-green-soft: #e6f4e8; --v-amber: #864f00; --v-amber-soft: #fdf1dc; --v-red: #b3261e; --v-red-soft: #fdeceb;
+  --primary: #2469bc; --ring: #2469bc;
+  font-family: 'Inter Variable', Inter, system-ui, sans-serif; font-size: 14px; color: var(--v-ink); background: var(--v-bg);
+  font-feature-settings: "cv11", "ss01";
+}
+.v3 .font-display { font-family: 'Space Grotesk', 'Inter Variable', sans-serif; letter-spacing: -0.01em; }
+.v3 .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.v3 .tnum { font-variant-numeric: tabular-nums; }
+.v3 h1, .v3 h2, .v3 h3 { text-wrap: balance; }

@@ -13,6 +13,20 @@ import FlightRecorder from '@/concepts2/FlightRecorder';
 import CommandConsole from '@/concepts2/CommandConsole';
 import RuleLedger from '@/concepts2/RuleLedger';
 
+import V3Home from '@/v3/Home';
+import V3New from '@/v3/NewRequest';
+import V3Run from '@/v3/Run';
+import V3Approve from '@/v3/Approve';
+import V3Clarify from '@/v3/Clarify';
+import V3Evidence from '@/v3/Evidence';
+export const V3 = [
+  ['v3-home','1 · Home','What is waiting for you, your requests and recent activity.',V3Home],
+  ['v3-new','2 · New request','Describe the change; see the plan, approvers and timing before anything starts.',V3New],
+  ['v3-run','3 · Run overview','Where a request is, who holds it, and what the next decision is.',V3Run],
+  ['v3-approve','4 · Approve a design','Plain summary or full detail, the risk you accept, then decide.',V3Approve],
+  ['v3-clarify','5 · Answer questions','The agent asks; you pick an option with the reason shown.',V3Clarify],
+  ['v3-evidence','6 · How it was made','Every step, source and check behind the agent\'s work.',V3Evidence],
+];
 export const ROUND2 = [
   ['strips','G · Flight strips','From air traffic control: each run is a strip handed between role bays, stamped by everyone who handled it.',FlightStrips],
   ['radius','H · Blast radius','From service maps: approve by seeing what the change touches, ring by ring, and what it does not.',BlastRadius],
@@ -38,10 +52,13 @@ function Gallery() {
       <div className="text-xs text-neutral-500">Unified Product Delivery Platform</div>
       <SplitText text="Redesign proposals for review" tag="h1" splitType="words" effect="fade" delay={60} duration={0.6} textAlign="left" trigger="load" className="text-3xl font-light" />
       <p className="mt-2 max-w-3xl text-neutral-600">Round 2 borrows interaction models from air traffic control, service maps, change-advisory boards, agent tracing, command lines and ontology tools. All use the same sample run, WI-4821, and the same visual language.</p>
-      <h2 className="mt-8 font-mono text-[11px] uppercase tracking-wider text-[#8a887f]">Round 2 · new interaction models (see RESEARCH.md)</h2>
+      <h2 className="mt-8 text-[13px] font-semibold text-ink">Round 3 · recommended: one product, six connected screens</h2>
+      <div className="mt-2 grid grid-cols-3 gap-4">{V3.map(([k,t,d])=>(
+        <a key={k} href={`#${k}`} className="block rounded-xl border-2 border-brand/30 bg-white p-5 hover:border-brand"><b className="block text-base font-semibold">{t}</b><p className="mt-1 text-neutral-600">{d}</p><span className="mt-3 inline-block text-primary">Open screen →</span></a>))}</div>
+      <h2 className="mt-10 font-mono text-[11px] uppercase tracking-wider text-[#65635c]">Round 2 · new interaction models (see RESEARCH.md)</h2>
       <div className="mt-2 grid grid-cols-3 gap-4">{ROUND2.map(([k,t,d])=>(
         <a key={k} href={`#${k}`} className="block border border-border bg-white p-5 hover:border-brand"><b className="block text-base font-semibold">{t}</b><p className="mt-1 text-neutral-600">{d}</p><span className="mt-3 inline-block text-primary">Open mockup →</span></a>))}</div>
-      <h2 className="mt-10 font-mono text-[11px] uppercase tracking-wider text-[#8a887f]">Round 1 · earlier directions</h2>
+      <h2 className="mt-10 font-mono text-[11px] uppercase tracking-wider text-[#65635c]">Round 1 · earlier directions</h2>
       <div className="mt-2 grid grid-cols-6 gap-2">{CONCEPTS.map(([k,t])=>(
         <a key={k} href={`#${k}`} className="block border border-border bg-white p-3 text-[12.5px] hover:border-brand">{t}</a>))}</div>
     </div>
@@ -49,7 +66,8 @@ function Gallery() {
 }
 export default function App() {
   const h = useHash();
-  const ALL = [...ROUND2, ...CONCEPTS];
+  const ALL = [...V3, ...ROUND2, ...CONCEPTS];
+  if (h === 'v3-approvals') location.hash = 'v3-approve';
   const C = ALL.find(c=>c[0]===h)?.[3];
   if (!C) return <Gallery/>;
   return <><C/><details className="fixed right-4 bottom-4 z-40 border border-ink bg-ink text-xs text-white">
