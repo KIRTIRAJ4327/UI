@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "skills": {
+    "ui-ux-review": {
+      "source": "adtn0810/truestack",
+      "sourceType": "github",
+      "skillPath": "skills/ui-ux-review/SKILL.md",
+      "computedHash": "44e7ece3d26edaf71de1380d9e4716c718c96dcf1cb146d868650c5916ac0226"
+    }
+  }
+}
