@@ -18,6 +18,7 @@ const NAV = [['inbox','Gate queue',Inbox,3],['runs','Runs',PlayCircle],['board',
 export function Shell({ active, title, actions, children, rail = true }) {
   return (
     <div className="flex min-h-screen flex-col bg-paper text-ink">
+      <a href="#main" className="sr-only z-50 bg-brand px-3 py-2 text-white focus:not-sr-only focus:fixed focus:top-2 focus:left-2">Skip to content</a>
       <header className="sticky top-0 z-20 flex h-12 items-center gap-3 bg-ink px-4 text-white">
         <span className="flex items-center gap-2 pr-4 font-semibold tracking-tight"><span className="grid size-7 place-items-center bg-brand"><GateGlyph state="light" /></span>Delivery Platform</span>
         <span className="h-5 w-px bg-white/15" />
@@ -29,18 +30,18 @@ export function Shell({ active, title, actions, children, rail = true }) {
       </header>
       <div className={cn('grid flex-1', rail ? 'grid-cols-[220px_1fr]' : 'grid-cols-1')}>
         {rail && <nav aria-label="Primary" className="sticky top-12 flex h-[calc(100vh-48px)] flex-col border-r border-border bg-paper py-3">
-          {NAV.map(([k,l,I,n]) => <a key={k} href="#" className={cn('flex h-8 items-center gap-2.5 px-4 hover:bg-black/[.04]', active===k && 'bg-white font-semibold shadow-[inset_3px_0_0_var(--brand)]')}><I className="size-4 text-[#77756e]" />{l}{n && <span className="ml-auto bg-gate px-1.5 text-[11px] font-semibold text-white">{n}</span>}</a>)}
-          <div className="mt-5 px-4 pb-1 font-mono text-[10.5px] uppercase tracking-wider text-[#8a887f]">Gates waiting</div>
-          {[['Solution Architect',1],['Product Owner',1],['Engineering Lead',1],['Release Manager',0]].map(([g,n]) => <a key={g} href="#" className="flex h-7 items-center gap-2 px-4 text-[12.5px] hover:bg-black/[.04]"><GateGlyph state={n ? 'waiting' : 'future'} className="size-3" />{g}<span className="ml-auto text-[#8a887f]">{n}</span></a>)}
-          <div className="mt-5 px-4 pb-1 font-mono text-[10.5px] uppercase tracking-wider text-[#8a887f]">Workspaces</div>
+          {NAV.map(([k,l,I,n]) => <a key={k} href="#" className={cn('flex h-8 items-center gap-2.5 px-4 hover:bg-black/[.04]', active===k && 'bg-white font-semibold shadow-[inset_3px_0_0_var(--brand)]')}><I className="size-4 text-[#5c5a54]" />{l}{n && <span className="ml-auto bg-gate px-1.5 text-[11px] font-semibold text-white">{n}</span>}</a>)}
+          <div className="mt-5 px-4 pb-1 font-mono text-[10.5px] uppercase tracking-wider text-[#65635c]">Gates waiting</div>
+          {[['Solution Architect',1],['Product Owner',1],['Engineering Lead',1],['Release Manager',0]].map(([g,n]) => <a key={g} href="#" className="flex h-7 items-center gap-2 px-4 text-[12.5px] hover:bg-black/[.04]"><GateGlyph state={n ? 'waiting' : 'future'} className="size-3" />{g}<span className="ml-auto text-[#65635c]">{n}</span></a>)}
+          <div className="mt-5 px-4 pb-1 font-mono text-[10.5px] uppercase tracking-wider text-[#65635c]">Workspaces</div>
           {['Full Application','Advisor Portal','Client Services'].map(w => <a key={w} href="#" className="flex h-7 items-center px-4 text-[12.5px] hover:bg-black/[.04]">{w}</a>)}
-          <a href="#" className="mt-auto flex h-8 items-center gap-2.5 px-4 text-[12.5px]"><Plug className="size-4 text-[#77756e]" />Connections<span className="ml-auto text-done">● online</span></a>
-          <div className="flex items-center gap-2.5 border-t border-border px-4 pt-3"><span className="grid size-7 place-items-center bg-ink text-xs font-semibold text-white">AK</span><div><div className="font-semibold">Alex Kim</div><div className="text-xs text-[#77756e]">Solution Architect</div></div></div>
+          <a href="#" className="mt-auto flex h-8 items-center gap-2.5 px-4 text-[12.5px]"><Plug className="size-4 text-[#5c5a54]" />Connections<span className="ml-auto text-done">● online</span></a>
+          <div className="flex items-center gap-2.5 border-t border-border px-4 pt-3"><span className="grid size-7 place-items-center bg-ink text-xs font-semibold text-white">AK</span><div><div className="font-semibold">Alex Kim</div><div className="text-xs text-[#5c5a54]">Solution Architect</div></div></div>
         </nav>}
-        <main className="flex min-w-0 flex-col">{children}</main>
+        <main id="main" tabIndex={-1} className="flex min-w-0 flex-col outline-none">{children}</main>
       </div>
     </div>
   );
 }
-export const Panel = ({ title, right, children, className }) => <section className={cn('border border-border bg-white', className)}>{title && <header className="flex h-10 items-center gap-2 border-b border-border px-4"><h2 className="font-mono text-[11px] font-normal uppercase tracking-wider text-[#77756e]">{title}</h2><div className="flex-1"/>{right}</header>}{children}</section>;
+export const Panel = ({ title, right, children, className }) => <section className={cn('border border-border bg-white', className)}>{title && <header className="flex h-10 items-center gap-2 border-b border-border px-4"><h2 className="font-mono text-[11px] font-normal uppercase tracking-wider text-[#5c5a54]">{title}</h2><div className="flex-1"/>{right}</header>}{children}</section>;
 export { Fragment };

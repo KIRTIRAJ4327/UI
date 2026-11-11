@@ -146,7 +146,7 @@
 /* Brand: derived from the existing console (navy #101429, blue #2469bc) */
 :root {
   --ink: #101429; --brand: #2469bc; --brand-soft: #e8f0fa;
-  --gate: #b7791f; --gate-soft: #fbf3e4; --done: #2f7d4f; --paper: #f7f6f2;
+  --gate: #965c08; --gate-soft: #fbf3e4; --done: #2f7d4f; --paper: #f7f6f2;
   --primary: #2469bc; --primary-foreground: #fff; --ring: #2469bc;
   --background: #f7f6f2; --border: #e3e1da; --foreground: #101429;
 }

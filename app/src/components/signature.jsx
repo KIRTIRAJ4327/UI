@@ -63,7 +63,7 @@ export const Narration = ({ children, className }) => (
 /* Evidence strip: what the claim is based on. */
 export const Evidence = ({ items, className }) => (
   <div className={cn('flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-dashed border-border pt-2 text-[12px] text-[#5d5c58]', className)}>
-    <span className="font-mono uppercase tracking-wider text-[11px] text-[#8a887f]">Evidence</span>
+    <span className="font-mono uppercase tracking-wider text-[11px] text-[#65635c]">Evidence</span>
     {items.map(x => <span key={x} className="flex items-center gap-1.5"><span className="size-1.5 bg-done" />{x}</span>)}
   </div>
 );
@@ -73,7 +73,7 @@ export const Trace = ({ steps, className }) => (
   <ol className={cn('flex flex-wrap items-center gap-1.5', className)}>
     {steps.map(([k, v], i) => (
       <Fragment key={k}>
-        <li className="border border-border bg-white px-2 py-1"><span className="block font-mono text-[10.5px] uppercase tracking-wider text-[#8a887f]">{k}</span><span className="text-[12.5px]">{v}</span></li>
+        <li className="border border-border bg-white px-2 py-1"><span className="block font-mono text-[10.5px] uppercase tracking-wider text-[#65635c]">{k}</span><span className="text-[12.5px]">{v}</span></li>
         {i < steps.length - 1 && <li aria-hidden="true" className="text-[#b9b6ad]">→</li>}
       </Fragment>
     ))}

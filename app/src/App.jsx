@@ -52,6 +52,7 @@ export default function App() {
   const ALL = [...ROUND2, ...CONCEPTS];
   const C = ALL.find(c=>c[0]===h)?.[3];
   if (!C) return <Gallery/>;
-  return <><C/><nav aria-label="Concepts" className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 gap-1 border bg-neutral-900 p-1 text-xs text-white">
-    <a href="#" className="px-2.5 py-1.5 hover:bg-neutral-700">All</a>{ALL.map(([k,t])=><a key={k} href={`#${k}`} className={`px-2.5 py-1.5 hover:bg-neutral-700 ${k===h?'bg-primary':''}`}>{t.split(' · ')[0]}</a>)}</nav></>;
+  return <><C/><details className="fixed right-4 bottom-4 z-40 border border-ink bg-ink text-xs text-white">
+    <summary className="cursor-pointer px-3 py-1.5 font-semibold">Mockups</summary>
+    <nav aria-label="Switch mockup" className="flex flex-wrap gap-0.5 p-1 pt-0"><a href="#" className="px-2 py-1 hover:bg-white/15">All</a>{ALL.map(([k,t])=><a key={k} href={`#${k}`} title={t} aria-current={k===h?'page':undefined} className={`px-2 py-1 hover:bg-white/15 ${k===h?'bg-brand':''}`}>{t.split(' · ')[0]}</a>)}</nav></details></>;
 }

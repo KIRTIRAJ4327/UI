@@ -16,18 +16,18 @@ export default function NarratedRun() {
         <article className="max-w-[720px]">
           {CH.map(([t,st,txt,ev])=>(
             <section key={st} className="grid grid-cols-[88px_1fr] gap-4 pb-6">
-              <div className="pt-1 text-right"><div className="font-mono text-[11px] text-[#8a887f]">{t}</div><div className="mt-0.5 flex items-center justify-end gap-1 text-[12px] text-done"><GateGlyph state="passed" className="size-3"/>{st}</div></div>
+              <div className="pt-1 text-right"><div className="font-mono text-[11px] text-[#65635c]">{t}</div><div className="mt-0.5 flex items-center justify-end gap-1 text-[12px] text-done"><GateGlyph state="passed" className="size-3"/>{st}</div></div>
               <div><Narration>{txt}</Narration><Evidence items={ev} className="mt-2"/></div>
             </section>))}
           <section className="grid grid-cols-[88px_1fr] gap-4 pb-6">
-            <div className="pt-1 text-right"><div className="font-mono text-[11px] text-[#8a887f]">Now</div><div className="mt-0.5 flex items-center justify-end gap-1 text-[12px] font-semibold text-gate"><GateGlyph state="waiting" className="size-3"/>Design</div></div>
+            <div className="pt-1 text-right"><div className="font-mono text-[11px] text-[#65635c]">Now</div><div className="mt-0.5 flex items-center justify-end gap-1 text-[12px] font-semibold text-gate"><GateGlyph state="waiting" className="size-3"/>Design</div></div>
             <div className="border-l-4 border-gate bg-white p-5">
               <Narration>The design is ready, and this is where the run stops for you. The agent recommends checking the limit in the form only. <span className="bg-gate-soft">The API will still accept values above 310</span> until a follow-up story fixes it.</Narration>
               <Evidence items={['ADR-0173','9 sources','Quality check passed']} className="mt-3"/>
               <div className="mt-4 flex gap-2"><Button>Approve gate</Button><Button variant="outline">Send back with changes</Button><Button variant="ghost">Read ADR-0173</Button></div>
             </div>
           </section>
-          <section className="grid grid-cols-[88px_1fr] gap-4 text-[#8a887f]"><div className="text-right font-mono text-[11px]">Next</div><p className="font-serif italic">After approval, the agent builds the change and its unit tests. This usually takes about 20 minutes.</p></section>
+          <section className="grid grid-cols-[88px_1fr] gap-4 text-[#65635c]"><div className="text-right font-mono text-[11px]">Next</div><p className="font-serif italic">After approval, the agent builds the change and its unit tests. This usually takes about 20 minutes.</p></section>
         </article>
         <aside className="sticky top-16 space-y-4">
           <Panel title="The request"><p className="p-4 font-serif text-[15px] leading-relaxed">“{REQUEST}”</p></Panel>

@@ -1,0 +1,33 @@
+# UX review and fixes: round 2 mockups (G–L)
+
+Scope: desktop (1280px laptop and 1440px), the six round-2 concepts. Method: the `ui-ux-review` skill, an axe-core WCAG 2 A/AA scan in Chromium, keyboard tab-order checks, and scripted interaction tests.
+
+## Findings and what changed
+
+| # | Severity | Finding | Fix |
+|---|---|---|---|
+| 1 | High | Strips, calendar, recorder and rules screens never said what the user should do. | Every screen opens with a **"Your next step"** bar: one sentence and the main action, or "Nothing needs you here". |
+| 2 | High | Unexplained jargon and metaphors: strip board, in bay, RQ/PO/SA stamps, blast radius, flight recorder, self-correction, CAB, layers. | Plain-language titles ("Handoff board", "What this change touches", "Agent activity"), labels in everyday words, stamp names on hover, and a collapsible **"How to read this screen"** on the unusual layouts. |
+| 3 | High | Decisions gave no feedback and could not be undone. | Every approve / send back / start action shows a confirmation with **Undo** (announced to screen readers). |
+| 4 | Medium | 64 contrast failures (grey labels 3.1–4.3:1, amber text 3.3:1). | Darker text greys and amber. axe now reports **0 violations** on all six screens. |
+| 5 | Medium | Controls that looked interactive but weren't: console suggestions, command line, recorder slider. | Console input and suggestion buttons work; the recorder slider and step rows update the detail panel. |
+| 6 | Medium | Calendar scroll area not keyboard reachable; no skip link, so keyboard users tab through the whole nav first. | Calendar region is focusable and labelled; "Skip to content" is the first tab stop. |
+| 7 | Low | Mockup switcher covered page content. | Collapsed by default. |
+| 8 | Low | Impact map had no text alternative. | SVG has a full text description; the side panel lists the same facts. |
+
+## Principles applied (from research)
+- **Complex is fine, complicated is not** (NN/g): keep the depth experts need, remove avoidable friction.
+- **Plain language helps experts too** (NN/g): short, scannable, minimal jargon.
+- **Explain why the system did what it did, and how well it can do it** (Microsoft HAX G2, G11); **explain for understanding, not completeness** (Google PAIR).
+- **Let users reverse actions** (expert-user principles): undo on every decision.
+
+## Not covered
+Screen-reader walkthrough, zoom/reflow at 200%, dark mode, and real user testing. Data is sample data.
+
+## Sources
+- https://www.nngroup.com/videos/complex-vs-complicated/
+- https://www.nngroup.com/videos/plain-language-for-experts/
+- https://www.microsoft.com/en-us/haxtoolkit/library/example,guideline,pattern/13/all/59/
+- https://uxdesign.cc/the-rulebook-for-designing-ai-experiences-a22a50bb063c
+- https://interaction19.ixda.org/download/talk-designing-transparent-ai.pdf
+- https://api.designprinciplesftw.com/collections/principles-for-designing-systems-for-expert-users
