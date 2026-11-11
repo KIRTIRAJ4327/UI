@@ -1,4 +1,11 @@
-# Round 3: one product, six connected screens
+# Round 3: the complete product, 15 connected screens
+
+## Screens
+**Delivery journey:** 1 Home · 2 New request · 3 Runs · 4 Run overview · 5 Approve a design · 6 Answer questions · 7 How it was made · 8 Code review (Build gate) · 9 Release (Release gate) · 10 Business rules
+
+**Super admin:** 11 Governance · 12 Squad for a work item · 13 People and access · 14 Policies · 15 Connections
+
+Figma: https://www.figma.com/design/yA0uUcQ3SXUKcXhqj5hUX5 (editable frames, exported from `figma/*.html`).
 
 ## Why this round is different
 - **One coherent product, not twelve ideas.** Six screens follow one real journey: Home → New request → Run overview → Approve a design → Answer questions → How it was made. Every link goes to the next screen.
@@ -14,7 +21,7 @@
 - Evidence screen turns the agent's work into readable steps, including the mistake it fixed.
 
 ## Checks
-axe-core WCAG 2 A/AA: 0 violations on all six screens at 1280px. Scripted tests: approve gating, summary/technical toggle, question answering, empty-request validation.
+axe-core WCAG 2 A/AA: 0 violations on all 15 screens at 1440px. Scripted tests: approve gating, summary/technical toggle, question answering, empty-request validation.
 
 ## Run
 `npm install && npm run dev`, open `#v3-home`.

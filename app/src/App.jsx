@@ -21,15 +21,29 @@ import V3Clarify from '@/v3/Clarify';
 import V3Evidence from '@/v3/Evidence';
 import V3Admin from '@/v3/Admin';
 import V3Squad from '@/v3/Squad';
+import V3Runs from '@/v3/Runs';
+import V3Review from '@/v3/Review';
+import V3Release from '@/v3/Release';
+import V3Rules from '@/v3/Rules';
+import V3People from '@/v3/People';
+import V3Policies from '@/v3/Policies';
+import V3Connections from '@/v3/Connections';
 export const V3 = [
   ['v3-home','1 · Home','What is waiting for you, your requests and recent activity.',V3Home],
   ['v3-new','2 · New request','Describe the change; see the plan, approvers and timing before anything starts.',V3New],
-  ['v3-run','3 · Run overview','Where a request is, who holds it, and what the next decision is.',V3Run],
-  ['v3-approve','4 · Approve a design','Plain summary or full detail, the risk you accept, then decide.',V3Approve],
-  ['v3-clarify','5 · Answer questions','The agent asks; you pick an option with the reason shown.',V3Clarify],
-  ['v3-evidence','6 · How it was made','Every step, source and check behind the agent\'s work.',V3Evidence],
-  ['v3-admin','7 · Admin: Governance','Super admin view: everything running, what needs attention, where work waits, people load.',V3Admin],
-  ['v3-squad','8 · Admin: Squad','Assign an approver and backup to every gate, with live policy checks.',V3Squad],
+  ['v3-runs','3 · Runs','Every request in one filterable list.',V3Runs],
+  ['v3-run','4 · Run overview','Where a request is, who holds it, and the next decision.',V3Run],
+  ['v3-approve','5 · Approve a design','Plain summary or full detail, the risk you accept, then decide.',V3Approve],
+  ['v3-clarify','6 · Answer questions','The agent asks; you pick an option with the reason shown.',V3Clarify],
+  ['v3-evidence','7 · How it was made','Every step, source and check behind the agent\'s work.',V3Evidence],
+  ['v3-review','8 · Code review','Build gate: what was built, changed files, automatic checks.',V3Review],
+  ['v3-release','9 · Release','Release gate: readiness, UAT sign-off, window, notes, rollback.',V3Release],
+  ['v3-rules','10 · Business rules','Each rule, where it is checked and where it is not.',V3Rules],
+  ['v3-admin','11 · Admin: Governance','Everything running, what needs attention, where work waits.',V3Admin],
+  ['v3-squad','12 · Admin: Squad','Assign an approver and backup to every gate, with policy checks.',V3Squad],
+  ['v3-people','13 · Admin: People and access','Who can approve what, in which application, and who is away.',V3People],
+  ['v3-policies','14 · Admin: Policies','Approval targets, separation of duties, freezes, agent limits, spend.',V3Policies],
+  ['v3-connections','15 · Admin: Connections','Health of Azure Boards, pipelines, repos, Knowledge Fabric, model, Teams.',V3Connections],
 ];
 export const ROUND2 = [
   ['strips','G · Flight strips','From air traffic control: each run is a strip handed between role bays, stamped by everyone who handled it.',FlightStrips],
@@ -56,7 +70,7 @@ function Gallery() {
       <div className="text-xs text-neutral-500">Unified Product Delivery Platform</div>
       <SplitText text="Redesign proposals for review" tag="h1" splitType="words" effect="fade" delay={60} duration={0.6} textAlign="left" trigger="load" className="text-3xl font-light" />
       <p className="mt-2 max-w-3xl text-neutral-600">Round 2 borrows interaction models from air traffic control, service maps, change-advisory boards, agent tracing, command lines and ontology tools. All use the same sample run, WI-4821, and the same visual language.</p>
-      <h2 className="mt-8 text-[13px] font-semibold text-ink">Round 3 · recommended: one product, eight connected screens</h2>
+      <h2 className="mt-8 text-[13px] font-semibold text-ink">Round 3 · recommended: the complete product, 15 connected screens</h2>
       <div className="mt-2 grid grid-cols-3 gap-4">{V3.map(([k,t,d])=>(
         <a key={k} href={`#${k}`} className="block rounded-xl border-2 border-brand/30 bg-white p-5 hover:border-brand"><b className="block text-base font-semibold">{t}</b><p className="mt-1 text-neutral-600">{d}</p><span className="mt-3 inline-block text-primary">Open screen →</span></a>))}</div>
       <h2 className="mt-10 font-mono text-[11px] uppercase tracking-wider text-[#65635c]">Round 2 · new interaction models (see RESEARCH.md)</h2>

@@ -1,6 +1,6 @@
 // v3 shared UI: one coherent product built on the client's existing console tokens.
 import { cn } from '@/lib/utils';
-import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale } from 'lucide-react';
+import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale, Contact, Plug } from 'lucide-react';
 
 export const PEOPLE = {
   priya: { name: 'Priya Nair', role: 'Product Owner', init: 'PN', hue: '#7c5cc4' },
@@ -72,9 +72,9 @@ export const Card = ({ className, children, ...r }) => <section className={cn('r
 export const CardHead = ({ title, sub, right }) => <header className="flex items-start gap-3 px-5 pt-4 pb-3"><div className="min-w-0 flex-1"><h2 className="text-[15px] font-semibold">{title}</h2>{sub && <p className="text-[13px] text-[var(--v-ink-3)]">{sub}</p>}</div>{right}</header>;
 
 const NAV = [['home','Home',Home],['new','New request',FilePlus2],['approvals','Approvals',Inbox,3],['run','Runs',Rocket],['rules','Business rules',BookCheck],['evidence','Evidence',ShieldCheck]];
-const ADMIN_NAV = [['admin','Governance',LayoutDashboard],['squad','Squads',UsersRound],['policies','Policies',Scale]];
-export function Shell({ active, crumbs = [], actions, children, admin }) {
-  const me = admin ? 'dana' : 'alex';
+const ADMIN_NAV = [['admin','Governance',LayoutDashboard],['squad','Squads',UsersRound],['people','People and access',Contact],['policies','Policies',Scale],['connections','Connections',Plug]];
+export function Shell({ active, crumbs = [], actions, children, admin, user }) {
+  const me = user || (admin ? 'dana' : 'alex');
   return (
     <div className="v3 grid min-h-screen grid-cols-[248px_1fr]">
       <a href="#v3main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
@@ -84,13 +84,13 @@ export function Shell({ active, crumbs = [], actions, children, admin }) {
           <div className="leading-tight"><div className="font-display text-[15px] font-semibold text-white">Delivery Platform</div><div className="text-[12px] text-[#8f97b3]">Full Application team</div></div>
         </div>
         {NAV.map(([k, l, I, n]) => (
-          <a key={k} href={{approvals:'#v3-approve',rules:'#rules'}[k] || `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}>
+          <a key={k} href={{approvals:'#v3-approve',run:'#v3-runs'}[k] || `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}>
             <I className="size-[18px]" strokeWidth={1.8} />{l}{n && <span className="ml-auto rounded-full bg-[#e0a000] px-1.5 text-[11.5px] font-semibold text-[var(--v-ink)]">{n}</span>}
           </a>))}
-        {admin && <>
+        {(admin || me === 'dana') && <>
           <div className="mt-5 mb-1 px-2.5 text-[12px] font-medium text-[#8f97b3]">Admin</div>
           {ADMIN_NAV.map(([k, l, I]) => (
-            <a key={k} href={k === 'policies' ? '#rules' : `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}><I className="size-[18px]" strokeWidth={1.8} />{l}</a>))}
+            <a key={k} href={`#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}><I className="size-[18px]" strokeWidth={1.8} />{l}</a>))}
         </>}
         <div className="mt-auto flex items-center gap-2.5 rounded-xl px-2.5 py-2 hover:bg-white/5"><Avatar p={me} size={32} /><div className="leading-tight"><div className="text-[14px] font-medium text-white">{PEOPLE[me].name}</div><div className="text-[12px] text-[#8f97b3]">{PEOPLE[me].role}</div></div><Settings className="ml-auto size-4" /></div>
       </nav>

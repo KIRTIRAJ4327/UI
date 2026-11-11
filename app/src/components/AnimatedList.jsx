@@ -147,6 +147,7 @@ const AnimatedList = ({
   maxHeight = 440,
   className = '',
   itemClassName = '',
+  ariaLabel = 'List',
   style
 }) => {
   const rootRef = useRef(null);
@@ -512,6 +513,7 @@ const AnimatedList = ({
         ref={viewportRef}
         className={`${VIEWPORT_CLASS} ${displayScrollbar ? SCROLLBAR_CLASS : BARE_CLASS}`}
         role="listbox"
+        aria-label={ariaLabel}
         tabIndex={0}
         aria-activedescendant={selected >= 0 && selected < items.length ? `${baseId}-${selected}` : undefined}
         style={{

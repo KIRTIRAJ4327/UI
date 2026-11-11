@@ -9,7 +9,7 @@ import { Clock, ArrowRight, Plus } from 'lucide-react';
 const WAITING = [
   { id: 'WI-4821', title: 'Registered Amortization limit', ask: 'Approve the solution design', why: 'Blocks values above 310 on Product Selection. The Pricing API is not covered.', from: 'priya', wait: '12 min', s: 'dddw', href: '#v3-approve', urgent: false },
   { id: 'WI-4799', title: 'Statement export format', ask: 'Answer 2 questions', why: 'The agent needs to know the column order before writing the specification.', from: 'priya', wait: '1 h', s: 'dw', href: '#v3-clarify' },
-  { id: 'WI-4807', title: 'Advisor eligibility banner', ask: 'Review the completion report', why: 'Code and 6 unit tests are ready. Jon is on leave, so this came to you.', from: 'jon', wait: '3 h', s: 'ddddw', href: '#v3-run', urgent: true },
+  { id: 'WI-4807', title: 'Advisor eligibility banner', ask: 'Review the completion report', why: 'Code and 6 unit tests are ready. Jon is on leave, so this came to you.', from: 'jon', wait: '3 h', s: 'ddddw', href: '#v3-review', urgent: true },
 ];
 const MINE = [['Fee schedule update','done','Released Tuesday','dddddddd'],['Session timeout copy','bad','2 tests failing','dddddda'],['Rate hold expiry','work','Agent is building','dddda']];
 const FEED = [['agent','Design finished · WI-4821','The agent','12 min ago'],['priya','Plan approved · WI-4830','Priya Nair','40 min ago'],['agent','Fixed its own mistake · WI-4821','The agent','45 min ago'],['sam','Released · WI-4772','Sam Okafor','Tue 16:05']];
@@ -58,7 +58,7 @@ export default function V3Home() {
             </Card>
             <Card>
               <CardHead title="Recent activity" />
-              <div className="px-2 pb-3"><AnimatedList theme="light" frame={false} showGradients={false} displayScrollbar={false} selectOnHover={false} enableArrowNavigation={false} animateOnce width="100%" maxHeight={400} gap={2} radius={10} accentColor="#2469bc"
+              <div className="px-2 pb-3"><AnimatedList ariaLabel="Recent activity" theme="light" frame={false} showGradients={false} displayScrollbar={false} selectOnHover={false} enableArrowNavigation={false} animateOnce width="100%" maxHeight={400} gap={2} radius={10} accentColor="#2469bc"
                 items={FEED.map(([p, title, who, t]) => ({ icon: <Avatar p={p} size={30} />, title, description: `${who} · ${t}` }))} /></div>
             </Card>
           </div>
