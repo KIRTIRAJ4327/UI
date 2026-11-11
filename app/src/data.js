@@ -23,3 +23,10 @@ export const AUDIT = [
   ['Wed 14:33','Design quality check passed','Agent','adr-0173.md'],
   ['Wed 14:40','Design opened for review','Alex K.','—'],
 ];
+
+export const TRACE = [['Request','Amortization ≤ 310'],['Spec','AC-3 · block above max'],['Design','ADR-0173'],['Code','ProductSelection.jsx'],['Tests','3 unit tests']];
+export const QUEUE = [
+  { gate:'Solution Architect', items:[{ t:'Approve solution design', run:'Registered Amortization limit', id:'WI-4821', s:'dddw', mins:12, sel:true }] },
+  { gate:'Product Owner', items:[{ t:'Answer 2 clarification questions', run:'Statement export format', id:'WI-4799', s:'ddw', mins:64 }] },
+  { gate:'Engineering Lead', items:[{ t:'Review developer completion', run:'Advisor eligibility banner', id:'WI-4807', s:'ddddw', mins:190 }] },
+];

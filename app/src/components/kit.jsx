@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import SplitText from '@/components/SplitText';
+import { GateGlyph } from '@/components/signature';
 import { cn } from '@/lib/utils';
 import { Inbox, PlayCircle, LayoutGrid, FileText, ScrollText, Search, Plug } from 'lucide-react';
 
@@ -11,33 +12,35 @@ export const Dot = ({ tone }) => <span className={cn('inline-block size-2 rounde
 export const Kbd = ({ children }) => <kbd className="rounded-sm border border-b-2 px-1 font-mono text-[11px] text-neutral-600 bg-white">{children}</kbd>;
 
 // SplitText used once per screen for the page title: subtle word fade, respects reduced motion.
-export const Title = ({ children, className }) => <SplitText text={children} tag="h1" splitType="words" effect="fade" delay={40} duration={0.5} textAlign="left" trigger="load" className={cn('text-xl font-normal text-neutral-900', className)} />;
+export const Title = ({ children, className }) => <SplitText text={children} tag="h1" splitType="words" effect="fade" delay={40} duration={0.5} textAlign="left" trigger="load" className={cn('text-xl font-medium tracking-tight', className)} />;
 
-const NAV = [['inbox','Inbox',Inbox,3],['runs','Runs',PlayCircle],['board','Stories',LayoutGrid],['docs','Documents',FileText],['audit','Audit trail',ScrollText]];
+const NAV = [['inbox','Gate queue',Inbox,3],['runs','Runs',PlayCircle],['board','Stories',LayoutGrid],['docs','Documents',FileText],['audit','Evidence ledger',ScrollText]];
 export function Shell({ active, title, actions, children, rail = true }) {
   return (
-    <div className={cn('grid min-h-screen bg-background text-neutral-900', rail ? 'grid-cols-[232px_1fr]' : 'grid-cols-1')}>
-      {rail && <nav aria-label="Primary" className="sticky top-0 flex h-screen flex-col border-r bg-white">
-        <div className="flex h-12 items-center gap-2.5 bg-neutral-900 px-4 font-semibold text-white"><span className="size-4 bg-white"/>Delivery Platform</div>
-        {NAV.map(([k,l,I,n])=> <a key={k} href="#" className={cn('flex h-8 items-center gap-2.5 px-4 hover:bg-neutral-100', active===k && 'bg-neutral-200 font-semibold shadow-[inset_3px_0_0_var(--primary)]')}><I className="size-4 text-neutral-500"/>{l}{n && <span className="ml-auto bg-primary px-1.5 text-xs text-white">{n}</span>}</a>)}
-        <div className="mt-4 px-4 pb-1 text-xs text-neutral-500">Workspaces</div>
-        {['Full Application','Advisor Portal','Client Services'].map(w=><a key={w} href="#" className="flex h-8 items-center px-4 hover:bg-neutral-100">{w}</a>)}
-        <div className="mt-4 px-4 pb-1 text-xs text-neutral-500">Admin</div>
-        <a href="#" className="flex h-8 items-center gap-2.5 px-4 hover:bg-neutral-100"><Plug className="size-4 text-neutral-500"/>Connections<Tag tone="ok" className="ml-auto">online</Tag></a>
-        <div className="mt-auto flex items-center gap-2.5 border-t px-4 py-3"><span className="grid size-7 place-items-center rounded-full bg-neutral-700 text-xs font-semibold text-white">AK</span><div><div className="font-semibold">Alex Kim</div><div className="text-xs text-neutral-500">Solution Architect</div></div></div>
-      </nav>}
-      <main className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-10 flex h-12 items-center gap-3 border-b bg-white px-6">
-          {typeof title === 'string' ? <Title>{title}</Title> : title}
-          <div className="flex-1"/>
-          <span className="flex items-center gap-1.5 text-neutral-600"><span className="size-2 rounded-full bg-emerald-600"/>Live</span>
-          <div className="flex h-8 w-64 items-center gap-2 border-b border-neutral-500 bg-neutral-100 px-2.5 text-neutral-500"><Search className="size-4"/>Search<span className="ml-auto"><Kbd>⌘K</Kbd></span></div>
-          {actions}
-        </header>
-        {children}
-      </main>
+    <div className="flex min-h-screen flex-col bg-paper text-ink">
+      <header className="sticky top-0 z-20 flex h-12 items-center gap-3 bg-ink px-4 text-white">
+        <span className="flex items-center gap-2 pr-4 font-semibold tracking-tight"><span className="grid size-7 place-items-center bg-brand"><GateGlyph state="light" /></span>Delivery Platform</span>
+        <span className="h-5 w-px bg-white/15" />
+        <div className="min-w-0 [&_h1]:text-white [&_h1]:text-[15px]">{typeof title === 'string' ? <Title>{title}</Title> : title}</div>
+        <div className="flex-1" />
+        <span className="flex items-center gap-1.5 text-white/70"><span className="size-2 rounded-full bg-emerald-400" />Live</span>
+        <div className="flex h-8 w-60 items-center gap-2 bg-white/10 px-2.5 text-white/60"><Search className="size-4" />Search<span className="ml-auto font-mono text-[11px]">⌘K</span></div>
+        {actions}
+      </header>
+      <div className={cn('grid flex-1', rail ? 'grid-cols-[220px_1fr]' : 'grid-cols-1')}>
+        {rail && <nav aria-label="Primary" className="sticky top-12 flex h-[calc(100vh-48px)] flex-col border-r border-border bg-paper py-3">
+          {NAV.map(([k,l,I,n]) => <a key={k} href="#" className={cn('flex h-8 items-center gap-2.5 px-4 hover:bg-black/[.04]', active===k && 'bg-white font-semibold shadow-[inset_3px_0_0_var(--brand)]')}><I className="size-4 text-[#77756e]" />{l}{n && <span className="ml-auto bg-gate px-1.5 text-[11px] font-semibold text-white">{n}</span>}</a>)}
+          <div className="mt-5 px-4 pb-1 font-mono text-[10.5px] uppercase tracking-wider text-[#8a887f]">Gates waiting</div>
+          {[['Solution Architect',1],['Product Owner',1],['Engineering Lead',1],['Release Manager',0]].map(([g,n]) => <a key={g} href="#" className="flex h-7 items-center gap-2 px-4 text-[12.5px] hover:bg-black/[.04]"><GateGlyph state={n ? 'waiting' : 'future'} className="size-3" />{g}<span className="ml-auto text-[#8a887f]">{n}</span></a>)}
+          <div className="mt-5 px-4 pb-1 font-mono text-[10.5px] uppercase tracking-wider text-[#8a887f]">Workspaces</div>
+          {['Full Application','Advisor Portal','Client Services'].map(w => <a key={w} href="#" className="flex h-7 items-center px-4 text-[12.5px] hover:bg-black/[.04]">{w}</a>)}
+          <a href="#" className="mt-auto flex h-8 items-center gap-2.5 px-4 text-[12.5px]"><Plug className="size-4 text-[#77756e]" />Connections<span className="ml-auto text-done">● online</span></a>
+          <div className="flex items-center gap-2.5 border-t border-border px-4 pt-3"><span className="grid size-7 place-items-center bg-ink text-xs font-semibold text-white">AK</span><div><div className="font-semibold">Alex Kim</div><div className="text-xs text-[#77756e]">Solution Architect</div></div></div>
+        </nav>}
+        <main className="flex min-w-0 flex-col">{children}</main>
+      </div>
     </div>
   );
 }
-export const Panel = ({ title, right, children, className }) => <section className={cn('border bg-white', className)}>{title && <header className="flex h-10 items-center gap-2 border-b bg-neutral-50 px-4"><h2 className="text-sm font-semibold">{title}</h2><div className="flex-1"/>{right}</header>}{children}</section>;
+export const Panel = ({ title, right, children, className }) => <section className={cn('border border-border bg-white', className)}>{title && <header className="flex h-10 items-center gap-2 border-b border-border px-4"><h2 className="font-mono text-[11px] font-normal uppercase tracking-wider text-[#77756e]">{title}</h2><div className="flex-1"/>{right}</header>}{children}</section>;
 export { Fragment };

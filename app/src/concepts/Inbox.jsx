@@ -1,36 +1,44 @@
+// A · Gate queue: decisions grouped by the gate they belong to, with waiting time against target.
 import { Button } from '@/components/ui/button';
-import { Shell, Tag, Dot, Kbd, Panel } from '@/components/kit';
-import { INBOX } from '@/data';
+import { Shell, Kbd, Panel } from '@/components/kit';
+import { Track, GateGlyph, Narration, Evidence, Trace, Waiting } from '@/components/signature';
+import { QUEUE, TRACE } from '@/data';
 import { cn } from '@/lib/utils';
-export default function InboxConcept() {
+export default function GateQueue() {
   return (
-    <Shell active="inbox" title="Inbox" actions={<Button>New delivery request</Button>}>
-      <div className="grid flex-1 grid-cols-[400px_1fr]">
-        <aside className="border-r bg-white">
-          <div className="flex gap-1.5 border-b p-3"><Tag tone="info">Needs me 3</Tag><Tag>Mentioned 1</Tag><Tag>Watching 6</Tag></div>
-          {INBOX.map((x,i)=>(
-            <button key={i} className={cn('grid w-full grid-cols-[10px_1fr_auto] gap-3 border-b px-4 py-3 text-left hover:bg-neutral-50', i===0 && 'bg-neutral-100 shadow-[inset_3px_0_0_var(--primary)]')}>
-              <span className="pt-1.5"><Dot tone={x.tone}/></span>
-              <span><b className="block font-semibold">{x.t}</b><span className="block text-neutral-600">{x.sub}</span><Tag tone={x.tone} className="mt-1.5">{x.tag}</Tag></span>
-              <span className="text-xs text-neutral-500">{x.age}</span>
-            </button>))}
+    <Shell active="inbox" title="Gate queue" actions={<Button>New request</Button>}>
+      <div className="grid flex-1 grid-cols-[380px_1fr]">
+        <aside className="border-r border-border">
+          <div className="px-4 py-3 font-serif text-[15px] italic text-[#5d5c58]">3 decisions are waiting on you. The oldest has waited 3 hours.</div>
+          {QUEUE.map(g => (
+            <section key={g.gate}>
+              <h2 className="flex items-center gap-2 border-y border-border bg-[#efede6] px-4 py-1.5 font-mono text-[11px] uppercase tracking-wider text-[#5d5c58]"><GateGlyph state="waiting" className="size-3" />{g.gate} gate</h2>
+              {g.items.map(x => (
+                <button key={x.id} className={cn('block w-full space-y-2 border-b border-border px-4 py-3 text-left hover:bg-white', x.sel && 'bg-white shadow-[inset_3px_0_0_var(--gate)]')}>
+                  <div className="flex justify-between"><b className="font-semibold">{x.t}</b><span className="font-mono text-[11px] text-[#8a887f]">{x.id}</span></div>
+                  <div className="text-[#5d5c58]">{x.run}</div>
+                  <Track s={x.s} size="sm" />
+                  <Waiting mins={x.mins} label={`${x.mins < 60 ? x.mins + 'm' : Math.round(x.mins / 60) + 'h'} of 4h target`} />
+                </button>))}
+            </section>))}
         </aside>
-        <section className="flex max-w-5xl flex-col gap-4 p-6">
-          <div className="flex items-center gap-2"><Tag tone="warn">Stage 4 of 8 · Design</Tag><span className="font-mono text-xs text-neutral-500">WI-4821</span><span className="ml-auto text-neutral-500">Requested by Priya N.</span></div>
-          <div><h2 className="text-xl font-normal">Approve solution design · ADR-0173</h2><p className="text-neutral-600">Proposed: client-side limit on Product Selection, reusing the existing validator. 2 open risks.</p></div>
-          <div className="grid grid-cols-2 gap-4">
-            <Panel title="What changes"><ul className="list-disc p-4 pl-8"><li>Registered Amortization blocks values above 310</li><li>Inline message explains the maximum</li><li>No change to other portals</li></ul></Panel>
-            <Panel title="Reason for review"><p className="p-4">Business rule enforced in the UI only. Policy requires Solution Architect sign-off before Build.<br/><span className="text-neutral-500">Evidence: 9 sources · quality check passed</span></p></Panel>
+        <section className="flex max-w-5xl flex-col gap-5 px-8 py-6">
+          <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-wider text-[#8a887f]">WI-4821 · Full Application · requested by Priya N.</div>
+          <h2 className="-mt-3 text-2xl font-medium tracking-tight">Registered Amortization limit</h2>
+          <Track s="dddw" className="border border-border bg-white px-4 py-3" />
+          <Narration>Design is finished. The agent proposes blocking values above 310 on the Product Selection page, using the validator the form already has. <span className="bg-gate-soft">Nothing on the server changes</span>, so you are being asked to accept that gap.</Narration>
+          <div className="border-l-4 border-gate bg-white">
+            <div className="flex items-center gap-2 border-b border-border px-5 py-2.5"><GateGlyph state="waiting" /><b className="font-semibold">Solution Architect gate</b><span className="ml-auto"><Waiting mins={12} label="12m of 4h target" /></span></div>
+            <div className="grid grid-cols-2 gap-6 px-5 py-4">
+              <div><div className="mb-1.5 font-mono text-[11px] uppercase tracking-wider text-[#8a887f]">You approve</div><ul className="list-disc space-y-1 pl-4"><li>Client-side maximum of 310</li><li>Inline message explaining the maximum</li><li>ADR-0173 as the record of decision</li></ul></div>
+              <div><div className="mb-1.5 font-mono text-[11px] uppercase tracking-wider text-[#8a887f]">You accept the risk</div><ul className="list-disc space-y-1 pl-4"><li><b>Medium</b>: direct API calls can bypass the limit</li><li><b>Low</b>: message copy not yet signed off</li></ul></div>
+            </div>
+            <Evidence className="mx-5 mb-4" items={['9 knowledge sources','Quality check passed','Scope matches spec v3','No other portals affected']} />
           </div>
-          <Panel title="Decision document · ADR-0173" right={<Button variant="ghost" size="sm">Open full view</Button>}>
-            <div className="space-y-3 p-4"><p>Enforce the maximum in the Product Selection form using the shared amortization validator. <mark className="border-b-2 border-amber-400 bg-amber-50">The server-side maximum is not changed in this story.</mark></p>
-            <table className="w-full"><thead><tr className="border-b text-left text-xs"><th className="py-1.5">Risk</th><th>Severity</th><th>Mitigation</th></tr></thead><tbody>
-              <tr className="border-b"><td className="py-2">Direct API call bypasses the limit</td><td><Tag tone="warn">Medium</Tag></td><td>Follow-up story for server validation</td></tr>
-              <tr><td className="py-2">Message copy not approved by Compliance</td><td><Tag>Low</Tag></td><td>Tracked as UAT item</td></tr></tbody></table></div>
-          </Panel>
-          <div className="sticky bottom-0 -mx-6 flex items-center gap-2 border-t bg-white px-6 py-3">
-            <Button>Approve &amp; continue <Kbd>A</Kbd></Button><Button variant="outline">Request changes <Kbd>R</Kbd></Button><Button variant="ghost">Ask a question <Kbd>C</Kbd></Button>
-            <span className="ml-auto text-neutral-500"><Kbd>J</Kbd> <Kbd>K</Kbd> next / previous</span>
+          <Panel title="Rule trace"><Trace steps={TRACE} className="p-4" /></Panel>
+          <div className="sticky bottom-0 -mx-8 flex items-center gap-2 border-t border-border bg-paper px-8 py-3">
+            <Button>Approve gate <Kbd>A</Kbd></Button><Button variant="outline">Send back with changes <Kbd>R</Kbd></Button><Button variant="ghost">Read ADR-0173</Button>
+            <span className="ml-auto text-[#8a887f]"><Kbd>J</Kbd> <Kbd>K</Kbd> next decision</span>
           </div>
         </section>
       </div>

@@ -8,23 +8,23 @@ import RoleLenses from '@/concepts/RoleLenses';
 import SplitText from '@/components/SplitText';
 
 export const CONCEPTS = [
-  ['inbox','A · Inbox-first','Approver to-do list with a decision reader and keyboard shortcuts.',InboxConcept],
-  ['mission','B · Mission control','KPIs and every run in one table with an 8-stage progress bar.',MissionControl],
-  ['board','C · Story board','Stories across the 8 stages, with gates shown as column markers.',StoryBoard],
-  ['timeline','D · Live timeline','The run as a plain-English event log with the decision inline.',Timeline],
-  ['workbench','E · Document workbench','Focus view: stages, full document, and an approval rail.',Workbench],
-  ['roles','F · Role lenses','Requester, Approver, Engineer and Auditor views of one product.',RoleLenses],
+  ['inbox','A · Gate queue','Decisions grouped by gate, with waiting time against target and the risk you accept.',InboxConcept],
+  ['mission','B · Control tower','Where delivery waits: agent time vs people time, and every run on an aligned track.',MissionControl],
+  ['board','C · Two-lane board','Each stage split into what agents are doing and what people are holding.',StoryBoard],
+  ['timeline','D · Narrated run','The run told as a short story, with evidence under every sentence.',Timeline],
+  ['workbench','E · Evidence review','The decision document with every claim cited to its source.',Workbench],
+  ['roles','F · Role lenses','One run, explained four ways: requester, approver, engineer, auditor.',RoleLenses],
 ];
 const useHash = () => { const [h,setH] = useState(location.hash.slice(1)); useEffect(()=>{ const f=()=>setH(location.hash.slice(1)); addEventListener('hashchange',f); return ()=>removeEventListener('hashchange',f); },[]); return h; };
 
 function Gallery() {
   return (
-    <div className="mx-auto max-w-6xl px-8 py-10">
+    <div className="mx-auto max-w-6xl px-8 py-10 text-ink">
       <div className="text-xs text-neutral-500">Unified Product Delivery Platform</div>
       <SplitText text="Redesign proposals for review" tag="h1" splitType="words" effect="fade" delay={60} duration={0.6} textAlign="left" trigger="load" className="text-3xl font-light" />
-      <p className="mt-2 max-w-3xl text-neutral-600">Six structural directions built on one shared component set (shadcn/ui, Radix). Each uses the same sample run, WI-4821, so the client compares layouts, not content.</p>
+      <p className="mt-2 max-w-3xl text-neutral-600">Six directions built on one visual language: the delivery track, the gate, the platform's plain-English voice, and evidence under every claim. Each uses the same sample run, WI-4821.</p>
       <div className="mt-8 grid grid-cols-3 gap-4">{CONCEPTS.map(([k,t,d])=>(
-        <a key={k} href={`#${k}`} className="block border bg-white p-5 hover:border-primary"><b className="block text-base font-semibold">{t}</b><p className="mt-1 text-neutral-600">{d}</p><span className="mt-3 inline-block text-primary">Open mockup →</span></a>))}</div>
+        <a key={k} href={`#${k}`} className="block border bg-white p-5 hover:border-brand border-border"><b className="block text-base font-semibold">{t}</b><p className="mt-1 text-neutral-600">{d}</p><span className="mt-3 inline-block text-primary">Open mockup →</span></a>))}</div>
     </div>
   );
 }
