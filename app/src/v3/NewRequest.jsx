@@ -3,10 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Avatar, Pill } from './ui';
 import { Sparkles, FileText, Users, Timer, Boxes } from 'lucide-react';
 import { useToast } from '@/components/friendly';
+import { useProto, runHref } from './store';
 
 const EXAMPLE = 'In the Full Application advisor flow, the Product Selection page must prevent advisors from entering a Registered Amortization value that exceeds the documented maximum. Registered Amortization must be less than or equal to 310.';
 export default function V3New() {
   const toast = useToast();
+  const { createRequest, nextId } = useProto();
   const [text, setText] = useState(EXAMPLE);
   const [app, setApp] = useState('Full Application');
   const ok = text.trim().length > 40;
@@ -26,7 +28,7 @@ export default function V3New() {
                 <input id="by" type="date" defaultValue="2026-11-20" className="h-10 rounded-lg border border-[var(--v-line)] bg-white px-3 font-normal" /></label>
             </div>
             <div className="mt-6 flex items-center gap-3 border-t border-[var(--v-line)] pt-5">
-              <Button disabled={!ok} onClick={() => toast('Plan drafted. Priya Nair will be asked to approve it.')} className="h-10 rounded-lg px-5"><Sparkles className="size-4" />Draft the plan</Button>
+              <Button disabled={!ok} onClick={() => { const id = 'WI-' + nextId; createRequest(id, text, app); toast(`${id} started. The agent is drafting the plan.`); location.hash = runHref(id).slice(1); }} className="h-10 rounded-lg px-5"><Sparkles className="size-4" />Draft the plan</Button>
               <Button variant="ghost" className="h-10 rounded-lg" onClick={() => setText('')}>Clear</Button>
               <span className="ml-auto text-[13px] text-[var(--v-ink-3)]">Usually ready in under a minute</span>
             </div>

@@ -1,44 +1,84 @@
+// Run overview for any work item: where it is, who holds it, and what happens next.
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Shell, Card, CardHead, Pill, Avatar, Stepper } from './ui';
-import { FileText, ArrowRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE, STAGES } from './ui';
+import { useProto } from './store';
+import { useToast } from '@/components/friendly';
+import { FileText, ArrowRight, AlertTriangle, CheckCircle2, Loader2, Clock, Rocket } from 'lucide-react';
 
-const DOCS = [['Delivery plan','Plan','Approved by Priya',true],['Specification · 8 acceptance criteria','Specify','Approved by Priya',true],['Impact assessment','Impact','Checked automatically',true],['Architecture decision ADR-0173','Design','Waiting for you',false]];
-export default function V3Run() {
+const DOC = ['Delivery plan', 'Specification', 'Impact assessment', 'Architecture decision', 'Completion report', 'Integration evidence', 'Validation report', 'Release record'];
+const DOC_HREF = { 3: '#v3-approve', 4: '#v3-review' };
+
+function StatusCard({ r }) {
+  const toast = useToast();
+  const holder = PEOPLE[r.holder]?.name || 'the agent';
+  if (r.state === 'you') return (
+    <Card className="overflow-hidden">
+      <div className="flex items-start gap-4 border-b border-[#f0d9a8] bg-[var(--v-amber-soft)] px-6 py-5">
+        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[var(--v-amber)]"><AlertTriangle className="size-5" /></span>
+        <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">{r.ask}</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">{r.why}</p></div>
+        <Button asChild className="h-10 shrink-0 rounded-lg px-5"><a href={r.screen}>Review<ArrowRight className="size-4" /></a></Button>
+      </div>
+      {r.id === 'WI-4821' && <div className="grid grid-cols-3 divide-x divide-[var(--v-line)]">
+        {[['What changes', 'Product Selection blocks values above 310 and explains why.'], ['What does not', 'The Pricing API and batch import still accept any value.'], ['If you approve', 'The agent builds it with unit tests, about 20 minutes, then Jon reviews.']].map(([h, t]) => <div key={h} className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">{h}</h3><p className="mt-1 text-[14.5px] leading-relaxed">{t}</p></div>)}
+      </div>}
+    </Card>);
+  const cfg = {
+    work: [Loader2, 'bg-[var(--v-blue-soft)] text-[var(--v-blue)]', 'The agent is working', r.now + '. You will be notified when a person is needed.', null],
+    wait: [Clock, 'bg-[var(--v-amber-soft)] text-[var(--v-amber)]', `Waiting for ${holder}`, r.now + '.', ['Send a reminder', () => toast(`Reminder sent to ${holder}.`)]],
+    bad: [AlertTriangle, 'bg-[var(--v-red-soft)] text-[var(--v-red)]', 'Needs attention', r.now + '. The run is paused until someone decides what to do.', ['Open governance', () => { location.hash = 'v3-admin'; }]],
+    done: [CheckCircle2, 'bg-[var(--v-green-soft)] text-[var(--v-green)]', r.now, 'Every stage is complete and the evidence is saved.', null],
+  }[r.state];
+  const [I, c, h, t, act] = cfg;
   return (
-    <Shell active="run" crumbs={['Runs', 'WI-4821']} actions={<Button variant="outline" className="h-9 rounded-lg">Pause run</Button>}>
+    <Card className="flex items-start gap-4 px-6 py-5">
+      <span className={`grid size-10 shrink-0 place-items-center rounded-full ${c}`}><I className={`size-5 ${r.state === 'work' ? 'animate-spin [animation-duration:2.5s]' : ''}`} /></span>
+      <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">{h}</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">{t}</p>{r.decidedAt && <p className="mt-2 text-[13px] text-[var(--v-green)]">Your decision was recorded {r.decidedAt}.</p>}</div>
+      {act && <Button variant="outline" className="h-10 shrink-0 rounded-lg" onClick={act[1]}>{act[0]}</Button>}
+    </Card>);
+}
+
+export default function V3Run({ id = 'WI-4821' }) {
+  const { runs, finishPlan, togglePause } = useProto();
+  const toast = useToast();
+  const r = runs[id];
+  useEffect(() => { if (r?.fresh && r.s === 'a') { const t = setTimeout(() => finishPlan(id), 4000); return () => clearTimeout(t); } }, [r?.fresh, r?.s, id, finishPlan]);
+  if (!r) return (
+    <Shell active="run" crumbs={['Runs', id]}><div className="mx-auto max-w-[600px] py-20 text-center"><h1 className="font-display text-[24px] font-semibold">We could not find {id}</h1><p className="mt-2 text-[var(--v-ink-2)]">It may have been reset with the demo data.</p><Button asChild className="mt-5 h-10 rounded-lg"><a href="#v3-runs">Back to all runs</a></Button></div></Shell>);
+  const cur = Math.max(r.s.length, 1);
+  return (
+    <Shell active="run" crumbs={['Runs', r.id]} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={() => { togglePause(r.id); toast(r.paused ? `${r.id} resumed.` : `${r.id} paused. Nothing will move until you resume it.`); }}>{r.paused ? 'Resume run' : 'Pause run'}</Button>}>
       <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
         <div className="flex flex-wrap items-start gap-6">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2"><span className="font-mono text-[12.5px] text-[var(--v-ink-3)]">WI-4821 · Full Application</span><Pill tone="you">Waiting for you</Pill></div>
-            <h1 className="mt-1 font-display text-[28px] font-semibold">Registered Amortization limit</h1>
-            <p className="mt-1 max-w-[70ch] text-[15px] text-[var(--v-ink-2)]">Stop advisors entering a Registered Amortization above 310 on the Product Selection page.</p>
+            <div className="flex items-center gap-2"><span className="font-mono text-[12.5px] text-[var(--v-ink-3)]">{r.id} · {r.app}</span><Pill tone={r.state}>{r.state === 'you' ? 'Waiting for you' : r.state === 'work' ? 'Agent working' : r.state === 'wait' ? 'Waiting for a person' : r.state === 'bad' ? 'Needs attention' : 'Complete'}</Pill></div>
+            <h1 className="mt-1 font-display text-[28px] font-semibold">{r.t}</h1>
+            <p className="mt-1 text-[15px] text-[var(--v-ink-2)]">Stage {cur} of 8 · {STAGES[cur - 1][0]}</p>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-[var(--v-line)] bg-white px-4 py-3"><Avatar p="priya" size={34} /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Requested by</div><div className="font-medium">Priya Nair</div></div><div className="mx-2 h-8 w-px bg-[var(--v-line)]" /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Expected release</div><div className="font-medium">Thu 13 Nov</div></div></div>
+          <div className="flex items-center gap-3 rounded-xl border border-[var(--v-line)] bg-white px-4 py-3"><Avatar p={r.by} size={34} /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Requested by</div><div className="font-medium">{PEOPLE[r.by].name}</div></div><div className="mx-2 h-8 w-px bg-[var(--v-line)]" /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Expected release</div><div className="font-medium">{r.eta}</div></div></div>
         </div>
 
-        <Card className="px-6 py-6"><Stepper s="dddw" /></Card>
+        <Card className="px-6 py-6"><Stepper s={r.s} /></Card>
 
         <div className="grid grid-cols-[minmax(0,1fr)_360px] items-start gap-6">
-          <Card className="overflow-hidden">
-            <div className="flex items-start gap-4 border-b border-[#f0d9a8] bg-[var(--v-amber-soft)] px-6 py-5">
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[var(--v-amber)]"><AlertTriangle className="size-5" /></span>
-              <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">Design is ready for your approval</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">The agent proposes enforcing the limit in the form only. One risk needs your judgement before Build can start.</p></div>
-              <Button asChild className="h-10 shrink-0 rounded-lg px-5"><a href="#v3-approve">Review design<ArrowRight className="size-4" /></a></Button>
-            </div>
-            <div className="grid grid-cols-3 divide-x divide-[var(--v-line)]">
-              {[['What changes','Product Selection blocks values above 310 and explains why.'],['What does not','The Pricing API and batch import still accept any value.'],['If you approve','The agent builds it with unit tests, about 20 minutes, then Jon reviews.']].map(([h, t]) => <div key={h} className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">{h}</h3><p className="mt-1 text-[14.5px] leading-relaxed">{t}</p></div>)}
-            </div>
-          </Card>
-
+          <div className="flex flex-col gap-6">
+            {r.paused && <Card className="flex items-center gap-3 border-[#f0d9a8] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><Clock className="size-5 text-[var(--v-amber)]" /><span className="flex-1"><b>Paused by you.</b> The agent and approvers cannot move this run until you resume it.</span><Button className="h-9 rounded-lg" onClick={() => togglePause(r.id)}>Resume run</Button></Card>}
+            <StatusCard r={r} />
+            {r.id === 'WI-4821' && <Card><CardHead title="How the design was made" sub="13 min 48 s · 6 of 6 quality checks passed · 4 sources" right={<Button asChild variant="outline" size="sm" className="rounded-lg"><a href="#v3-evidence">Open</a></Button>} /></Card>}
+          </div>
           <div className="flex flex-col gap-6">
             <Card>
               <CardHead title="Documents" sub="Created at each stage" />
-              <ul className="flex flex-col px-3 pb-3">{DOCS.map(([t, st, by, ok]) => <li key={t}><a href={ok ? '#v3-evidence' : '#v3-approve'} className="flex items-center gap-3 rounded-lg px-2 py-2.5 hover:bg-[var(--v-sunken)]"><FileText className="size-[18px] shrink-0 text-[var(--v-ink-3)]" /><div className="min-w-0 flex-1"><div className="truncate font-medium">{t}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">{st} · {by}</div></div>{ok ? <CheckCircle2 className="size-4 text-[var(--v-green)]" /> : <span className="size-2 rounded-full bg-[#e0a000]" />}</a></li>)}</ul>
+              <ul className="flex flex-col px-3 pb-3">
+                {DOC.slice(0, r.s.replace(/[^dw]/g, '').length).map((t, i) => { const ok = r.s[i] === 'd'; return <li key={t}><a href={DOC_HREF[i] && (r.id === 'WI-4821' || r.id === 'WI-4807') ? DOC_HREF[i] : '#v3-evidence'} className="flex items-center gap-3 rounded-lg px-2 py-2.5 hover:bg-[var(--v-sunken)]"><FileText className="size-[18px] shrink-0 text-[var(--v-ink-3)]" /><div className="min-w-0 flex-1"><div className="truncate font-medium">{t}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">{STAGES[i][0]} · {ok ? 'Approved' : 'Waiting for approval'}</div></div>{ok ? <CheckCircle2 className="size-4 text-[var(--v-green)]" /> : <span className="size-2 rounded-full bg-[#e0a000]" />}</a></li>; })}
+                {!r.s.replace(/[^dw]/g, '').length && <li className="px-2 py-3 text-[13.5px] text-[var(--v-ink-2)]">The first document appears when the plan is drafted.</li>}
+              </ul>
             </Card>
             <Card>
-              <CardHead title="Stories" />
-              <ul className="flex flex-col gap-3 px-5 pb-5">{[['Block values above 310','Design · waiting for you','you'],['Show the reason inline','Design · agent working','work']].map(([t, s, tone]) => <li key={t} className="flex items-center justify-between gap-2"><span className="font-medium">{t}</span><Pill tone={tone}>{s.split(' · ')[1].replace(/^./, c => c.toUpperCase())}</Pill></li>)}</ul>
+              <CardHead title="People" sub="Who approves each stage" right={<a href="#v3-squad" className="text-[13px] font-medium text-[var(--v-blue)]">Manage</a>} />
+              <ul className="flex flex-col gap-2.5 px-5 pb-5 text-[13.5px]">{STAGES.filter(([, w]) => w).slice(0, 5).map(([s, w]) => <li key={s} className="flex items-center gap-2.5"><Avatar p={w} size={24} /><span className="flex-1">{PEOPLE[w].name}</span><span className="text-[var(--v-ink-3)]">{s}</span></li>)}</ul>
             </Card>
+            <Button asChild variant="ghost" className="h-9 justify-start rounded-lg"><a href="#v3-runs"><Rocket className="size-4" />All runs</a></Button>
           </div>
         </div>
       </div>

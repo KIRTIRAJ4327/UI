@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, Pill } from './ui';
 import { useToast } from '@/components/friendly';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, CheckCircle2 } from 'lucide-react';
+import { useProto } from './store';
 
 const QS = [
   { id: 'q1', q: 'Which order should the columns appear in the export?', why: 'The current statement and the new spec list them differently, and the downstream bank reconciliation reads columns by position.', opts: ['Same as the on-screen statement (Date, Description, Amount, Balance)', 'Bank reconciliation order (Date, Amount, Balance, Description)'], rec: 1 },
@@ -12,6 +13,8 @@ export default function V3Clarify() {
   const toast = useToast();
   const [a, setA] = useState({ q1: 1 });
   const done = QS.every(q => a[q.id] !== undefined);
+  const { runs, answerQuestions, undo } = useProto();
+  const sent = runs['WI-4799'].state !== 'you';
   return (
     <Shell active="approvals" crumbs={['Approvals', 'WI-4799', 'Questions']}>
       <div className="mx-auto flex max-w-[820px] flex-col gap-6">
@@ -33,10 +36,11 @@ export default function V3Clarify() {
               </div>
             </fieldset>
           </Card>))}
-        <div className="sticky bottom-4 flex items-center gap-4 rounded-2xl border border-[var(--v-line)] bg-white/95 px-5 py-3.5 shadow-lg backdrop-blur">
+        {sent && <div className="flex items-center gap-3 rounded-2xl border border-[var(--v-line)] bg-[var(--v-green-soft)] px-5 py-3.5 text-[14px]"><CheckCircle2 className="size-5 text-[var(--v-green)]" />Your answers were sent. The agent is writing the specification.<a href="#v3-run-wi-4799" className="ml-auto font-medium text-[var(--v-blue)]">Open the run</a></div>}
+        {!sent && <div className="sticky bottom-4 flex items-center gap-4 rounded-2xl border border-[var(--v-line)] bg-white/95 px-5 py-3.5 shadow-lg backdrop-blur">
           <span className="text-[14px]"><b className="tnum">{Object.keys(a).length} of {QS.length}</b> answered</span>
-          <Button disabled={!done} onClick={() => toast('Answers sent. The agent is writing the specification.')} className="ml-auto h-10 rounded-lg px-5">Send answers</Button>
-        </div>
+          <Button disabled={!done} onClick={() => { answerQuestions(); toast('Answers sent. The agent is writing the specification.', undo); location.hash = 'v3-run-wi-4799'; }} className="ml-auto h-10 rounded-lg px-5">Send answers</Button>
+        </div>}
       </div>
     </Shell>
   );

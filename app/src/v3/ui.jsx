@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CommandPalette, Notifications } from './overlays';
+import { useProto } from './store';
 import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale, Contact, Plug } from 'lucide-react';
 
 export const PEOPLE = {
@@ -77,12 +78,13 @@ export function Stepper({ s, compact, label }) {
 export const Card = ({ className, children, ...r }) => <section className={cn('rounded-2xl border border-[var(--v-line)] bg-[var(--v-surface)] shadow-[0_1px_2px_rgba(16,20,41,.04),0_8px_24px_-12px_rgba(16,20,41,.10)]', className)} {...r}>{children}</section>;
 export const CardHead = ({ title, sub, right }) => <header className="flex items-start gap-3 px-5 pt-4 pb-3"><div className="min-w-0 flex-1"><h2 className="text-[15px] font-semibold">{title}</h2>{sub && <p className="text-[13px] text-[var(--v-ink-3)]">{sub}</p>}</div>{right}</header>;
 
-const CRUMB = { Home: '#v3-home', Requests: '#v3-runs', Runs: '#v3-runs', Approvals: '#v3-approvals', Admin: '#v3-admin', Squads: '#v3-squad', 'Business rules': '#v3-rules', 'WI-4821': '#v3-run', 'WI-4807': '#v3-runs', 'WI-4772': '#v3-runs', 'WI-4799': '#v3-runs' };
+const CRUMB = { Home: '#v3-home', Requests: '#v3-runs', Runs: '#v3-runs', Approvals: '#v3-approvals', Admin: '#v3-admin', Squads: '#v3-squad', 'Business rules': '#v3-rules', 'WI-4821': '#v3-run-wi-4821', 'WI-4807': '#v3-run-wi-4807', 'WI-4772': '#v3-run-wi-4772', 'WI-4799': '#v3-run-wi-4799' };
 const NAV = [['home','Home',Home],['new','New request',FilePlus2],['approvals','Approvals',Inbox,3],['run','Runs',Rocket],['rules','Business rules',BookCheck],['evidence','Evidence',ShieldCheck]];
 const ADMIN_NAV = [['admin','Governance',LayoutDashboard],['squad','Squads',UsersRound],['people','People and access',Contact],['policies','Policies',Scale],['connections','Connections',Plug]];
 export function Shell({ active, crumbs = [], actions, children, admin, user }) {
   const me = user || (admin ? 'dana' : 'alex');
   const [cp, setCp] = useState(false);
+  const proto = useProto();
   useEffect(() => {
     const k = e => {
       const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '');
@@ -99,10 +101,10 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
           <span className="grid size-8 place-items-center rounded-lg bg-[var(--v-blue)]"><svg viewBox="0 0 20 20" className="size-5" aria-hidden="true"><path d="M4 15V5l6 5 6-5v10" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round"/></svg></span>
           <div className="leading-tight"><div className="font-display text-[15px] font-semibold text-white">Delivery Platform</div><div className="text-[12px] text-[#8f97b3]">Full Application team</div></div>
         </div>
-        {NAV.map(([k, l, I, n]) => (
+        {NAV.map(([k, l, I, n0]) => { const n = k === 'approvals' ? proto.mine.length : n0; return (
           <a key={k} href={{run:'#v3-runs'}[k] || `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}>
-            <I className="size-[18px]" strokeWidth={1.8} />{l}{n && <span className="ml-auto rounded-full bg-[#e0a000] px-1.5 text-[11.5px] font-semibold text-[var(--v-ink)]">{n}</span>}
-          </a>))}
+            <I className="size-[18px]" strokeWidth={1.8} />{l}{n > 0 && <span className="ml-auto rounded-full bg-[#e0a000] px-1.5 text-[11.5px] font-semibold text-[var(--v-ink)]">{n}</span>}
+          </a>); })}
         {(admin || me === 'dana') && <>
           <div className="mt-5 mb-1 px-2.5 text-[12px] font-medium text-[#8f97b3]">Admin</div>
           {ADMIN_NAV.map(([k, l, I]) => (

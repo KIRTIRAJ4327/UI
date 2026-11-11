@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Avatar, PEOPLE } from './ui';
 import { useToast } from '@/components/friendly';
+import { useProto } from './store';
 import { Check, X, AlertTriangle, Bot } from 'lucide-react';
 
 const REQUESTER = 'priya';
@@ -36,6 +37,7 @@ function PersonSelect({ id, value, options, onChange, label }) {
 
 export default function V3Squad() {
   const toast = useToast();
+  const { resolve, undo } = useProto();
   const [sq, setSq] = useState(START);
   const [autonomy, setAutonomy] = useState({ impact: true, retry: true });
   const set = (role, i, v) => setSq(s => ({ ...s, [role]: i === 0 ? [v, s[role][1]] : [s[role][0], v] }));
@@ -72,7 +74,7 @@ export default function V3Squad() {
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right"><div className="tnum font-display text-[22px] font-semibold">{filled} of {ROLES.length}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">roles filled</div></div>
-            <Button disabled={blocking} onClick={() => toast('Squad saved. New approvers have been notified.')} className="h-10 rounded-lg px-5">Save squad</Button>
+            <Button disabled={blocking} onClick={() => { resolve('squad'); toast('Squad saved. New approvers have been notified.', undo); location.hash = 'v3-admin'; }} className="h-10 rounded-lg px-5">Save squad</Button>
           </div>
         </div>
 

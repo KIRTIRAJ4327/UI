@@ -3,13 +3,18 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Shell, Card, Pill, Avatar } from './ui';
 import { useToast } from '@/components/friendly';
-import { AlertTriangle, BookOpen, Link2 } from 'lucide-react';
+import { AlertTriangle, BookOpen, Link2, CheckCircle2 } from 'lucide-react';
+import { useProto } from './store';
 
 const Cite = ({ n }) => <a href="#src" className="ml-0.5 rounded bg-[var(--v-blue-soft)] px-1 align-[2px] font-mono text-[10.5px] text-[var(--v-blue)]">{n}</a>;
 export default function V3Approve() {
   const toast = useToast();
   const [risk, setRisk] = useState(false);
   const [mode, setMode] = useState('summary');
+  const { runs, approveDesign, requestDesignChanges, undo } = useProto();
+  const run = runs['WI-4821'];
+  const decided = run.state !== 'you';
+  const go = () => { location.hash = 'v3-run-wi-4821'; };
   return (
     <Shell active="approvals" crumbs={['Approvals', 'WI-4821', 'Design']}>
       <div className="mx-auto grid max-w-[1240px] grid-cols-[minmax(0,1fr)_380px] items-start gap-6">
@@ -37,7 +42,8 @@ export default function V3Approve() {
         </Card>
 
         <aside className="sticky top-24 flex flex-col gap-4">
-          <Card className="p-5">
+          {decided && <Card className="p-5"><div className="flex items-center gap-2 text-[var(--v-green)]"><CheckCircle2 className="size-5" /><b>Decision recorded</b></div><p className="mt-2 text-[14px] text-[var(--v-ink-2)]">You have decided on this design. Current status: {run.now}.</p><div className="mt-4 flex flex-col gap-2"><Button asChild className="h-10 rounded-lg"><a href="#v3-run-wi-4821">Open the run</a></Button><Button asChild variant="outline" className="h-10 rounded-lg"><a href="#v3-home">Back to home</a></Button></div></Card>}
+          {!decided && <Card className="p-5">
             <div className="flex items-center gap-2"><Pill tone="you">Your decision</Pill><span className="text-[13px] text-[var(--v-ink-3)]">waiting 12 min</span></div>
             <h2 className="mt-3 text-[18px] font-semibold">Approve the design?</h2>
             <p className="mt-1 text-[14px] text-[var(--v-ink-2)]">If you approve, the agent starts building. Jon Reyes reviews the code next.</p>
@@ -48,11 +54,11 @@ export default function V3Approve() {
             <label htmlFor="note" className="mt-4 block text-[13.5px] font-medium">Note for the team <span className="font-normal text-[var(--v-ink-3)]">(optional)</span></label>
             <textarea id="note" rows={2} placeholder="e.g. Please raise a follow-up for the API." className="mt-1.5 w-full rounded-lg border border-[var(--v-line)] p-2.5 text-[14px] outline-none focus:border-[var(--v-blue)] focus:ring-4 focus:ring-[var(--v-blue)]/15" />
             <div className="mt-4 flex flex-col gap-2">
-              <Button disabled={!risk} onClick={() => toast('Design approved. The agent has started building.')} className="h-11 rounded-lg text-[15px]">Approve design</Button>
+              <Button disabled={!risk} onClick={() => { approveDesign(); toast('Design approved. The agent has started building.', undo); go(); }} className="h-11 rounded-lg text-[15px]">Approve design</Button>
               {!risk && <p className="text-center text-[12.5px] text-[var(--v-ink-3)]">Tick the risk above to approve</p>}
-              <Button variant="outline" onClick={() => toast('Sent back to the agent with your note.')} className="h-11 rounded-lg text-[15px]">Request changes</Button>
+              <Button variant="outline" onClick={() => { requestDesignChanges(); toast('Sent back to the agent with your note.', undo); go(); }} className="h-11 rounded-lg text-[15px]">Request changes</Button>
             </div>
-          </Card>
+          </Card>}
           <Card className="p-5">
             <h3 className="text-[14px] font-semibold">Discussion</h3>
             <div className="mt-3 flex gap-3"><Avatar p="priya" size={28} /><div className="rounded-xl rounded-tl-sm bg-[var(--v-sunken)] px-3 py-2 text-[14px]"><b className="font-medium">Priya Nair</b> <span className="text-[12px] text-[var(--v-ink-3)]">10 min ago</span><p>Can we add the server check as a follow-up request?</p></div></div>

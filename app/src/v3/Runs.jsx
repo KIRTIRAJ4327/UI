@@ -2,26 +2,19 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, Pill, Avatar, Stepper, PEOPLE } from './ui';
+import { useProto, runHref } from './store';
 import { Plus, Search } from 'lucide-react';
 
-const RUNS = [
-  { id: 'WI-4836', t: 'Rate hold expiry notice', app: 'Full Application', s: 'dda', now: ['Agent writing the impact assessment', 'work'], holder: 'agent', age: '2 h', eta: 'Mon 17 Nov', mine: true },
-  { id: 'WI-4830', t: 'Advisor licence check', app: 'Advisor Portal', s: 'ddd', now: ['Agent preparing the design', 'work'], holder: 'agent', age: '6 h', eta: 'Tue 2 Dec', mine: false },
-  { id: 'WI-4821', t: 'Registered Amortization limit', app: 'Full Application', s: 'dddw', now: ['Design waiting for approval', 'you'], holder: 'alex', age: '1 d', eta: 'Thu 13 Nov', mine: true },
-  { id: 'WI-4807', t: 'Advisor eligibility banner', app: 'Advisor Portal', s: 'ddddw', now: ['Build waiting for code review', 'you'], holder: 'alex', age: '2 d', eta: 'Fri 14 Nov', mine: false },
-  { id: 'WI-4799', t: 'Statement export format', app: 'Client Services', s: 'dw', now: ['Questions waiting for your answer', 'you'], holder: 'alex', age: '3 d', eta: 'Wed 19 Nov', mine: false },
-  { id: 'WI-4790', t: 'Session timeout copy', app: 'Advisor Portal', s: 'ddddddf', now: ['Validation failed: 2 tests', 'bad'], holder: 'jon', age: '4 d', eta: 'At risk', mine: false },
-  { id: 'WI-4772', t: 'Fee schedule update', app: 'Full Application', s: 'dddddddw', now: ['Release waiting for sign-off', 'wait'], holder: 'sam', age: '5 d', eta: 'Thu 13 Nov', mine: false },
-  { id: 'WI-4751', t: 'Mortgage term picker labels', app: 'Full Application', s: 'dddddddd', now: ['Released', 'done'], holder: 'sam', age: '9 d', eta: 'Released 6 Nov', mine: true },
-];
+
 const FILTERS = [['all', 'All'], ['you', 'Waiting for me'], ['work', 'Agent working'], ['bad', 'Blocked'], ['done', 'Released']];
 
 export default function V3Runs({ approvals }) {
   const [f, setF] = useState(approvals ? 'you' : 'all');
   const [app, setApp] = useState('All applications');
   const [q, setQ] = useState('');
-  const rows = useMemo(() => RUNS.filter(r => (f === 'all' || r.now[1] === f) && (app === 'All applications' || r.app === app) && (`${r.id} ${r.t}`.toLowerCase().includes(q.toLowerCase()))), [f, app, q]);
-  const count = k => k === 'all' ? RUNS.length : RUNS.filter(r => r.now[1] === k).length;
+  const { list: RUNS } = useProto();
+  const rows = useMemo(() => RUNS.filter(r => (f === 'all' || r.state === f) && (app === 'All applications' || r.app === app) && (`${r.id} ${r.t}`.toLowerCase().includes(q.toLowerCase()))), [f, app, q, RUNS]);
+  const count = k => k === 'all' ? RUNS.length : RUNS.filter(r => r.state === k).length;
   return (
     <Shell active={approvals ? 'approvals' : 'run'} crumbs={[approvals ? 'Approvals' : 'Runs']} actions={<Button asChild className="h-9 rounded-lg px-4"><a href="#v3-new"><Plus className="size-4" />New request</a></Button>}>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-5">
@@ -40,9 +33,9 @@ export default function V3Runs({ approvals }) {
             <tbody>
               {rows.map(r => (
                 <tr key={r.id} className="border-b border-[var(--v-line)] last:border-0 hover:bg-[var(--v-sunken)]">
-                  <td className="py-3.5 pl-5"><a href={r.id === 'WI-4807' ? '#v3-review' : r.id === 'WI-4772' ? '#v3-release' : r.id === 'WI-4799' ? '#v3-clarify' : '#v3-run'} className="font-medium hover:text-[var(--v-blue)]">{r.t}</a><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}{r.mine && ' · requested by you'}</div></td>
+                  <td className="py-3.5 pl-5"><a href={runHref(r.id)} className="font-medium hover:text-[var(--v-blue)]">{r.t}</a><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}{r.by === 'alex' && ' · requested by you'}</div></td>
                   <td className="pr-6"><Stepper s={r.s} compact label /></td>
-                  <td className="pr-4"><Pill tone={r.now[1]}>{r.now[0]}</Pill></td>
+                  <td className="pr-4">{r.state === 'you' ? <a href={r.screen} className="inline-flex"><Pill tone="you">{r.now} →</Pill></a> : <Pill tone={r.state}>{r.now}</Pill>}</td>
                   <td className="pr-4"><span className="flex items-center gap-2"><Avatar p={r.holder} size={24} />{r.holder === 'agent' ? 'Agent' : PEOPLE[r.holder].name.split(' ')[0]}</span></td>
                   <td className="tnum pr-4 text-[var(--v-ink-2)]">{r.age}</td>
                   <td className={`pr-5 ${r.eta === 'At risk' ? 'font-medium text-[var(--v-red)]' : ''}`}>{r.eta}</td>

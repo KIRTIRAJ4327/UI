@@ -19,6 +19,7 @@ import V3Run from '@/v3/Run';
 import V3Approve from '@/v3/Approve';
 import V3Clarify from '@/v3/Clarify';
 import V3Evidence from '@/v3/Evidence';
+import { useProto } from '@/v3/store';
 import V3Admin from '@/v3/Admin';
 import V3Squad from '@/v3/Squad';
 import V3Runs from '@/v3/Runs';
@@ -82,12 +83,23 @@ function Gallery() {
     </div>
   );
 }
+const ApprovalsList = () => <V3Runs approvals />;
+function DemoMenu({ h, ALL }) {
+  const { reset } = useProto();
+  return <details className="fixed left-3 bottom-[76px] z-40 w-[224px] rounded-lg border border-white/15 bg-[#1c2140] text-xs text-white shadow-lg">
+    <summary className="cursor-pointer px-3 py-1.5 font-semibold">Prototype</summary>
+    <div className="flex flex-col gap-1 p-2 pt-0">
+      <button onClick={() => { reset(); location.hash = 'v3-home'; }} className="rounded-md bg-white/10 px-2 py-1.5 text-left hover:bg-white/20">Reset demo data</button>
+      <a href="#" className="rounded-md px-2 py-1.5 hover:bg-white/15">All mockups and earlier rounds</a>
+      <nav aria-label="Jump to screen" className="flex flex-wrap gap-0.5">{ALL.filter(x => x[0].startsWith('v3')).map(([k,t])=><a key={k} href={`#${k}`} title={t} aria-current={k===h?'page':undefined} className={`rounded px-1.5 py-1 hover:bg-white/15 ${k===h?'bg-brand':''}`}>{t.split(' · ')[0]}</a>)}</nav>
+    </div></details>;
+}
 export default function App() {
   const h = useHash();
-  const ALL = [...V3, ['v3-approvals','Approvals','',() => <V3Runs approvals />], ...ROUND2, ...CONCEPTS];
+  const ALL = [...V3, ['v3-approvals','Approvals','',ApprovalsList], ...ROUND2, ...CONCEPTS];
+  useEffect(() => { window.scrollTo(0, 0); }, [h]);
+  const runId = h.startsWith('v3-run-') ? h.slice(7).toUpperCase() : null;
   const C = ALL.find(c=>c[0]===h)?.[3];
-  if (!C) return <Gallery/>;
-  return <><C/><details className="fixed left-3 bottom-[76px] z-40 w-[224px] rounded-lg border border-white/15 bg-[#1c2140] text-xs text-white shadow-lg">
-    <summary className="cursor-pointer px-3 py-1.5 font-semibold">Mockups</summary>
-    <nav aria-label="Switch mockup" className="flex flex-wrap gap-0.5 p-1 pt-0"><a href="#" className="px-2 py-1 hover:bg-white/15">All</a>{ALL.map(([k,t])=><a key={k} href={`#${k}`} title={t} aria-current={k===h?'page':undefined} className={`px-2 py-1 hover:bg-white/15 ${k===h?'bg-brand':''}`}>{t.split(' · ')[0]}</a>)}</nav></details></>;
+  if (!C && !runId) return <Gallery/>;
+  return <>{runId ? <V3Run key={runId} id={runId} /> : <C/>}<DemoMenu h={h} ALL={ALL} /></>;
 }

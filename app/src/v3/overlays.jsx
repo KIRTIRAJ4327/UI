@@ -1,12 +1,13 @@
 // Command palette (⌘K / Ctrl+K / "/") and notifications panel for the v3 shell.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useProto } from './store';
 import { Search, Bell, CornerDownLeft, FileText, Rocket, BookCheck, User, LayoutGrid, X } from 'lucide-react';
 
 const ITEMS = [
   ['Go to', 'Home', '#v3-home', LayoutGrid], ['Go to', 'New request', '#v3-new', LayoutGrid], ['Go to', 'Approvals', '#v3-approvals', LayoutGrid], ['Go to', 'All runs', '#v3-runs', LayoutGrid],
   ['Go to', 'Business rules', '#v3-rules', LayoutGrid], ['Go to', 'Governance (admin)', '#v3-admin', LayoutGrid], ['Go to', 'Policies (admin)', '#v3-policies', LayoutGrid], ['Go to', 'Connections (admin)', '#v3-connections', LayoutGrid],
-  ['Runs', 'WI-4821 Registered Amortization limit', '#v3-run', Rocket], ['Runs', 'WI-4807 Advisor eligibility banner', '#v3-review', Rocket], ['Runs', 'WI-4772 Fee schedule update', '#v3-release', Rocket], ['Runs', 'WI-4799 Statement export format', '#v3-clarify', Rocket],
+  ['Runs', 'WI-4821 Registered Amortization limit', '#v3-run-wi-4821', Rocket], ['Runs', 'WI-4807 Advisor eligibility banner', '#v3-run-wi-4807', Rocket], ['Runs', 'WI-4772 Fee schedule update', '#v3-run-wi-4772', Rocket], ['Runs', 'WI-4799 Statement export format', '#v3-run-wi-4799', Rocket],
   ['Documents', 'ADR-0173 Enforce the Registered Amortization maximum', '#v3-approve', FileText], ['Documents', 'How the WI-4821 design was made', '#v3-evidence', FileText],
   ['Business rules', 'RA-MAX Registered Amortization must be 310 or less', '#v3-rules', BookCheck], ['Business rules', 'RATE-H Rate holds last at most 120 days', '#v3-rules', BookCheck],
   ['People', 'Priya Nair · Product Owner', '#v3-people', User], ['People', 'Jon Reyes · Engineering Lead (on leave)', '#v3-people', User], ['People', 'Lena Brooks · Engineering Lead', '#v3-people', User],
@@ -56,18 +57,10 @@ export function CommandPalette({ open, onClose }) {
   );
 }
 
-const NOTES = [
-  ['Design waiting for your approval', 'WI-4821 · from the delivery agent', '12 min', '#v3-approve', true],
-  ['Completion report reassigned to you', 'WI-4807 · Jon Reyes is on leave', '3 h', '#v3-review', true],
-  ['Priya replied to your question', 'WI-4821 · “Can we add the server check…”', '10 min', '#v3-approve', true],
-  ['Teams notifications are failing', 'Connections · sign-in expired at 08:12', '2 h', '#v3-connections', false],
-  ['Fee schedule update released', 'WI-4772 · Sam Okafor', 'Tue', '#v3-release', false],
-];
 export function Notifications() {
   const [open, setOpen] = useState(false);
-  const [read, setRead] = useState(false);
+  const { notes, unread, markRead } = useProto();
   const ref = useRef(null);
-  const unread = read ? 0 : NOTES.filter(n => n[4]).length;
   useEffect(() => {
     if (!open) return;
     const off = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
@@ -82,12 +75,12 @@ export function Notifications() {
       </button>
       {open && (
         <div role="dialog" aria-label="Notifications" className="absolute right-0 top-11 z-40 w-[380px] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10">
-          <div className="flex items-center justify-between border-b border-[var(--v-line)] px-4 py-3"><b className="font-semibold">Notifications</b><div className="flex items-center gap-1"><button onClick={() => setRead(true)} className="rounded-md px-2 py-1 text-[13px] font-medium text-[var(--v-blue)] hover:bg-[var(--v-blue-soft)]">Mark all read</button><button aria-label="Close notifications" onClick={() => setOpen(false)} className="rounded-md p-1 hover:bg-[var(--v-sunken)]"><X className="size-4" /></button></div></div>
-          <ul className="max-h-[400px] overflow-y-auto">{NOTES.map(([t, s, a, href, u]) => (
-            <li key={t}><a href={href} onClick={() => setOpen(false)} className="flex gap-3 border-b border-[var(--v-line)] px-4 py-3 last:border-0 hover:bg-[var(--v-sunken)]">
-              <span className={cn('mt-1.5 size-2 shrink-0 rounded-full', u && !read ? 'bg-[var(--v-blue)]' : 'bg-transparent')} aria-hidden="true" />
-              <span className="min-w-0 flex-1"><span className={cn('block text-[14px]', u && !read && 'font-semibold')}>{t}</span><span className="block truncate text-[12.5px] text-[var(--v-ink-3)]">{s}</span></span>
-              <span className="shrink-0 text-[12px] text-[var(--v-ink-3)]">{a}</span>{u && !read && <span className="sr-only">Unread</span>}</a></li>))}</ul>
+          <div className="flex items-center justify-between border-b border-[var(--v-line)] px-4 py-3"><b className="font-semibold">Notifications</b><div className="flex items-center gap-1"><button onClick={markRead} className="rounded-md px-2 py-1 text-[13px] font-medium text-[var(--v-blue)] hover:bg-[var(--v-blue-soft)]">Mark all read</button><button aria-label="Close notifications" onClick={() => setOpen(false)} className="rounded-md p-1 hover:bg-[var(--v-sunken)]"><X className="size-4" /></button></div></div>
+          <ul className="max-h-[400px] overflow-y-auto">{notes.map(({ id, t, s, a, href, unread: u }) => (
+            <li key={id}><a href={href} onClick={() => setOpen(false)} className="flex gap-3 border-b border-[var(--v-line)] px-4 py-3 last:border-0 hover:bg-[var(--v-sunken)]">
+              <span className={cn('mt-1.5 size-2 shrink-0 rounded-full', u ? 'bg-[var(--v-blue)]' : 'bg-transparent')} aria-hidden="true" />
+              <span className="min-w-0 flex-1"><span className={cn('block text-[14px]', u && 'font-semibold')}>{t}</span><span className="block truncate text-[12.5px] text-[var(--v-ink-3)]">{s}</span></span>
+              <span className="shrink-0 text-[12px] text-[var(--v-ink-3)]">{a}</span>{u && <span className="sr-only">Unread</span>}</a></li>))}</ul>
         </div>)}
     </div>
   );

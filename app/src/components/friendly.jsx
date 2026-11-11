@@ -36,12 +36,12 @@ export function HowToRead({ items, className }) {
 const ToastCtx = createContext(() => {});
 export function ToastProvider({ children }) {
   const [t, setT] = useState(null);
-  const show = useCallback((msg) => { setT(msg); clearTimeout(window.__toast); window.__toast = setTimeout(() => setT(null), 6000); }, []);
+  const show = useCallback((msg, undo) => { setT({ msg, undo }); clearTimeout(window.__toast); window.__toast = setTimeout(() => setT(null), 6000); }, []);
   return (
     <ToastCtx.Provider value={show}>
       {children}
       <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex justify-center">
-        {t && <div className="pointer-events-auto flex items-center gap-4 bg-ink px-4 py-2.5 text-white shadow-lg"><span>{t}</span><button onClick={() => setT(null)} className="font-semibold text-[#9cc3ff] underline underline-offset-2">Undo</button></div>}
+        {t && <div className="pointer-events-auto flex items-center gap-4 rounded-lg bg-[#101429] px-4 py-2.5 text-white shadow-lg"><span>{t.msg}</span>{t.undo && <button onClick={() => { t.undo(); setT({ msg: 'Undone.' }); }} className="font-semibold text-[#9cc3ff] underline underline-offset-2">Undo</button>}</div>}
       </div>
     </ToastCtx.Provider>
   );

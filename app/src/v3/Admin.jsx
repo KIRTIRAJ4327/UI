@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import CountUp from '@/components/CountUp';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE } from './ui';
 import { useToast } from '@/components/friendly';
+import { useProto, runHref } from './store';
 import { AlertTriangle, Clock, UserX, ShieldAlert, FlaskConical, Download, ArrowRight } from 'lucide-react';
 
 const KPIS = [
@@ -13,26 +14,23 @@ const KPIS = [
 ];
 
 const ATTENTION = [
-  { icon: UserX, tone: 'bad', id: 'WI-4807', title: 'Approver is on leave', text: 'Jon Reyes holds the completion review and is away until Friday. It has waited 3 h against a 2 h target.', action: 'Reassign to Lena Brooks', done: 'WI-4807 reassigned to Lena Brooks. Jon has been notified.' },
-  { icon: FlaskConical, tone: 'bad', id: 'WI-4790', title: 'Agent stopped after 3 attempts', text: 'Two regression tests still fail. The agent needs an engineer to decide whether the tests or the code are wrong.', action: 'Assign an engineer', done: 'Engineer assignment opened for WI-4790.' },
-  { icon: ShieldAlert, tone: 'wait', id: 'WI-4830', title: 'Release falls in the month-end freeze', text: 'Planned release on 2 Dec is inside the 1–3 Dec freeze. Approve an exception or move the date.', action: 'Review exception', done: 'Freeze exception request opened for WI-4830.' },
-  { icon: AlertTriangle, tone: 'wait', id: 'WI-4836', title: 'Squad is incomplete', text: 'No Integration Lead is assigned. The run will stop at Integrate without one.', action: 'Complete squad', href: '#v3-squad' },
+  { icon: UserX, tone: 'bad', id: 'WI-4807', key: 'leave', title: 'Approver is on leave', text: 'Jon Reyes holds the completion review and is away until Friday. It has waited 3 h against a 2 h target.', action: 'Reassign to Lena Brooks', done: 'WI-4807 reassigned to Lena Brooks. Jon has been notified.' },
+  { icon: FlaskConical, tone: 'bad', id: 'WI-4790', key: 'agent', title: 'Agent stopped after 3 attempts', text: 'Two regression tests still fail. The agent needs an engineer to decide whether the tests or the code are wrong.', action: 'Assign an engineer', done: 'Engineer assignment opened for WI-4790.' },
+  { icon: ShieldAlert, tone: 'wait', id: 'WI-4830', key: 'freeze', title: 'Release falls in the month-end freeze', text: 'Planned release on 2 Dec is inside the 1–3 Dec freeze. Approve an exception or move the date.', action: 'Review exception', done: 'Freeze exception request opened for WI-4830.' },
+  { icon: AlertTriangle, tone: 'wait', id: 'WI-4836', key: 'squad', title: 'Squad is incomplete', text: 'No Integration Lead is assigned. The run will stop at Integrate without one.', action: 'Complete squad', href: '#v3-squad' },
 ];
 
-const ITEMS = [
-  { id: 'WI-4821', t: 'Registered Amortization limit', app: 'Full Application', s: 'dddw', holder: 'alex', wait: '12m', squad: '6/6', health: ['On track', 'done'] },
-  { id: 'WI-4807', t: 'Advisor eligibility banner', app: 'Advisor Portal', s: 'ddddw', holder: 'jon', wait: '3h', squad: '6/6', health: ['Over target', 'bad'] },
-  { id: 'WI-4799', t: 'Statement export format', app: 'Client Services', s: 'dw', holder: 'priya', wait: '1h', squad: '6/6', health: ['On track', 'done'] },
-  { id: 'WI-4790', t: 'Session timeout copy', app: 'Advisor Portal', s: 'ddddddf', holder: 'agent', wait: '40m', squad: '6/6', health: ['Blocked', 'bad'] },
-  { id: 'WI-4836', t: 'Rate hold expiry notice', app: 'Full Application', s: 'dda', holder: 'agent', wait: '—', squad: '5/6', health: ['Squad gap', 'wait'] },
-  { id: 'WI-4830', t: 'Advisor licence check', app: 'Advisor Portal', s: 'ddd', holder: 'ravi', wait: '—', squad: '6/6', health: ['Freeze risk', 'wait'] },
-];
+
 
 const WAIT = [['Product Owner', 9.5], ['Engineering Lead', 6.8], ['Solution Architect', 4.2], ['Release Manager', 3.0], ['Quality Lead', 2.4], ['Integration Lead', 1.1]];
 const LOAD = [['alex', 3, ''], ['priya', 4, ''], ['jon', 2, 'On leave until Fri'], ['lena', 1, ''], ['ravi', 1, ''], ['mara', 2, '']];
 
 export default function V3Admin() {
   const toast = useToast();
+  const { list, attention, resolve, undo } = useProto();
+  const open = ATTENTION.filter(a => attention.includes(a.key));
+  const kpi = [list.filter(r => r.state !== 'done').length, list.filter(r => r.state === 'you' || r.state === 'wait').length, (attention.includes('leave') ? 1 : 0) + list.filter(r => r.state === 'bad').length, 48.2];
+  const ITEMS = list.map(r => ({ id: r.id, t: r.t, app: r.app, s: r.s, holder: r.holder, wait: r.wait || '—', squad: r.squadGap ? '5/6' : '6/6', health: r.state === 'bad' ? ['Blocked', 'bad'] : r.squadGap ? ['Squad gap', 'wait'] : r.freeze ? ['Freeze risk', 'wait'] : r.state === 'done' ? ['Done', 'done'] : ['On track', 'done'] }));
   return (
     <Shell admin active="admin" crumbs={['Admin', 'Governance']} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={() => toast('Audit pack for this week is being prepared.')}><Download className="size-4" />Export audit pack</Button>}>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
@@ -42,21 +40,22 @@ export default function V3Admin() {
         </div>
 
         <div className="grid grid-cols-4 gap-4">
-          {KPIS.map(([l, v, d, pre, suf, tone]) => (
+          {KPIS.map(([l, v0, d, pre, suf, tone], ki) => { const v = kpi[ki]; return (
             <Card key={l} className="px-5 py-4"><div className="flex items-center justify-between text-[13px] text-[var(--v-ink-3)]">{l}{tone !== 'mute' && <span className={`size-2 rounded-full ${tone === 'bad' ? 'bg-[var(--v-red)]' : 'bg-[#e0a000]'}`} />}</div>
-              <div className={`tnum mt-0.5 font-display text-[26px] font-semibold ${tone === 'bad' ? 'text-[var(--v-red)]' : ''}`}><CountUp to={v} decimals={d} prefix={pre} suffix={suf} duration={1.1} trigger="load" /></div></Card>))}
+              <div className={`tnum mt-0.5 font-display text-[26px] font-semibold ${tone === 'bad' ? 'text-[var(--v-red)]' : ''}`}><CountUp to={v} decimals={d} prefix={pre} suffix={suf} duration={1.1} trigger="load" /></div></Card>); })}
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_340px] items-start gap-6">
           <div className="flex flex-col gap-6">
             <Card>
-              <CardHead title="Needs your attention" sub="Problems the platform cannot resolve on its own" right={<Pill tone="bad">4 open</Pill>} />
+              <CardHead title="Needs your attention" sub="Problems the platform cannot resolve on its own" right={open.length ? <Pill tone="bad">{open.length} open</Pill> : <Pill tone="done">All clear</Pill>} />
               <ul className="divide-y divide-[var(--v-line)] border-t border-[var(--v-line)]">
-                {ATTENTION.map(a => (
+                {open.length === 0 && <li className="px-5 py-8 text-center text-[14px] text-[var(--v-ink-2)]">Nothing needs you right now. New problems appear here as soon as the platform finds them.</li>}
+                {open.map(a => (
                   <li key={a.id} className="flex items-start gap-4 px-5 py-4">
                     <span className={`grid size-9 shrink-0 place-items-center rounded-full ${a.tone === 'bad' ? 'bg-[var(--v-red-soft)] text-[var(--v-red)]' : 'bg-[var(--v-amber-soft)] text-[var(--v-amber)]'}`}><a.icon className="size-[18px]" /></span>
                     <div className="min-w-0 flex-1"><div className="flex items-center gap-2"><b className="font-semibold">{a.title}</b><span className="font-mono text-[12px] text-[var(--v-ink-3)]">{a.id}</span></div><p className="mt-0.5 max-w-[70ch] text-[13.5px] text-[var(--v-ink-2)]">{a.text}</p></div>
-                    {a.href ? <Button asChild variant="outline" className="h-9 shrink-0 rounded-lg"><a href={a.href}>{a.action}<ArrowRight className="size-4" /></a></Button> : <Button variant="outline" className="h-9 shrink-0 rounded-lg" onClick={() => toast(a.done)}>{a.action}</Button>}
+                    {a.href ? <Button asChild variant="outline" className="h-9 shrink-0 rounded-lg"><a href={a.href}>{a.action}<ArrowRight className="size-4" /></a></Button> : <Button variant="outline" className="h-9 shrink-0 rounded-lg" onClick={() => { resolve(a.key); toast(a.done, undo); }}>{a.action}</Button>}
                   </li>))}
               </ul>
             </Card>
@@ -68,9 +67,9 @@ export default function V3Admin() {
                   <thead><tr className="border-y border-[var(--v-line)] bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]"><th className="py-2 pl-5 font-medium">Work item</th><th className="w-40 pr-4 font-medium">Progress</th><th className="pr-4 font-medium">Held by</th><th className="pr-4 font-medium">Waiting</th><th className="pr-4 font-medium">Squad</th><th className="pr-4 font-medium">Health</th><th className="pr-5"><span className="sr-only">Actions</span></th></tr></thead>
                   <tbody>{ITEMS.map(r => (
                     <tr key={r.id} className="border-b border-[var(--v-line)] last:border-0 hover:bg-[var(--v-sunken)]">
-                      <td className="py-3 pl-5"><b className="font-medium">{r.t}</b><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}</div></td>
+                      <td className="py-3 pl-5"><a href={runHref(r.id)} className="font-medium hover:text-[var(--v-blue)]">{r.t}</a><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}</div></td>
                       <td className="pr-4"><Stepper s={r.s} compact label /></td>
-                      <td className="pr-4"><span className="flex items-center gap-2"><Avatar p={r.holder} size={24} />{PEOPLE[r.holder].name.split(' ')[0]}</span></td>
+                      <td className="pr-4"><span className="flex items-center gap-2"><Avatar p={r.holder} size={24} />{r.holder === 'agent' ? 'Agent' : PEOPLE[r.holder].name.split(' ')[0]}</span></td>
                       <td className="tnum pr-4">{r.wait}</td>
                       <td className={`tnum pr-4 ${r.squad !== '6/6' ? 'font-semibold text-[var(--v-amber)]' : ''}`}>{r.squad}</td>
                       <td className="pr-4"><Pill tone={r.health[1]}>{r.health[0]}</Pill></td>

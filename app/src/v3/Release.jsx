@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper } from './ui';
 import { useToast } from '@/components/friendly';
 import { CheckCircle2, CalendarClock, RotateCcw, FileText } from 'lucide-react';
+import { useProto } from './store';
 
 const READY = [
   ['Validation passed', 'All 8 acceptance criteria met · 214 regression tests green', 'mara', 'Mara Lopez · Tue 10:12'],
@@ -15,6 +16,10 @@ const WINDOWS = [['Thu 13 Nov, 18:00', 'Standard evening window · no conflicts'
 
 export default function V3Release() {
   const toast = useToast();
+  const { runs, scheduleRelease, holdRelease, undo } = useProto();
+  const run = runs['WI-4772'];
+  const decided = run.state !== 'wait';
+  const go = () => { location.hash = 'v3-run-wi-4772'; };
   const [w, setW] = useState(0);
   return (
     <Shell user="sam" active="approvals" crumbs={['Approvals', 'WI-4772', 'Release']}>
@@ -40,15 +45,16 @@ export default function V3Release() {
             </Card>
           </div>
           <aside className="flex flex-col gap-4">
-            <Card className="p-5">
+            {decided && <Card className="p-5"><div className="flex items-center gap-2 text-[var(--v-green)]"><CheckCircle2 className="size-5" /><b>Decision recorded</b></div><p className="mt-2 text-[14px] text-[var(--v-ink-2)]">The release decision is recorded. Current status: {run.now}.</p><div className="mt-4 flex flex-col gap-2"><Button asChild className="h-10 rounded-lg"><a href="#v3-run-wi-4772">Open the run</a></Button><Button asChild variant="outline" className="h-10 rounded-lg"><a href="#v3-home">Back to home</a></Button></div></Card>}
+            {!decided && <Card className="p-5">
               <h2 className="flex items-center gap-2 text-[17px] font-semibold"><CalendarClock className="size-5 text-[var(--v-ink-3)]" />When should it go live?</h2>
               <fieldset className="mt-3 flex flex-col gap-2"><legend className="sr-only">Release window</legend>
                 {WINDOWS.map(([t, d], i) => <label key={t} className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3.5 py-3 ${w === i ? 'border-[var(--v-blue)] bg-[var(--v-blue-soft)]' : 'border-[var(--v-line)]'}`}><input type="radio" name="win" checked={w === i} onChange={() => setW(i)} className="mt-1 accent-[var(--v-blue)]" /><span><b className="block font-medium">{t}</b><span className="text-[12.5px] text-[var(--v-ink-2)]">{d}</span></span></label>)}
               </fieldset>
               {w === 2 && <><label htmlFor="why" className="mt-3 block text-[13.5px] font-medium">Reason for releasing outside a window</label><input id="why" className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 text-[14px]" placeholder="e.g. regulatory deadline" /></>}
               <div className="mt-4 flex items-start gap-2 rounded-lg bg-[var(--v-sunken)] p-3 text-[12.5px] text-[var(--v-ink-2)]"><RotateCcw className="mt-0.5 size-3.5 shrink-0" />You can roll back for 24 hours after release from the run page.</div>
-              <div className="mt-4 flex flex-col gap-2"><Button onClick={() => toast(`Release scheduled for ${WINDOWS[w][0]}. The team has been notified.`)} className="h-11 rounded-lg text-[15px]">{w === 2 ? 'Release now' : 'Schedule release'}</Button><Button variant="outline" onClick={() => toast('Release held. Priya and Mara have been told why.')} className="h-11 rounded-lg text-[15px]">Hold release</Button></div>
-            </Card>
+              <div className="mt-4 flex flex-col gap-2"><Button onClick={() => { scheduleRelease(WINDOWS[w][0]); toast(w === 2 ? 'Released. The team has been notified.' : `Release scheduled for ${WINDOWS[w][0]}. The team has been notified.`, undo); go(); }} className="h-11 rounded-lg text-[15px]">{w === 2 ? 'Release now' : 'Schedule release'}</Button><Button variant="outline" onClick={() => { holdRelease(); toast('Release held. Priya and Mara have been told why.', undo); go(); }} className="h-11 rounded-lg text-[15px]">Hold release</Button></div>
+            </Card>}
           </aside>
         </div>
       </div>
