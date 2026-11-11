@@ -1,12 +1,12 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>C · Story board</title><link rel="stylesheet" href="base.css"><style>
 .board{display:grid;grid-template-columns:repeat(8,minmax(138px,1fr));gap:10px;overflow-x:auto;padding-bottom:8px}
-.col{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:10px;min-height:520px}
+.col{background:var(--panel2);border:1px solid var(--line);padding:10px;min-height:520px}
 .col h3{margin:0 0 10px;font-size:13px;display:flex;justify-content:space-between;align-items:center}
 .col h3 span{color:var(--faint);font-weight:500}
-.st{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;box-shadow:var(--shadow)}
-.st.need{border-color:#e0a21a;box-shadow:0 0 0 3px var(--warn-soft)}
+.st{background:var(--panel);border:1px solid var(--line);padding:10px;margin-bottom:8px}
+.st.need{border-left:4px solid #f1c21b}
 .st b{display:block;margin:4px 0}
-.gate{font-size:12px;color:var(--faint);text-align:center;border:1px dashed var(--line);border-radius:8px;padding:6px;margin-bottom:8px}
+.gate{font-size:12px;color:var(--faint);text-align:center;border:1px dashed var(--line);padding:6px;margin-bottom:8px}
 </style></head><body data-active="stories"><div class="app"><main class="main">
 <div class="top"><h1>Stories</h1><span class="crumb">Registered Amortization limit · WI-4821 and 5 other runs</span><div class="sp"></div><div class="search">Group: Stage <kbd>G</kbd></div><button class="btn pri">New request</button></div>
 <div class="page"><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip">All workspaces</span><span class="chip mute">Needs a person 5</span><span class="chip mute">Mine</span><span class="chip mute">Failed 1</span></div>
@@ -21,4 +21,4 @@
 <section class="col"><h3>Integrate <span>0</span></h3></section>
 <section class="col"><h3>Validate <span>1</span></h3><div class="st" style="border-color:var(--bad)"><span class="mono faint">S-05</span><b>Session timeout copy</b><span class="chip bad">2 tests failed</span><div class="faint" style="margin-top:6px">Agent retrying · 1 of 3</div></div></section>
 <section class="col"><h3>Release <span>1</span></h3><div class="st"><span class="mono faint">S-03</span><b>Fee schedule update</b><span class="chip ok">Released</span></div></section>
-</div><p class="faint" style="margin:0">Cards with an amber ring need a person. Drag is disabled: stage changes are driven by gates, not by hand.</p></div></main></div><script src="app.js"></script></body></html>
+</div><p class="faint" style="margin:0">Cards with an amber edge need a person. Drag is disabled: stage changes are driven by gates, not by hand.</p></div></main></div><script src="app.js"></script></body></html>
