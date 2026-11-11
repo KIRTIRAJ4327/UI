@@ -5,6 +5,7 @@ import { Shell, Card, Pill, Avatar } from './ui';
 import { useToast } from '@/components/friendly';
 import { AlertTriangle, BookOpen, Link2, CheckCircle2 } from 'lucide-react';
 import { useProto } from './store';
+import { useGate, NotYours } from './gate';
 
 const Cite = ({ n }) => <a href="#src" className="ml-0.5 rounded bg-[var(--v-blue-soft)] px-1 align-[2px] font-mono text-[10.5px] text-[var(--v-blue)]">{n}</a>;
 export default function V3Approve() {
@@ -12,8 +13,9 @@ export default function V3Approve() {
   const [risk, setRisk] = useState(false);
   const [mode, setMode] = useState('summary');
   const { runs, approveDesign, requestDesignChanges, undo } = useProto();
-  const run = runs['WI-4821'];
-  const decided = run.state !== 'you';
+  const g = useGate('WI-4821', 'gate.design');
+  const run = g.run;
+  const decided = g.decided;
   const go = () => { location.hash = 'v3-run-wi-4821'; };
   return (
     <Shell active="approvals" crumbs={['Approvals', 'WI-4821', 'Design']}>
@@ -42,8 +44,9 @@ export default function V3Approve() {
         </Card>
 
         <aside className="sticky top-24 flex flex-col gap-4">
+          {g.blocked && <NotYours g={g} />}
           {decided && <Card className="p-5"><div className="flex items-center gap-2 text-[var(--v-green)]"><CheckCircle2 className="size-5" /><b>Decision recorded</b></div><p className="mt-2 text-[14px] text-[var(--v-ink-2)]">You have decided on this design. Current status: {run.now}.</p><div className="mt-4 flex flex-col gap-2"><Button asChild className="h-10 rounded-lg"><a href="#v3-run-wi-4821">Open the run</a></Button><Button asChild variant="outline" className="h-10 rounded-lg"><a href="#v3-home">Back to home</a></Button></div></Card>}
-          {!decided && <Card className="p-5">
+          {!decided && !g.blocked && <Card className="p-5">
             <div className="flex items-center gap-2"><Pill tone="you">Your decision</Pill><span className="text-[13px] text-[var(--v-ink-3)]">waiting 12 min</span></div>
             <h2 className="mt-3 text-[18px] font-semibold">Approve the design?</h2>
             <p className="mt-1 text-[14px] text-[var(--v-ink-2)]">If you approve, the agent starts building. Jon Reyes reviews the code next.</p>

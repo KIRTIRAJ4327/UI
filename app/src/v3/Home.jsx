@@ -8,8 +8,9 @@ import { useProto, runHref } from './store';
 import { Clock, ArrowRight, Plus, PartyPopper } from 'lucide-react';
 
 export default function V3Home() {
-  const { mine, list, feed } = useProto();
-  const myRequests = list.filter(r => r.by === 'alex').slice(0, 4);
+  const { mine, list, feed, me, can, attention, myRole } = useProto();
+  const isAdmin = can('squads.manage');
+  const myRequests = list.filter(r => r.by === me).slice(0, 4);
   const inProgress = list.filter(r => r.state !== 'done').length;
   const heading = mine.length ? `${mine.length} ${mine.length === 1 ? 'decision is' : 'decisions are'} waiting for you` : 'You are all caught up';
   return (
@@ -35,12 +36,12 @@ export default function V3Home() {
                   <li key={w.id} className="group grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-3 px-5 py-4 hover:bg-[var(--v-sunken)]">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2"><a href={runHref(w.id)} className="font-mono text-[12px] text-[var(--v-ink-3)] hover:underline">{w.id}</a><span className="text-[13px] text-[var(--v-ink-3)]">{w.t}</span>{w.reassigned && <Pill tone="bad">Reassigned to you</Pill>}</div>
-                      <a href={w.screen} className="mt-0.5 block text-[16px] font-semibold hover:text-[var(--v-blue)]">{w.ask}</a>
+                      <a href={w.screen || runHref(w.id)} className="mt-0.5 block text-[16px] font-semibold hover:text-[var(--v-blue)]">{w.ask}</a>
                       <p className="mt-1 max-w-[62ch] text-[13.5px] text-[var(--v-ink-2)]">{w.why}</p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
                       <span className="flex items-center gap-1.5 text-[13px] text-[var(--v-amber)]"><Clock className="size-3.5" />Waiting {w.wait}</span>
-                      <Button asChild className="h-9 rounded-lg"><a href={w.screen}>Review<ArrowRight className="size-4" /></a></Button>
+                      <Button asChild className="h-9 rounded-lg"><a href={w.screen || runHref(w.id)}>Review<ArrowRight className="size-4" /></a></Button>
                     </div>
                     <div className="col-span-2 flex items-center gap-3"><Avatar p={w.by} size={22} /><span className="text-[12.5px] text-[var(--v-ink-3)]">from {PEOPLE[w.by].name}</span><div className="ml-auto w-52"><Stepper s={w.s} compact label /></div></div>
                   </li>))}
@@ -56,9 +57,11 @@ export default function V3Home() {
           </SpotlightCard>
 
           <div className="flex flex-col gap-6">
+            {isAdmin && <Card className="overflow-hidden"><div className={`px-5 py-4 ${attention.length ? 'bg-[var(--v-red-soft)]' : 'bg-[var(--v-green-soft)]'}`}><div className="text-[12.5px] font-medium text-[var(--v-ink-2)]">{myRole}</div><b className="text-[16px]">{attention.length ? `${attention.length} problems need an admin` : 'No problems need an admin'}</b><p className="mt-1 text-[13.5px] text-[var(--v-ink-2)]">Approvers on leave, stuck agents, freezes and incomplete squads.</p><Button asChild size="sm" className="mt-3 rounded-lg"><a href="#v3-admin">Open governance</a></Button></div></Card>}
             <Card>
               <CardHead title="Your requests" right={<a href="#v3-new" className="text-[13px] font-medium text-[var(--v-blue)]">New</a>} />
               <ul className="flex flex-col gap-1 px-3 pb-4">
+                {!myRequests.length && <li className="px-2 py-2 text-[13.5px] text-[var(--v-ink-2)]">You have not started any requests. <a href="#v3-new" className="font-medium text-[var(--v-blue)]">Start one</a></li>}
                 {myRequests.map(r => <li key={r.id}><a href={runHref(r.id)} className="flex flex-col gap-1.5 rounded-lg px-2 py-2 hover:bg-[var(--v-sunken)]"><div className="flex items-center justify-between gap-2"><span className="truncate font-medium">{r.t}</span><Pill tone={r.state}>{r.state === 'done' ? 'Released' : r.state === 'bad' ? 'Needs attention' : r.state === 'work' ? 'Agent working' : 'Waiting'}</Pill></div><Stepper s={r.s} compact /></a></li>)}
               </ul>
             </Card>

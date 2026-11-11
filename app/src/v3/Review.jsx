@@ -5,6 +5,7 @@ import { Shell, Card, CardHead, Pill, Stepper } from './ui';
 import { useToast } from '@/components/friendly';
 import { CheckCircle2, FileCode2, GitPullRequest } from 'lucide-react';
 import { useProto } from './store';
+import { useGate, NotYours } from './gate';
 
 const FILES = [
   ['src/advisor/EligibilityBanner.jsx', '+42 −0', [
@@ -24,8 +25,9 @@ const CHECKS = [['Unit tests', '6 of 6 passed'], ['Baseline build', 'Green befor
 export default function V3Review() {
   const toast = useToast();
   const { runs, approveBuild, requestBuildChanges, undo } = useProto();
-  const run = runs['WI-4807'];
-  const decided = run.state !== 'you';
+  const g = useGate('WI-4807', 'gate.build');
+  const run = g.run;
+  const decided = g.decided;
   const go = () => { location.hash = 'v3-run-wi-4807'; };
   const [open, setOpen] = useState(0);
   return (
@@ -35,7 +37,7 @@ export default function V3Review() {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2"><span className="font-mono text-[12.5px] text-[var(--v-ink-3)]">WI-4807 · Advisor Portal</span><Pill tone="you">Build · reassigned to you</Pill></div>
             <h1 className="mt-1 font-display text-[28px] font-semibold">Review the code for the eligibility banner</h1>
-            <p className="mt-1 max-w-[72ch] text-[15px] text-[var(--v-ink-2)]">The agent built the approved design and tested it. You are reviewing for Jon Reyes, who is on leave. If you approve, the change moves to integration.</p>
+            <p className="mt-1 max-w-[72ch] text-[15px] text-[var(--v-ink-2)]">The agent built the approved design and tested it. You are the named backup for Jon Reyes, who is on leave, so you can approve this build even though your role is Solution Architect. If you approve, the change moves to integration.</p>
           </div>
           <div className="w-56 pt-2"><Stepper s="ddddw" compact /><div className="mt-1.5 text-[12.5px] text-[var(--v-ink-3)]">Stage 5 of 8 · Build</div></div>
         </div>
@@ -64,8 +66,9 @@ export default function V3Review() {
               <CardHead title="Automatic checks" right={<Pill tone="done">All passed</Pill>} />
               <ul className="flex flex-col gap-2.5 px-5 pb-5">{CHECKS.map(([a, b]) => <li key={a} className="flex items-start gap-2.5 text-[13.5px]"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[var(--v-green)]" /><span><b className="font-medium">{a}</b><span className="block text-[var(--v-ink-2)]">{b}</span></span></li>)}</ul>
             </Card>
-            {decided && <Card className="p-5"><div className="flex items-center gap-2 text-[var(--v-green)]"><CheckCircle2 className="size-5" /><b>Decision recorded</b></div><p className="mt-2 text-[14px] text-[var(--v-ink-2)]">You have decided on this build. Current status: {run.now}.</p><div className="mt-4 flex flex-col gap-2"><Button asChild className="h-10 rounded-lg"><a href="#v3-run-wi-4807">Open the run</a></Button><Button asChild variant="outline" className="h-10 rounded-lg"><a href="#v3-home">Back to home</a></Button></div></Card>}
-            {!decided && <Card className="p-5">
+            {g.blocked && <NotYours g={g} />}
+          {decided && <Card className="p-5"><div className="flex items-center gap-2 text-[var(--v-green)]"><CheckCircle2 className="size-5" /><b>Decision recorded</b></div><p className="mt-2 text-[14px] text-[var(--v-ink-2)]">You have decided on this build. Current status: {run.now}.</p><div className="mt-4 flex flex-col gap-2"><Button asChild className="h-10 rounded-lg"><a href="#v3-run-wi-4807">Open the run</a></Button><Button asChild variant="outline" className="h-10 rounded-lg"><a href="#v3-home">Back to home</a></Button></div></Card>}
+            {!decided && !g.blocked && <Card className="p-5">
               <h2 className="text-[17px] font-semibold">Approve the build?</h2>
               <p className="mt-1 text-[13.5px] text-[var(--v-ink-2)]">Next: Tom Iverson runs integration on the merge commit.</p>
               <label htmlFor="rnote" className="mt-4 block text-[13.5px] font-medium">Comment <span className="font-normal text-[var(--v-ink-3)]">(optional)</span></label>

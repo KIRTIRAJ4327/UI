@@ -35,7 +35,7 @@ export default function V3Runs({ approvals }) {
                 <tr key={r.id} className="border-b border-[var(--v-line)] last:border-0 hover:bg-[var(--v-sunken)]">
                   <td className="py-3.5 pl-5"><a href={runHref(r.id)} className="font-medium hover:text-[var(--v-blue)]">{r.t}</a><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}{r.by === 'alex' && ' · requested by you'}</div></td>
                   <td className="pr-6"><Stepper s={r.s} compact label /></td>
-                  <td className="pr-4">{r.state === 'you' ? <a href={r.screen} className="inline-flex"><Pill tone="you">{r.now} →</Pill></a> : <Pill tone={r.state}>{r.now}</Pill>}</td>
+                  <td className="pr-4">{r.state === 'you' ? <a href={r.screen || runHref(r.id)} className="inline-flex"><Pill tone="you">{r.now} →</Pill></a> : <Pill tone={r.state}>{r.now}</Pill>}</td>
                   <td className="pr-4"><span className="flex items-center gap-2"><Avatar p={r.holder} size={24} />{r.holder === 'agent' ? 'Agent' : PEOPLE[r.holder].name.split(' ')[0]}</span></td>
                   <td className="tnum pr-4 text-[var(--v-ink-2)]">{r.age}</td>
                   <td className={`pr-5 ${r.eta === 'At risk' ? 'font-medium text-[var(--v-red)]' : ''}`}>{r.eta}</td>

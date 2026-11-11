@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { CommandPalette, Notifications } from './overlays';
 import { useProto } from './store';
-import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale, Contact, Plug } from 'lucide-react';
+import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale, Contact, Plug, KeyRound, History } from 'lucide-react';
 
 export const PEOPLE = {
   priya: { name: 'Priya Nair', role: 'Product Owner', init: 'PN', hue: '#7c5cc4' },
@@ -79,10 +79,10 @@ export const Card = ({ className, children, ...r }) => <section className={cn('r
 export const CardHead = ({ title, sub, right }) => <header className="flex items-start gap-3 px-5 pt-4 pb-3"><div className="min-w-0 flex-1"><h2 className="text-[15px] font-semibold">{title}</h2>{sub && <p className="text-[13px] text-[var(--v-ink-3)]">{sub}</p>}</div>{right}</header>;
 
 const CRUMB = { Home: '#v3-home', Requests: '#v3-runs', Runs: '#v3-runs', Approvals: '#v3-approvals', Admin: '#v3-admin', Squads: '#v3-squad', 'Business rules': '#v3-rules', 'WI-4821': '#v3-run-wi-4821', 'WI-4807': '#v3-run-wi-4807', 'WI-4772': '#v3-run-wi-4772', 'WI-4799': '#v3-run-wi-4799' };
-const NAV = [['home','Home',Home],['new','New request',FilePlus2],['approvals','Approvals',Inbox,3],['run','Runs',Rocket],['rules','Business rules',BookCheck],['evidence','Evidence',ShieldCheck]];
-const ADMIN_NAV = [['admin','Governance',LayoutDashboard],['squad','Squads',UsersRound],['people','People and access',Contact],['policies','Policies',Scale],['connections','Connections',Plug]];
+const NAV = [['home','Home',Home],['new','New request',FilePlus2],['approvals','Approvals',Inbox,3],['run','Runs',Rocket],['rules','Business rules',BookCheck],['artifacts','Artifacts',ShieldCheck]];
+const ADMIN_NAV = [['admin','Governance',LayoutDashboard,'squads.manage'],['squads','Squads',UsersRound,'squads.manage'],['people','People and access',Contact,'people.manage'],['roles','Roles and permissions',KeyRound,'roles.manage'],['policies','Policies',Scale,'policies.manage'],['connections','Connections',Plug,'connections.manage'],['audit','Audit log',History,'audit.view']];
 export function Shell({ active, crumbs = [], actions, children, admin, user }) {
-  const me = user || (admin ? 'dana' : 'alex');
+  const me = useProto().me;
   const [cp, setCp] = useState(false);
   const proto = useProto();
   useEffect(() => {
@@ -105,12 +105,18 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
           <a key={k} href={{run:'#v3-runs'}[k] || `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}>
             <I className="size-[18px]" strokeWidth={1.8} />{l}{n > 0 && <span className="ml-auto rounded-full bg-[#e0a000] px-1.5 text-[11.5px] font-semibold text-[var(--v-ink)]">{n}</span>}
           </a>); })}
-        {(admin || me === 'dana') && <>
+        {ADMIN_NAV.some(x => proto.can(x[3])) && <>
           <div className="mt-5 mb-1 px-2.5 text-[12px] font-medium text-[#8f97b3]">Admin</div>
-          {ADMIN_NAV.map(([k, l, I]) => (
+          {ADMIN_NAV.filter(x => proto.can(x[3])).map(([k, l, I]) => (
             <a key={k} href={`#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}><I className="size-[18px]" strokeWidth={1.8} />{l}</a>))}
         </>}
-        <div className="mt-auto flex items-center gap-2.5 rounded-xl px-2.5 py-2 hover:bg-white/5"><Avatar p={me} size={32} /><div className="leading-tight"><div className="text-[14px] font-medium text-white">{PEOPLE[me].name}</div><div className="text-[12px] text-[#8f97b3]">{PEOPLE[me].role}</div></div><Settings className="ml-auto size-4" /></div>
+        <div className="mt-auto flex flex-col gap-1.5 rounded-xl bg-white/5 px-2.5 py-2">
+          <div className="flex items-center gap-2.5"><Avatar p={me} size={32} /><div className="min-w-0 leading-tight"><div className="truncate text-[14px] font-medium text-white">{PEOPLE[me].name}</div><div className="truncate text-[12px] text-[#8f97b3]">{proto.myRole}</div></div></div>
+          <label htmlFor="viewas" className="text-[11.5px] text-[#8f97b3]">View as</label>
+          <select id="viewas" value={me} onChange={e => { proto.setMe(e.target.value); location.hash = 'v3-home'; }} className="h-8 rounded-md border border-white/15 bg-[#1c2140] px-2 text-[13px] text-white">
+            <option value="alex">Alex Kim · Solution Architect</option><option value="priya">Priya Nair · Product Owner</option><option value="sam">Sam Okafor · Release Manager</option><option value="dana">Dana Whitfield · Platform Admin</option>
+          </select>
+        </div>
       </nav>
       <div className="flex min-w-0 flex-col">
         <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[var(--v-line)] bg-[var(--v-bg)]/90 px-8 backdrop-blur">

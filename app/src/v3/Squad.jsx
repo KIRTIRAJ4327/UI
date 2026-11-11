@@ -35,10 +35,13 @@ function PersonSelect({ id, value, options, onChange, label }) {
   );
 }
 
-export default function V3Squad() {
+const STAGE_OF = { 'Product Owner': [0, 1], 'Solution Architect': [3], 'Engineering Lead': [4], 'Integration Lead': [5], 'Quality Lead': [6], 'Release Manager': [7] };
+const gateFor = (s, role) => { const idx = STAGE_OF[role]; if (idx.every(i => s[i] === 'd')) return 'Approved'; if (idx.some(i => s[i] === 'w')) return 'Waiting now'; const cur = s.length; return idx[0] === cur ? 'Next' : 'Upcoming'; };
+export default function V3Squad({ id = 'WI-4836' }) {
   const toast = useToast();
-  const { resolve, undo } = useProto();
-  const [sq, setSq] = useState(START);
+  const { resolve, undo, runs, attention } = useProto();
+  const run = runs[id] || runs['WI-4836'];
+  const [sq, setSq] = useState(() => { const s = structuredClone(START); if (!run.squadGap) s['Integration Lead'] = ['tom', 'lena']; if (run.id === 'WI-4807' && !attention.includes('leave')) s['Engineering Lead'] = ['lena', 'jon']; if (run.id !== 'WI-4807') s['Engineering Lead'] = [s['Engineering Lead'][0], s['Engineering Lead'][1] || 'lena']; return s; });
   const [autonomy, setAutonomy] = useState({ impact: true, retry: true });
   const set = (role, i, v) => setSq(s => ({ ...s, [role]: i === 0 ? [v, s[role][1]] : [s[role][0], v] }));
 
@@ -64,26 +67,26 @@ export default function V3Squad() {
   const blocking = issues.some(i => i[2] === 'bad');
 
   return (
-    <Shell admin active="squad" crumbs={['Admin', 'Squads', 'WI-4821']}>
+    <Shell active="squads" crumbs={['Admin', 'Squads', run.id]}>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
         <div className="flex flex-wrap items-start gap-6">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2"><span className="font-mono text-[12.5px] text-[var(--v-ink-3)]">WI-4821 · Full Application</span><Pill tone="you">Design · waiting for Alex Kim</Pill></div>
-            <h1 className="mt-1 font-display text-[28px] font-semibold">Squad for Registered Amortization limit</h1>
+            <div className="flex items-center gap-2"><span className="font-mono text-[12.5px] text-[var(--v-ink-3)]">{run.id} · {run.app}</span><Pill tone={run.state === 'done' ? 'done' : 'wait'}>{run.now}</Pill></div>
+            <h1 className="mt-1 font-display text-[28px] font-semibold">Squad for {run.t}</h1>
             <p className="mt-1 text-[15px] text-[var(--v-ink-2)]">Choose who approves each stage and who steps in if they are away. Changes apply to stages that have not been approved yet.</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right"><div className="tnum font-display text-[22px] font-semibold">{filled} of {ROLES.length}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">roles filled</div></div>
-            <Button disabled={blocking} onClick={() => { resolve('squad'); toast('Squad saved. New approvers have been notified.', undo); location.hash = 'v3-admin'; }} className="h-10 rounded-lg px-5">Save squad</Button>
+            <Button disabled={blocking} onClick={() => { if (run.squadGap) resolve('squad'); else if (run.id === 'WI-4807' && attention.includes('leave')) resolve('leave'); toast('Squad saved. New approvers have been notified.', undo); location.hash = 'v3-squads'; }} className="h-10 rounded-lg px-5">Save squad</Button>
           </div>
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_340px] items-start gap-6">
           <Card className="overflow-hidden">
             <table className="w-full text-[13.5px]">
-              <caption className="sr-only">Approval roles for WI-4821</caption>
+              <caption className="sr-only">Approval roles for {run.id}</caption>
               <thead><tr className="border-b border-[var(--v-line)] bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]"><th className="py-2.5 pl-5 font-medium">Role</th><th className="font-medium">Approver</th><th className="font-medium">Backup</th><th className="pr-5 font-medium">Gate</th></tr></thead>
-              <tbody>{ROLES.map(([r, st, opts, gate], i) => {
+              <tbody>{ROLES.map(([r, st, opts], i) => { const gate = gateFor(run.s, r);
                 const locked = gate === 'Approved';
                 const rowIssue = issues.find(x => x[0] === r);
                 return (

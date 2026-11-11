@@ -21,7 +21,6 @@ import V3Clarify from '@/v3/Clarify';
 import V3Evidence from '@/v3/Evidence';
 import { useProto } from '@/v3/store';
 import V3Admin from '@/v3/Admin';
-import V3Squad from '@/v3/Squad';
 import V3Runs from '@/v3/Runs';
 import V3Review from '@/v3/Review';
 import V3Release from '@/v3/Release';
@@ -29,6 +28,12 @@ import V3Rules from '@/v3/Rules';
 import V3People from '@/v3/People';
 import V3Policies from '@/v3/Policies';
 import V3Connections from '@/v3/Connections';
+import V3Roles from '@/v3/Roles';
+import V3Artifacts from '@/v3/Artifacts';
+import V3Audit from '@/v3/Audit';
+import V3Squads from '@/v3/Squads';
+import V3Squad from '@/v3/Squad';
+import { RequirePerm } from '@/v3/gate';
 export const V3 = [
   ['v3-home','1 · Home','What is waiting for you, your requests and recent activity.',V3Home],
   ['v3-new','2 · New request','Describe the change; see the plan, approvers and timing before anything starts.',V3New],
@@ -45,6 +50,10 @@ export const V3 = [
   ['v3-people','13 · Admin: People and access','Who can approve what, in which application, and who is away.',V3People],
   ['v3-policies','14 · Admin: Policies','Approval targets, separation of duties, freezes, agent limits, spend.',V3Policies],
   ['v3-connections','15 · Admin: Connections','Health of Azure Boards, pipelines, repos, Knowledge Fabric, model, Teams.',V3Connections],
+  ['v3-artifacts','16 · Artifacts','Every stored document and piece of evidence, with versions, approvals and access history.',V3Artifacts],
+  ['v3-squads','17 · Admin: Squads','Every work item\'s squad, gaps, and the people available per application.',V3Squads],
+  ['v3-roles','18 · Admin: Roles and permissions','Role-based access: what each role may do, editable and audited.',V3Roles],
+  ['v3-audit','19 · Admin: Audit log','Every decision, document, access and permission change.',V3Audit],
 ];
 export const ROUND2 = [
   ['strips','G · Flight strips','From air traffic control: each run is a strip handed between role bays, stamped by everyone who handled it.',FlightStrips],
@@ -71,7 +80,7 @@ function Gallery() {
       <div className="text-xs text-neutral-500">Unified Product Delivery Platform</div>
       <SplitText text="Redesign proposals for review" tag="h1" splitType="words" effect="fade" delay={60} duration={0.6} textAlign="left" trigger="load" className="text-3xl font-light" />
       <p className="mt-2 max-w-3xl text-neutral-600">Round 2 borrows interaction models from air traffic control, service maps, change-advisory boards, agent tracing, command lines and ontology tools. All use the same sample run, WI-4821, and the same visual language.</p>
-      <h2 className="mt-8 text-[13px] font-semibold text-ink">Round 3 · recommended: the complete product, 15 connected screens</h2>
+      <h2 className="mt-8 text-[13px] font-semibold text-ink">Round 3 · recommended: the complete product, 19 connected screens</h2>
       <div className="mt-2 grid grid-cols-3 gap-4">{V3.map(([k,t,d])=>(
         <a key={k} href={`#${k}`} className="block rounded-xl border-2 border-brand/30 bg-white p-5 hover:border-brand"><b className="block text-base font-semibold">{t}</b><p className="mt-1 text-neutral-600">{d}</p><span className="mt-3 inline-block text-primary">Open screen →</span></a>))}</div>
       <h2 className="mt-10 font-mono text-[11px] uppercase tracking-wider text-[#65635c]">Round 2 · new interaction models (see RESEARCH.md)</h2>
@@ -86,7 +95,7 @@ function Gallery() {
 const ApprovalsList = () => <V3Runs approvals />;
 function DemoMenu({ h, ALL }) {
   const { reset } = useProto();
-  return <details className="fixed left-3 bottom-[76px] z-40 w-[224px] rounded-lg border border-white/15 bg-[#1c2140] text-xs text-white shadow-lg">
+  return <details className="fixed left-3 bottom-[140px] z-40 w-[224px] rounded-lg border border-white/15 bg-[#1c2140] text-xs text-white shadow-lg">
     <summary className="cursor-pointer px-3 py-1.5 font-semibold">Prototype</summary>
     <div className="flex flex-col gap-1 p-2 pt-0">
       <button onClick={() => { reset(); location.hash = 'v3-home'; }} className="rounded-md bg-white/10 px-2 py-1.5 text-left hover:bg-white/20">Reset demo data</button>
@@ -99,7 +108,11 @@ export default function App() {
   const ALL = [...V3, ['v3-approvals','Approvals','',ApprovalsList], ...ROUND2, ...CONCEPTS];
   useEffect(() => { window.scrollTo(0, 0); }, [h]);
   const runId = h.startsWith('v3-run-') ? h.slice(7).toUpperCase() : null;
+  const squadId = h.startsWith('v3-squad-') ? h.slice(9).toUpperCase() : null;
+  const GUARD = { 'v3-admin': 'squads.manage', 'v3-squad': 'squads.manage', 'v3-squads': 'squads.manage', 'v3-people': 'people.manage', 'v3-policies': 'policies.manage', 'v3-connections': 'connections.manage', 'v3-roles': 'roles.manage', 'v3-audit': 'audit.view' };
+  const guardKey = squadId ? 'v3-squad' : h;
   const C = ALL.find(c=>c[0]===h)?.[3];
-  if (!C && !runId) return <Gallery/>;
-  return <>{runId ? <V3Run key={runId} id={runId} /> : <C/>}<DemoMenu h={h} ALL={ALL} /></>;
+  if (!C && !runId && !squadId) return <Gallery/>;
+  const page = runId ? <V3Run key={runId} id={runId} /> : squadId ? <V3Squad key={squadId} id={squadId} /> : <C/>;
+  return <>{GUARD[guardKey] ? <RequirePerm perm={GUARD[guardKey]} active={guardKey.slice(3)} crumbs={['Admin']}>{page}</RequirePerm> : page}<DemoMenu h={h} ALL={ALL} /></>;
 }

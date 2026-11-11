@@ -11,13 +11,16 @@ const DOC_HREF = { 3: '#v3-approve', 4: '#v3-review' };
 
 function StatusCard({ r }) {
   const toast = useToast();
+  const { approvePlan, requestPlanChanges, can, undo } = useProto();
   const holder = PEOPLE[r.holder]?.name || 'the agent';
   if (r.state === 'you') return (
     <Card className="overflow-hidden">
       <div className="flex items-start gap-4 border-b border-[#f0d9a8] bg-[var(--v-amber-soft)] px-6 py-5">
         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[var(--v-amber)]"><AlertTriangle className="size-5" /></span>
         <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">{r.ask}</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">{r.why}</p></div>
-        <Button asChild className="h-10 shrink-0 rounded-lg px-5"><a href={r.screen}>Review<ArrowRight className="size-4" /></a></Button>
+        {r.screen ? <Button asChild className="h-10 shrink-0 rounded-lg px-5"><a href={r.screen}>Review<ArrowRight className="size-4" /></a></Button>
+          : can('gate.plan') ? <div className="flex shrink-0 gap-2"><Button className="h-10 rounded-lg px-5" onClick={() => { approvePlan(r.id); toast('Plan approved. The agent is writing the specification.', undo); }}>Approve plan</Button><Button variant="outline" className="h-10 rounded-lg" onClick={() => { requestPlanChanges(r.id); toast('Plan sent back to the agent.', undo); }}>Send back</Button></div>
+          : <span className="shrink-0 text-[13px] text-[var(--v-ink-3)]">Your role cannot approve plans</span>}
       </div>
       {r.id === 'WI-4821' && <div className="grid grid-cols-3 divide-x divide-[var(--v-line)]">
         {[['What changes', 'Product Selection blocks values above 310 and explains why.'], ['What does not', 'The Pricing API and batch import still accept any value.'], ['If you approve', 'The agent builds it with unit tests, about 20 minutes, then Jon reviews.']].map(([h, t]) => <div key={h} className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">{h}</h3><p className="mt-1 text-[14.5px] leading-relaxed">{t}</p></div>)}
@@ -39,7 +42,7 @@ function StatusCard({ r }) {
 }
 
 export default function V3Run({ id = 'WI-4821' }) {
-  const { runs, finishPlan, togglePause } = useProto();
+  const { runs, finishPlan, togglePause, can } = useProto();
   const toast = useToast();
   const r = runs[id];
   useEffect(() => { if (r?.fresh && r.s === 'a') { const t = setTimeout(() => finishPlan(id), 4000); return () => clearTimeout(t); } }, [r?.fresh, r?.s, id, finishPlan]);
@@ -47,7 +50,7 @@ export default function V3Run({ id = 'WI-4821' }) {
     <Shell active="run" crumbs={['Runs', id]}><div className="mx-auto max-w-[600px] py-20 text-center"><h1 className="font-display text-[24px] font-semibold">We could not find {id}</h1><p className="mt-2 text-[var(--v-ink-2)]">It may have been reset with the demo data.</p><Button asChild className="mt-5 h-10 rounded-lg"><a href="#v3-runs">Back to all runs</a></Button></div></Shell>);
   const cur = Math.max(r.s.length, 1);
   return (
-    <Shell active="run" crumbs={['Runs', r.id]} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={() => { togglePause(r.id); toast(r.paused ? `${r.id} resumed.` : `${r.id} paused. Nothing will move until you resume it.`); }}>{r.paused ? 'Resume run' : 'Pause run'}</Button>}>
+    <Shell active="run" crumbs={['Runs', r.id]} actions={can('runs.pause') && <Button variant="outline" className="h-9 rounded-lg" onClick={() => { togglePause(r.id); toast(r.paused ? `${r.id} resumed.` : `${r.id} paused. Nothing will move until you resume it.`); }}>{r.paused ? 'Resume run' : 'Pause run'}</Button>}>
       <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
         <div className="flex flex-wrap items-start gap-6">
           <div className="min-w-0 flex-1">
@@ -75,7 +78,7 @@ export default function V3Run({ id = 'WI-4821' }) {
               </ul>
             </Card>
             <Card>
-              <CardHead title="People" sub="Who approves each stage" right={<a href="#v3-squad" className="text-[13px] font-medium text-[var(--v-blue)]">Manage</a>} />
+              <CardHead title="People" sub="Who approves each stage" right={<a href={`#v3-squad-${r.id.toLowerCase()}`} className="text-[13px] font-medium text-[var(--v-blue)]">Manage</a>} />
               <ul className="flex flex-col gap-2.5 px-5 pb-5 text-[13.5px]">{STAGES.filter(([, w]) => w).slice(0, 5).map(([s, w]) => <li key={s} className="flex items-center gap-2.5"><Avatar p={w} size={24} /><span className="flex-1">{PEOPLE[w].name}</span><span className="text-[var(--v-ink-3)]">{s}</span></li>)}</ul>
             </Card>
             <Button asChild variant="ghost" className="h-9 justify-start rounded-lg"><a href="#v3-runs"><Rocket className="size-4" />All runs</a></Button>

@@ -17,7 +17,7 @@ const ATTENTION = [
   { icon: UserX, tone: 'bad', id: 'WI-4807', key: 'leave', title: 'Approver is on leave', text: 'Jon Reyes holds the completion review and is away until Friday. It has waited 3 h against a 2 h target.', action: 'Reassign to Lena Brooks', done: 'WI-4807 reassigned to Lena Brooks. Jon has been notified.' },
   { icon: FlaskConical, tone: 'bad', id: 'WI-4790', key: 'agent', title: 'Agent stopped after 3 attempts', text: 'Two regression tests still fail. The agent needs an engineer to decide whether the tests or the code are wrong.', action: 'Assign an engineer', done: 'Engineer assignment opened for WI-4790.' },
   { icon: ShieldAlert, tone: 'wait', id: 'WI-4830', key: 'freeze', title: 'Release falls in the month-end freeze', text: 'Planned release on 2 Dec is inside the 1–3 Dec freeze. Approve an exception or move the date.', action: 'Review exception', done: 'Freeze exception request opened for WI-4830.' },
-  { icon: AlertTriangle, tone: 'wait', id: 'WI-4836', key: 'squad', title: 'Squad is incomplete', text: 'No Integration Lead is assigned. The run will stop at Integrate without one.', action: 'Complete squad', href: '#v3-squad' },
+  { icon: AlertTriangle, tone: 'wait', id: 'WI-4836', key: 'squad', title: 'Squad is incomplete', text: 'No Integration Lead is assigned. The run will stop at Integrate without one.', action: 'Complete squad', href: '#v3-squad-wi-4836' },
 ];
 
 
@@ -73,7 +73,7 @@ export default function V3Admin() {
                       <td className="tnum pr-4">{r.wait}</td>
                       <td className={`tnum pr-4 ${r.squad !== '6/6' ? 'font-semibold text-[var(--v-amber)]' : ''}`}>{r.squad}</td>
                       <td className="pr-4"><Pill tone={r.health[1]}>{r.health[0]}</Pill></td>
-                      <td className="pr-5 text-right"><a href="#v3-squad" className="text-[13px] font-medium text-[var(--v-blue)] hover:underline">Manage squad</a></td>
+                      <td className="pr-5 text-right"><a href={`#v3-squad-${r.id.toLowerCase()}`} className="text-[13px] font-medium text-[var(--v-blue)] hover:underline">Manage squad</a></td>
                     </tr>))}</tbody>
                 </table>
               </div>

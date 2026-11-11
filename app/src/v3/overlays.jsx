@@ -6,7 +6,7 @@ import { Search, Bell, CornerDownLeft, FileText, Rocket, BookCheck, User, Layout
 
 const ITEMS = [
   ['Go to', 'Home', '#v3-home', LayoutGrid], ['Go to', 'New request', '#v3-new', LayoutGrid], ['Go to', 'Approvals', '#v3-approvals', LayoutGrid], ['Go to', 'All runs', '#v3-runs', LayoutGrid],
-  ['Go to', 'Business rules', '#v3-rules', LayoutGrid], ['Go to', 'Governance (admin)', '#v3-admin', LayoutGrid], ['Go to', 'Policies (admin)', '#v3-policies', LayoutGrid], ['Go to', 'Connections (admin)', '#v3-connections', LayoutGrid],
+  ['Go to', 'Business rules', '#v3-rules', LayoutGrid], ['Go to', 'Governance (admin)', '#v3-admin', LayoutGrid], ['Go to', 'Policies (admin)', '#v3-policies', LayoutGrid], ['Go to', 'Connections (admin)', '#v3-connections', LayoutGrid], ['Go to', 'Artifacts', '#v3-artifacts', LayoutGrid], ['Go to', 'Squads (admin)', '#v3-squads', LayoutGrid], ['Go to', 'Roles and permissions (admin)', '#v3-roles', LayoutGrid], ['Go to', 'Audit log (admin)', '#v3-audit', LayoutGrid],
   ['Runs', 'WI-4821 Registered Amortization limit', '#v3-run-wi-4821', Rocket], ['Runs', 'WI-4807 Advisor eligibility banner', '#v3-run-wi-4807', Rocket], ['Runs', 'WI-4772 Fee schedule update', '#v3-run-wi-4772', Rocket], ['Runs', 'WI-4799 Statement export format', '#v3-run-wi-4799', Rocket],
   ['Documents', 'ADR-0173 Enforce the Registered Amortization maximum', '#v3-approve', FileText], ['Documents', 'How the WI-4821 design was made', '#v3-evidence', FileText],
   ['Business rules', 'RA-MAX Registered Amortization must be 310 or less', '#v3-rules', BookCheck], ['Business rules', 'RATE-H Rate holds last at most 120 days', '#v3-rules', BookCheck],
