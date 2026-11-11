@@ -31,3 +31,20 @@ Screen-reader walkthrough, zoom/reflow at 200%, dark mode, and real user testing
 - https://uxdesign.cc/the-rulebook-for-designing-ai-experiences-a22a50bb063c
 - https://interaction19.ixda.org/download/talk-designing-transparent-ai.pdf
 - https://api.designprinciplesftw.com/collections/principles-for-designing-systems-for-expert-users
+
+---
+
+# UX review round 3: the complete product (15 screens)
+
+Method: `ui-ux-review` skill; Chromium at 1280px and 1920px; axe-core WCAG 2 A/AA; keyboard tab order; reduced-motion emulation; scripted interaction tests.
+
+| # | Severity | Finding | Fix |
+|---|---|---|---|
+| 1 | High | Search box and ⌘K looked interactive but did nothing on all 15 screens. | Working command palette: ⌘K, Ctrl+K or `/`; search runs, documents, rules, people and screens; arrow keys, Enter, Esc; empty-result message. |
+| 2 | High | No notifications although approvals, reassignments and a failing Teams connection all happen. | Bell with unread count, panel of linked notifications, "Mark all read", Esc and click-outside to close. |
+| 3 | Medium | Breadcrumbs were plain text, so the side menu was the only way back. | Breadcrumbs are links with `aria-current` on the current page. |
+| 4 | Medium | Compact stage bars only revealed the stage on hover. | "Stage 4 of 8 · Design" shown under the bars on Home, Approvals, Runs and Governance; bars expose the same text to screen readers. |
+| 5 | Medium | The floating mockup switcher covered the comment box on Code review at 1280px. | Switcher moved into the sidebar's empty space; verified it covers no control on any screen. |
+| 6 | Medium | "Approvals" in the menu opened one specific approval, and the badge (3) disagreed with the list (2). | New Approvals list (Runs filtered to "Waiting for me"); data fixed so badge and list both show 3. |
+
+Verified after fixes: 0 axe violations on all 16 routes at 1280px, no horizontal overflow, nothing covered by the switcher, focus visible on every tab stop, reduced motion shows final numbers immediately.

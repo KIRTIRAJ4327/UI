@@ -84,11 +84,10 @@ function Gallery() {
 }
 export default function App() {
   const h = useHash();
-  const ALL = [...V3, ...ROUND2, ...CONCEPTS];
-  if (h === 'v3-approvals') location.hash = 'v3-approve';
+  const ALL = [...V3, ['v3-approvals','Approvals','',() => <V3Runs approvals />], ...ROUND2, ...CONCEPTS];
   const C = ALL.find(c=>c[0]===h)?.[3];
   if (!C) return <Gallery/>;
-  return <><C/><details className="fixed right-4 bottom-4 z-40 border border-ink bg-ink text-xs text-white">
+  return <><C/><details className="fixed left-3 bottom-[76px] z-40 w-[224px] rounded-lg border border-white/15 bg-[#1c2140] text-xs text-white shadow-lg">
     <summary className="cursor-pointer px-3 py-1.5 font-semibold">Mockups</summary>
     <nav aria-label="Switch mockup" className="flex flex-wrap gap-0.5 p-1 pt-0"><a href="#" className="px-2 py-1 hover:bg-white/15">All</a>{ALL.map(([k,t])=><a key={k} href={`#${k}`} title={t} aria-current={k===h?'page':undefined} className={`px-2 py-1 hover:bg-white/15 ${k===h?'bg-brand':''}`}>{t.split(' · ')[0]}</a>)}</nav></details></>;
 }

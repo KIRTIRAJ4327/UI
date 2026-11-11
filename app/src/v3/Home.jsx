@@ -44,7 +44,7 @@ export default function V3Home() {
                     <span className="flex items-center gap-1.5 text-[13px] text-[var(--v-amber)]"><Clock className="size-3.5" />Waiting {w.wait}</span>
                     <Button asChild className="h-9 rounded-lg"><a href={w.href}>Review<ArrowRight className="size-4" /></a></Button>
                   </div>
-                  <div className="col-span-2 flex items-center gap-3"><Avatar p={w.from} size={22} /><span className="text-[12.5px] text-[var(--v-ink-3)]">from {w.from === 'priya' ? 'Priya Nair' : 'Jon Reyes'}</span><div className="ml-auto w-48"><Stepper s={w.s} compact /></div></div>
+                  <div className="col-span-2 flex items-center gap-3"><Avatar p={w.from} size={22} /><span className="text-[12.5px] text-[var(--v-ink-3)]">from {w.from === 'priya' ? 'Priya Nair' : 'Jon Reyes'}</span><div className="ml-auto w-52"><Stepper s={w.s} compact label /></div></div>
                 </li>))}
             </ul>
           </SpotlightCard>

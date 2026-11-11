@@ -1,5 +1,7 @@
 // v3 shared UI: one coherent product built on the client's existing console tokens.
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { CommandPalette, Notifications } from './overlays';
 import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, LayoutDashboard, UsersRound, Scale, Contact, Plug } from 'lucide-react';
 
 export const PEOPLE = {
@@ -39,9 +41,13 @@ export const Pill = ({ tone = 'mute', dot = true, children, className }) => (
 );
 
 /* Stage stepper. states: d done, w waiting on a person, a agent working, '' upcoming. */
-export function Stepper({ s, compact }) {
+export function Stepper({ s, compact, label }) {
+  const cur = Math.max(s.length, 1);
+  if (compact && label) return (
+    <div className="flex flex-col gap-1"><Stepper s={s} compact /><span className="text-[12px] text-[var(--v-ink-3)]">Stage {cur} of 8 · {STAGES[cur - 1][0]}</span></div>
+  );
   if (compact) return (
-    <div className="flex items-center gap-1" aria-label={`Stage ${s.length} of 8`}>
+    <div className="flex items-center gap-1" role="img" aria-label={`Stage ${cur} of 8, ${STAGES[cur - 1][0]}`}>
       {STAGES.map(([n], i) => <span key={n} title={n} className={cn('h-1.5 flex-1 rounded-full', s[i] === 'd' ? 'bg-[var(--v-green)]' : s[i] === 'w' ? 'bg-[#e0a000]' : s[i] === 'a' ? 'bg-[var(--v-blue)]' : s[i] === 'f' ? 'bg-[var(--v-red)]' : 'bg-[var(--v-line)]')} />)}
     </div>
   );
@@ -71,10 +77,20 @@ export function Stepper({ s, compact }) {
 export const Card = ({ className, children, ...r }) => <section className={cn('rounded-2xl border border-[var(--v-line)] bg-[var(--v-surface)] shadow-[0_1px_2px_rgba(16,20,41,.04),0_8px_24px_-12px_rgba(16,20,41,.10)]', className)} {...r}>{children}</section>;
 export const CardHead = ({ title, sub, right }) => <header className="flex items-start gap-3 px-5 pt-4 pb-3"><div className="min-w-0 flex-1"><h2 className="text-[15px] font-semibold">{title}</h2>{sub && <p className="text-[13px] text-[var(--v-ink-3)]">{sub}</p>}</div>{right}</header>;
 
+const CRUMB = { Home: '#v3-home', Requests: '#v3-runs', Runs: '#v3-runs', Approvals: '#v3-approvals', Admin: '#v3-admin', Squads: '#v3-squad', 'Business rules': '#v3-rules', 'WI-4821': '#v3-run', 'WI-4807': '#v3-runs', 'WI-4772': '#v3-runs', 'WI-4799': '#v3-runs' };
 const NAV = [['home','Home',Home],['new','New request',FilePlus2],['approvals','Approvals',Inbox,3],['run','Runs',Rocket],['rules','Business rules',BookCheck],['evidence','Evidence',ShieldCheck]];
 const ADMIN_NAV = [['admin','Governance',LayoutDashboard],['squad','Squads',UsersRound],['people','People and access',Contact],['policies','Policies',Scale],['connections','Connections',Plug]];
 export function Shell({ active, crumbs = [], actions, children, admin, user }) {
   const me = user || (admin ? 'dana' : 'alex');
+  const [cp, setCp] = useState(false);
+  useEffect(() => {
+    const k = e => {
+      const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '');
+      if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) { e.preventDefault(); setCp(true); }
+      else if (e.key === '/' && !typing) { e.preventDefault(); setCp(true); }
+    };
+    addEventListener('keydown', k); return () => removeEventListener('keydown', k);
+  }, []);
   return (
     <div className="v3 grid min-h-screen grid-cols-[248px_1fr]">
       <a href="#v3main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
@@ -84,7 +100,7 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
           <div className="leading-tight"><div className="font-display text-[15px] font-semibold text-white">Delivery Platform</div><div className="text-[12px] text-[#8f97b3]">Full Application team</div></div>
         </div>
         {NAV.map(([k, l, I, n]) => (
-          <a key={k} href={{approvals:'#v3-approve',run:'#v3-runs'}[k] || `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}>
+          <a key={k} href={{run:'#v3-runs'}[k] || `#v3-${k}`} aria-current={active === k ? 'page' : undefined} className={cn('flex h-9 items-center gap-3 rounded-lg px-2.5 text-[14px] transition-colors hover:bg-white/5 hover:text-white', active === k && 'bg-white/10 font-medium text-white')}>
             <I className="size-[18px]" strokeWidth={1.8} />{l}{n && <span className="ml-auto rounded-full bg-[#e0a000] px-1.5 text-[11.5px] font-semibold text-[var(--v-ink)]">{n}</span>}
           </a>))}
         {(admin || me === 'dana') && <>
@@ -96,12 +112,14 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
       </nav>
       <div className="flex min-w-0 flex-col">
         <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[var(--v-line)] bg-[var(--v-bg)]/90 px-8 backdrop-blur">
-          <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2 text-[14px] text-[var(--v-ink-3)]">{crumbs.map((c, i) => <span key={c} className="flex items-center gap-2">{i > 0 && <span aria-hidden="true">/</span>}<span className={i === crumbs.length - 1 ? 'font-medium text-[var(--v-ink)]' : ''}>{c}</span></span>)}</nav>
+          <nav aria-label="Breadcrumb"><ol className="flex min-w-0 items-center gap-2 text-[14px] text-[var(--v-ink-3)]">{crumbs.map((c, i) => { const last = i === crumbs.length - 1; const href = CRUMB[c]; return <li key={c} className="flex items-center gap-2">{i > 0 && <span aria-hidden="true">/</span>}{last ? <span aria-current="page" className="font-medium text-[var(--v-ink)]">{c}</span> : href ? <a href={href} className="rounded hover:text-[var(--v-ink)] hover:underline">{c}</a> : <span>{c}</span>}</li>; })}</ol></nav>
           <div className="flex-1" />
-          <button className="flex h-9 w-72 items-center gap-2 rounded-lg border border-[var(--v-line)] bg-white px-3 text-[13.5px] text-[var(--v-ink-3)]"><Search className="size-4" />Search requests, rules, people<kbd className="ml-auto rounded border border-[var(--v-line)] px-1.5 font-mono text-[11px]">⌘K</kbd></button>
+          <button onClick={() => setCp(true)} aria-keyshortcuts="Control+K Meta+K /" className="flex h-9 w-72 items-center gap-2 rounded-lg border border-[var(--v-line)] bg-white px-3 text-[13.5px] text-[var(--v-ink-3)] hover:border-[#b9c4bb]"><Search className="size-4" />Search requests, rules, people<kbd className="ml-auto rounded border border-[var(--v-line)] px-1.5 font-mono text-[11px]">⌘K</kbd></button>
+          <Notifications />
           {actions}
         </header>
         <main id="v3main" className="flex-1 px-8 py-7">{children}</main>
+        <CommandPalette open={cp} onClose={() => setCp(false)} />
       </div>
     </div>
   );

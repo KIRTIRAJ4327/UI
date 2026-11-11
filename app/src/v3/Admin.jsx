@@ -69,7 +69,7 @@ export default function V3Admin() {
                   <tbody>{ITEMS.map(r => (
                     <tr key={r.id} className="border-b border-[var(--v-line)] last:border-0 hover:bg-[var(--v-sunken)]">
                       <td className="py-3 pl-5"><b className="font-medium">{r.t}</b><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}</div></td>
-                      <td className="pr-4"><Stepper s={r.s} compact /></td>
+                      <td className="pr-4"><Stepper s={r.s} compact label /></td>
                       <td className="pr-4"><span className="flex items-center gap-2"><Avatar p={r.holder} size={24} />{PEOPLE[r.holder].name.split(' ')[0]}</span></td>
                       <td className="tnum pr-4">{r.wait}</td>
                       <td className={`tnum pr-4 ${r.squad !== '6/6' ? 'font-semibold text-[var(--v-amber)]' : ''}`}>{r.squad}</td>
