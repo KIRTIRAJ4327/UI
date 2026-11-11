@@ -1,5 +1,8 @@
 import { Button } from '@/components/ui/button';
 import SplitText from '@/components/SplitText';
+import CountUp from '@/components/CountUp';
+import AnimatedList from '@/components/AnimatedList';
+import SpotlightCard from '@/components/SpotlightCard';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper } from './ui';
 import { Clock, ArrowRight, Plus } from 'lucide-react';
 
@@ -9,7 +12,7 @@ const WAITING = [
   { id: 'WI-4807', title: 'Advisor eligibility banner', ask: 'Review the completion report', why: 'Code and 6 unit tests are ready. Jon is on leave, so this came to you.', from: 'jon', wait: '3 h', s: 'ddddw', href: '#v3-run', urgent: true },
 ];
 const MINE = [['Fee schedule update','done','Released Tuesday','dddddddd'],['Session timeout copy','bad','2 tests failing','dddddda'],['Rate hold expiry','work','Agent is building','dddda']];
-const FEED = [['agent','finished the design for','WI-4821','12 min ago'],['priya','approved the plan for','WI-4830','40 min ago'],['agent','fixed 1 issue in its own work on','WI-4821','45 min ago'],['sam','released','WI-4772','Tue 16:05']];
+const FEED = [['agent','Design finished · WI-4821','The agent','12 min ago'],['priya','Plan approved · WI-4830','Priya Nair','40 min ago'],['agent','Fixed its own mistake · WI-4821','The agent','45 min ago'],['sam','Released · WI-4772','Sam Okafor','Tue 16:05']];
 
 export default function V3Home() {
   return (
@@ -21,13 +24,13 @@ export default function V3Home() {
             <SplitText text="3 decisions are waiting for you" tag="h1" splitType="words" effect="fade" delay={45} duration={0.5} textAlign="left" trigger="load" className="font-display text-[30px] font-semibold leading-tight" />
           </div>
           <dl className="flex gap-3">
-            {[['In progress','7','work'],['Released this week','4','done'],['Average time to release','3.2 days','mute']].map(([l, v]) => (
-              <div key={l} className="rounded-xl border border-[var(--v-line)] bg-white px-4 py-2.5"><dt className="text-[12.5px] text-[var(--v-ink-3)]">{l}</dt><dd className="tnum font-display text-[20px] font-semibold">{v}</dd></div>))}
+            {[['In progress',7,0,''],['Released this week',4,0,''],['Average time to release',3.2,1,' days']].map(([l, v, d, suf]) => (
+              <div key={l} className="rounded-xl border border-[var(--v-line)] bg-white px-4 py-2.5"><dt className="text-[12.5px] text-[var(--v-ink-3)]">{l}</dt><dd className="tnum font-display text-[20px] font-semibold"><CountUp to={v} decimals={d} suffix={suf} duration={1.2} trigger="load" /></dd></div>))}
           </dl>
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_340px] items-start gap-6">
-          <Card>
+          <SpotlightCard theme="light" spotlightColor="rgba(36,105,188,0.18)" intensity={0.12} spotlightSize={420} borderGlow={0.35} flare={false} className="!rounded-2xl !border !border-[var(--v-line)] !bg-white !p-0 shadow-[0_1px_2px_rgba(16,20,41,.04),0_8px_24px_-12px_rgba(16,20,41,.10)]">
             <CardHead title="Waiting for you" sub="Oldest first. Each one names exactly what you are deciding." />
             <ul className="divide-y divide-[var(--v-line)] border-t border-[var(--v-line)]">
               {WAITING.map(w => (
@@ -44,7 +47,7 @@ export default function V3Home() {
                   <div className="col-span-2 flex items-center gap-3"><Avatar p={w.from} size={22} /><span className="text-[12.5px] text-[var(--v-ink-3)]">from {w.from === 'priya' ? 'Priya Nair' : 'Jon Reyes'}</span><div className="ml-auto w-48"><Stepper s={w.s} compact /></div></div>
                 </li>))}
             </ul>
-          </Card>
+          </SpotlightCard>
 
           <div className="flex flex-col gap-6">
             <Card>
@@ -55,9 +58,8 @@ export default function V3Home() {
             </Card>
             <Card>
               <CardHead title="Recent activity" />
-              <ul className="flex flex-col gap-3.5 px-5 pb-5">
-                {FEED.map(([p, v, id, t], i) => <li key={i} className="flex gap-3"><Avatar p={p} size={26} /><p className="text-[13.5px] leading-snug"><b className="font-medium">{p === 'agent' ? 'The agent' : p[0].toUpperCase() + p.slice(1)}</b> {v} <span className="font-mono text-[12.5px]">{id}</span><span className="block text-[12.5px] text-[var(--v-ink-3)]">{t}</span></p></li>)}
-              </ul>
+              <div className="px-2 pb-3"><AnimatedList theme="light" frame={false} showGradients={false} displayScrollbar={false} selectOnHover={false} enableArrowNavigation={false} animateOnce width="100%" maxHeight={400} gap={2} radius={10} accentColor="#2469bc"
+                items={FEED.map(([p, title, who, t]) => ({ icon: <Avatar p={p} size={30} />, title, description: `${who} · ${t}` }))} /></div>
             </Card>
           </div>
         </div>

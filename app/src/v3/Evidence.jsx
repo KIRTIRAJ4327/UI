@@ -1,4 +1,5 @@
 import { Shell, Card, CardHead, Pill } from './ui';
+import CountUp from '@/components/CountUp';
 import { Search, CheckCircle2, PenLine, Wrench, Save, Bell, FileText } from 'lucide-react';
 
 const STEPS = [
@@ -14,7 +15,7 @@ export default function V3Evidence() {
     <Shell active="evidence" crumbs={['Runs', 'WI-4821', 'How the design was made']}>
       <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
         <div><h1 className="font-display text-[28px] font-semibold">How the design was made</h1><p className="mt-1 max-w-[70ch] text-[15px] text-[var(--v-ink-2)]">Every step the agent took for the Design stage, what it used, and what it checked. Use this when you want to verify the work before approving.</p></div>
-        <div className="grid grid-cols-4 gap-4">{[['Time taken','13 min 48 s'],['Sources used','4'],['Quality checks','6 of 6 passed'],['Cost','$0.21']].map(([l, v]) => <Card key={l} className="px-5 py-4"><div className="text-[13px] text-[var(--v-ink-3)]">{l}</div><div className="tnum mt-0.5 font-display text-[22px] font-semibold">{v}</div></Card>)}</div>
+        <div className="grid grid-cols-4 gap-4">{[['Time taken',13.8,1,'',' min'],['Sources used',4,0,'',''],['Quality checks passed',6,0,'',' of 6'],['Cost',0.21,2,'$','']].map(([l, v, d, pre, suf]) => <Card key={l} className="px-5 py-4"><div className="text-[13px] text-[var(--v-ink-3)]">{l}</div><div className="tnum mt-0.5 font-display text-[22px] font-semibold"><CountUp to={v} decimals={d} prefix={pre} suffix={suf} duration={1.2} trigger="load" /></div></Card>)}</div>
         <div className="grid grid-cols-[minmax(0,1fr)_360px] items-start gap-6">
           <Card>
             <CardHead title="Steps" sub="In the order they happened" />
