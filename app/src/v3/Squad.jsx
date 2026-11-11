@@ -24,7 +24,7 @@ function PersonSelect({ id, value, options, onChange, label }) {
   return (
     <label className="flex flex-col gap-1" htmlFor={id}>
       <span className="sr-only">{label}</span>
-      <div className="flex items-center gap-2 rounded-lg border border-[var(--v-line)] bg-white pl-2 focus-within:border-[var(--v-blue)] focus-within:ring-4 focus-within:ring-[var(--v-blue)]/15">
+      <div className="flex items-center gap-2 rounded-lg border border-[var(--v-line)] bg-[var(--v-surface)] pl-2 focus-within:border-[var(--v-blue)] focus-within:ring-4 focus-within:ring-[var(--v-blue)]/15">
         {value ? <Avatar p={value} size={22} /> : <span className="grid size-[22px] place-items-center rounded-full border border-dashed border-[var(--v-ink-3)] text-[11px] text-[var(--v-ink-3)]">?</span>}
         <select id={id} value={value} onChange={e => onChange(e.target.value)} className="h-9 min-w-0 flex-1 bg-transparent pr-2 text-[13.5px] outline-none">
           <option value="">Not assigned</option>
@@ -120,7 +120,7 @@ export default function V3Squad({ id = 'WI-4836' }) {
               <ul className="flex flex-col gap-3 px-5 pb-5 text-[13.5px]">
                 {[['impact', 'Move past Impact automatically when checks pass'], ['retry', 'Retry failed tests up to 3 times']].map(([k, t]) => (
                   <li key={k}><label className="flex cursor-pointer items-start gap-3"><Bot className="mt-0.5 size-4 shrink-0 text-[var(--v-ink-3)]" /><span className="flex-1">{t}</span>
-                    <button type="button" role="switch" aria-checked={autonomy[k]} aria-label={t} onClick={() => setAutonomy(a => ({ ...a, [k]: !a[k] }))} className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${autonomy[k] ? 'bg-[var(--v-blue)]' : 'bg-[#c3ccc5]'}`}><span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition-all ${autonomy[k] ? 'left-[18px]' : 'left-0.5'}`} /></button></label></li>))}
+                    <button type="button" role="switch" aria-checked={autonomy[k]} aria-label={t} onClick={() => setAutonomy(a => ({ ...a, [k]: !a[k] }))} className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${autonomy[k] ? 'bg-[var(--v-blue)]' : 'bg-[var(--v-toggle-off)]'}`}><span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition-all ${autonomy[k] ? 'left-[18px]' : 'left-0.5'}`} /></button></label></li>))}
               </ul>
             </Card>
           </div>

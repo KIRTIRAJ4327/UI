@@ -36,7 +36,7 @@ export default function V3Admin() {
       <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
         <div className="flex flex-wrap items-end gap-4">
           <div className="min-w-0 flex-1"><p className="text-[14px] text-[var(--v-ink-3)]">All workspaces · this week</p><h1 className="font-display text-[28px] font-semibold">Governance</h1></div>
-          <div role="tablist" aria-label="Period" className="flex rounded-lg bg-white p-1 text-[13px] ring-1 ring-[var(--v-line)]">{['Today', 'This week', 'This month'].map((p, i) => <button key={p} role="tab" aria-selected={i === 1} className={`rounded-md px-3 py-1.5 ${i === 1 ? 'bg-[var(--v-ink)] text-white' : 'text-[var(--v-ink-2)]'}`}>{p}</button>)}</div>
+          <div role="tablist" aria-label="Period" className="flex rounded-lg bg-[var(--v-surface)] p-1 text-[13px] ring-1 ring-[var(--v-line)]">{['Today', 'This week', 'This month'].map((p, i) => <button key={p} role="tab" aria-selected={i === 1} className={`rounded-md px-3 py-1.5 ${i === 1 ? 'bg-[var(--v-inv)] text-[var(--v-inv-fg)]' : 'text-[var(--v-ink-2)]'}`}>{p}</button>)}</div>
         </div>
 
         <div className="grid grid-cols-4 gap-4">

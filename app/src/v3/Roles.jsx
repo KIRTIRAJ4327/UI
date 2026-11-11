@@ -13,7 +13,7 @@ function ConfirmGrant({ p, members, onCancel, onConfirm }) {
   useEffect(() => { cancel.current?.focus(); }, []);
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-[#101429]/45 p-6" onMouseDown={e => e.target === e.currentTarget && onCancel()}>
-      <div role="alertdialog" aria-modal="true" aria-labelledby="cg-t" onKeyDown={e => e.key === 'Escape' && onCancel()} className="w-full max-w-[460px] rounded-2xl bg-white p-6 shadow-2xl">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="cg-t" onKeyDown={e => e.key === 'Escape' && onCancel()} className="w-full max-w-[460px] rounded-2xl bg-[var(--v-surface)] p-6 shadow-2xl">
         <h2 id="cg-t" className="font-display text-[20px] font-semibold">Grant “{p.label}” to {p.role}?</h2>
         <p className="mt-2 text-[14px] text-[var(--v-ink-2)]">This is a sensitive permission. {members.length ? <>It applies straight away to <b>{members.length} {members.length === 1 ? 'person' : 'people'}</b>: {members.join(', ')}.</> : 'Nobody has this role yet, so it takes effect when someone is given it.'}</p>
         <p className="mt-2 text-[13px] text-[var(--v-ink-3)]">The change is recorded in the audit log with your name.</p>
@@ -43,16 +43,16 @@ export default function V3Roles() {
               <table className="w-full min-w-[980px] text-[13px]">
                 <caption className="sr-only">Permissions by role</caption>
                 <thead><tr className="border-b border-[var(--v-line)] bg-[var(--v-sunken)]"><th className="sticky left-0 z-10 w-64 bg-[var(--v-sunken)] py-3 pl-5 text-left font-medium text-[var(--v-ink-3)]">Permission</th>
-                  {names.map(r => <th key={r} scope="col" className="px-1 py-2 align-bottom"><button onClick={() => setFocus(r)} className={`w-full rounded-md px-1.5 py-1 text-[12px] leading-tight font-semibold ${focus === r ? 'bg-[var(--v-blue-soft)] text-[var(--v-blue)]' : 'text-[var(--v-ink)] hover:bg-white'}`}>{r}</button></th>)}</tr></thead>
+                  {names.map(r => <th key={r} scope="col" className="px-1 py-2 align-bottom"><button onClick={() => setFocus(r)} className={`w-full rounded-md px-1.5 py-1 text-[12px] leading-tight font-semibold ${focus === r ? 'bg-[var(--v-blue-soft)] text-[var(--v-blue)]' : 'text-[var(--v-ink)] hover:bg-[var(--v-surface)]'}`}>{r}</button></th>)}</tr></thead>
                 <tbody>{PERMS.map(([group, list]) => (
                   <Fragment key={group}>
-                    <tr className="bg-white"><th colSpan={names.length + 1} className="sticky left-0 px-5 pt-4 pb-1 text-left text-[12px] font-semibold uppercase tracking-wide text-[var(--v-ink-3)]">{group}</th></tr>
+                    <tr className="bg-[var(--v-surface)]"><th colSpan={names.length + 1} className="sticky left-0 px-5 pt-4 pb-1 text-left text-[12px] font-semibold uppercase tracking-wide text-[var(--v-ink-3)]">{group}</th></tr>
                     {list.map(([key, label]) => (
                       <tr key={key} className="border-b border-[var(--v-line)] hover:bg-[var(--v-sunken)]">
-                        <th scope="row" className="sticky left-0 bg-white py-2 pl-5 text-left font-normal">{label}</th>
+                        <th scope="row" className="sticky left-0 bg-[var(--v-surface)] py-2 pl-5 text-left font-normal">{label}</th>
                         {names.map(r => { const on = roles[r].includes(key); const locked = r === LOCKED; return (
                           <td key={r} className={`text-center ${focus === r ? 'bg-[var(--v-blue-soft)]/50' : ''}`}>
-                            <button role="checkbox" aria-checked={on} aria-label={`${r}: ${label}`} disabled={locked} onClick={() => ask(r, key, label)} className={`grid size-6 place-items-center rounded-md border transition-colors ${on ? 'border-[var(--v-blue)] bg-[var(--v-blue)] text-white' : 'border-[#c3ccc5] bg-white hover:border-[var(--v-blue)]'} ${locked ? 'cursor-not-allowed opacity-70' : ''} mx-auto`}>{on ? (locked ? <Lock className="size-3" /> : <Check className="size-3.5" strokeWidth={3} />) : null}</button>
+                            <button role="checkbox" aria-checked={on} aria-label={`${r}: ${label}`} disabled={locked} onClick={() => ask(r, key, label)} className={`grid size-6 place-items-center rounded-md border transition-colors ${on ? 'border-[var(--v-blue)] bg-[var(--v-blue)] text-white' : 'border-[var(--v-toggle-off)] bg-[var(--v-surface)] hover:border-[var(--v-blue)]'} ${locked ? 'cursor-not-allowed opacity-70' : ''} mx-auto`}>{on ? (locked ? <Lock className="size-3" /> : <Check className="size-3.5" strokeWidth={3} />) : null}</button>
                           </td>); })}
                       </tr>))}
                   </Fragment>))}</tbody>

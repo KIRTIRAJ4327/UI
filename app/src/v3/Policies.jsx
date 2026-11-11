@@ -6,7 +6,7 @@ import { useToast } from '@/components/friendly';
 import { useProto } from './store';
 import { Plus, Trash2 } from 'lucide-react';
 
-const Toggle = ({ on, onChange, label }) => <button type="button" role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? 'bg-[var(--v-blue)]' : 'bg-[#c3ccc5]'}`}><span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition-all ${on ? 'left-[18px]' : 'left-0.5'}`} /></button>;
+const Toggle = ({ on, onChange, label }) => <button type="button" role="switch" aria-checked={on} aria-label={label} onClick={() => onChange(!on)} className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? 'bg-[var(--v-blue)]' : 'bg-[var(--v-toggle-off)]'}`}><span className={`absolute top-0.5 size-4 rounded-full bg-white shadow transition-all ${on ? 'left-[18px]' : 'left-0.5'}`} /></button>;
 const Row = ({ title, sub, children }) => <div className="flex items-center gap-4 border-t border-[var(--v-line)] px-5 py-3.5 first:border-0"><div className="min-w-0 flex-1"><div className="text-[14px] font-medium">{title}</div>{sub && <div className="text-[12.5px] text-[var(--v-ink-3)]">{sub}</div>}</div>{children}</div>;
 const NumIn = ({ id, value, onChange, unit, label }) => <label htmlFor={id} className="flex items-center gap-2 text-[13.5px]"><span className="sr-only">{label}</span><input id={id} type="number" min="1" value={value} onChange={e => onChange(+e.target.value)} className="tnum h-9 w-20 rounded-lg border border-[var(--v-line)] px-2.5 text-right outline-none focus:border-[var(--v-blue)] focus:ring-4 focus:ring-[var(--v-blue)]/15" />{unit}</label>;
 
@@ -40,7 +40,7 @@ export default function V3Policies() {
         <Card><CardHead title="Agent spend" sub="This month: $186 of $500" right={<Pill tone="done">37% used</Pill>} />
           <div className="border-t border-[var(--v-line)]"><Row title="Monthly budget"><NumIn id="bud" label="Monthly budget in dollars" value={p.budget} unit="USD" onChange={v => up('budget', v)} /></Row><Row title="Warn the platform admin at"><NumIn id="al" label="Warning threshold percent" value={p.alert} unit="% of budget" onChange={v => up('alert', v)} /></Row></div></Card>
       </div>
-      {changed && <div className="fixed inset-x-0 bottom-6 z-30 flex justify-center pl-[248px]"><div className="flex items-center gap-4 rounded-2xl bg-[var(--v-ink)] px-5 py-3 text-white shadow-xl"><span className="text-[14px]">You have unsaved policy changes</span><Button variant="ghost" className="h-9 rounded-lg text-white hover:bg-white/10 hover:text-white" onClick={() => setP(START)}>Discard</Button><Button className="h-9 rounded-lg" onClick={() => toast('Policies saved. They apply to new gates from now.')}>Save policies</Button></div></div>}
+      {changed && <div className="fixed inset-x-0 bottom-6 z-30 flex justify-center pl-[248px]"><div className="flex items-center gap-4 rounded-2xl bg-[var(--v-side)] px-5 py-3 text-white shadow-xl"><span className="text-[14px]">You have unsaved policy changes</span><Button variant="ghost" className="h-9 rounded-lg text-white hover:bg-white/10 hover:text-white" onClick={() => setP(START)}>Discard</Button><Button className="h-9 rounded-lg" onClick={() => toast('Policies saved. They apply to new gates from now.')}>Save policies</Button></div></div>}
     </Shell>
   );
 }

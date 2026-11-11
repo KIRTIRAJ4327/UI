@@ -1,5 +1,4 @@
 import { Shell, Card, CardHead, Pill } from './ui';
-import CountUp from '@/components/CountUp';
 import { Search, CheckCircle2, PenLine, Wrench, Save, Bell, FileText } from 'lucide-react';
 
 const STEPS = [
@@ -15,7 +14,7 @@ export default function V3Evidence() {
     <Shell active="evidence" crumbs={['Runs', 'WI-4821', 'How the design was made']}>
       <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
         <div><h1 className="font-display text-[28px] font-semibold">How the design was made</h1><p className="mt-1 max-w-[70ch] text-[15px] text-[var(--v-ink-2)]">Every step the agent took for the Design stage, what it used, and what it checked. Use this when you want to verify the work before approving.</p></div>
-        <div className="grid grid-cols-4 gap-4">{[['Time taken',13.8,1,'',' min'],['Sources used',4,0,'',''],['Quality checks passed',6,0,'',' of 6'],['Cost',0.21,2,'$','']].map(([l, v, d, pre, suf]) => <Card key={l} className="px-5 py-4"><div className="text-[13px] text-[var(--v-ink-3)]">{l}</div><div className="tnum mt-0.5 font-display text-[22px] font-semibold"><CountUp to={v} decimals={d} prefix={pre} suffix={suf} duration={1.2} trigger="load" /></div></Card>)}</div>
+        <div className="grid grid-cols-4 gap-4">{[['Time taken',13.8,1,'',' min'],['Sources used',4,0,'',''],['Quality checks passed',6,0,'',' of 6'],['Cost',0.21,2,'$','']].map(([l, v, d, pre, suf]) => <Card key={l} className="px-5 py-4"><div className="text-[13px] text-[var(--v-ink-3)]">{l}</div><div className="tnum mt-0.5 font-display text-[22px] font-semibold">{pre}{v.toFixed(d)}{suf}</div></Card>)}</div>
         <div className="grid grid-cols-[minmax(0,1fr)_360px] items-start gap-6">
           <Card>
             <CardHead title="Steps" sub="In the order they happened" />
@@ -30,7 +29,7 @@ export default function V3Evidence() {
           </Card>
           <div className="flex flex-col gap-6">
             <Card><CardHead title="Sources" /><ul className="flex flex-col gap-1 px-3 pb-3">{[['Product rules v4','Knowledge Fabric'],['Specification v3','Approved by Priya Nair'],['ADR-0151','Earlier decision'],['amortizationValidator.js','full-application-ui']].map(([a, b]) => <li key={a}><a href="#v3-artifacts" className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-[var(--v-sunken)]"><FileText className="size-[18px] text-[var(--v-ink-3)]" /><div><div className="font-medium">{a}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">{b}</div></div></a></li>)}</ul></Card>
-            <Card><CardHead title="Record" sub="For audit" /><dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 px-5 pb-5 text-[13.5px]"><dt className="text-[var(--v-ink-3)]">Saved</dt><dd>Wed 12 Nov, 14:33</dd><dt className="text-[var(--v-ink-3)]">Fingerprint</dt><dd className="font-mono text-[12.5px]">9f2c 41ab 77e0</dd><dt className="text-[var(--v-ink-3)]">Model</dt><dd>GPT-5.4</dd><dt className="text-[var(--v-ink-3)]">Kept for</dt><dd>7 years</dd></dl></Card>
+            <Card><CardHead title="Record" sub="For audit" /><dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 px-5 pb-5 text-[13.5px]"><dt className="text-[var(--v-ink-3)]">Saved</dt><dd>Wed 11 Nov, 09:42 UTC</dd><dt className="text-[var(--v-ink-3)]">Fingerprint</dt><dd className="font-mono text-[12.5px]">9f2c 41ab 77e0</dd><dt className="text-[var(--v-ink-3)]">Model</dt><dd>GPT-5.4</dd><dt className="text-[var(--v-ink-3)]">Kept for</dt><dd>7 years</dd></dl></Card>
           </div>
         </div>
       </div>

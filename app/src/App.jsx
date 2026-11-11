@@ -34,6 +34,7 @@ import V3Audit from '@/v3/Audit';
 import V3Squads from '@/v3/Squads';
 import V3Squad from '@/v3/Squad';
 import { RequirePerm } from '@/v3/gate';
+import { useTheme } from '@/v3/theme';
 export const V3 = [
   ['v3-home','1 · Home','What is waiting for you, your requests and recent activity.',V3Home],
   ['v3-new','2 · New request','Describe the change; see the plan, approvers and timing before anything starts.',V3New],
@@ -97,9 +98,10 @@ const ApprovalsList = () => <V3Runs approvals />;
 // Phones and narrow windows: the platform is built for laptop screens, so explain that and offer the desktop layout in a scrollable frame.
 const useNarrow = () => { const q = '(max-width: 899px)'; const [n, setN] = useState(() => typeof matchMedia !== 'undefined' && matchMedia(q).matches); useEffect(() => { const m = matchMedia(q); const f = () => setN(m.matches); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []); return n; };
 function NarrowGate({ onContinue }) {
+  const { resolved } = useTheme();
   return (
-    <div className="v3 flex min-h-screen items-center justify-center px-4 py-10">
-      <div className="w-full max-w-[420px] rounded-2xl bg-white p-6 shadow-lg ring-1 ring-black/5">
+    <div data-mode={resolved} className="v3 flex min-h-screen items-center justify-center px-4 py-10">
+      <div className="w-full max-w-[420px] rounded-2xl bg-[var(--v-surface)] p-6 shadow-lg ring-1 ring-black/5">
         <div className="text-[13px] text-[var(--v-ink-3)]">Clickable prototype</div>
         <h1 className="mt-1 font-display text-[24px] leading-tight font-semibold">Unified Product Delivery Platform</h1>
         <p className="mt-3 text-[15px] leading-relaxed text-[var(--v-ink-2)]">This platform is designed for laptops and larger screens, where approvers review documents side by side with their decision. Open this link on a computer for the best experience.</p>

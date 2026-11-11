@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Stepper } from './ui';
 import { useToast } from '@/components/friendly';
 import { CheckCircle2, FileCode2, GitPullRequest } from 'lucide-react';
+import { AgentPanelButton } from './agentpanel';
 import { useProto } from './store';
 import { useGate, NotYours } from './gate';
 
@@ -39,7 +40,7 @@ export default function V3Review() {
             <h1 className="mt-1 font-display text-[28px] font-semibold">Review the code for the eligibility banner</h1>
             <p className="mt-1 max-w-[72ch] text-[15px] text-[var(--v-ink-2)]">The agent built the approved design and tested it. You are the named backup for Jon Reyes, who is on leave, so you can approve this build even though your role is Solution Architect. If you approve, the change moves to integration.</p>
           </div>
-          <div className="w-56 pt-2"><Stepper s="ddddw" compact /><div className="mt-1.5 text-[12.5px] text-[var(--v-ink-3)]">Stage 5 of 8 · Build</div></div>
+          <div className="w-56 pt-2"><Stepper s="ddddw" compact /><div className="mt-1.5 text-[12.5px] text-[var(--v-ink-3)]">Stage 5 of 8 · Build</div><div className="mt-3"><AgentPanelButton stage={4} run="WI-4807" /></div></div>
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_360px] items-start gap-6">
@@ -54,7 +55,7 @@ export default function V3Review() {
                 {FILES.map(([f, n, lines], i) => (
                   <li key={f} className="border-b border-[var(--v-line)] last:border-0">
                     <button onClick={() => setOpen(open === i ? -1 : i)} aria-expanded={open === i} className="flex w-full items-center gap-3 px-5 py-3 text-left hover:bg-[var(--v-sunken)]"><FileCode2 className="size-4 text-[var(--v-ink-3)]" /><span className="font-mono text-[13px]">{f}</span><span className="ml-auto font-mono text-[12.5px] text-[var(--v-green)]">{n}</span></button>
-                    {open === i && (lines ? <pre className="overflow-x-auto border-t border-[var(--v-line)] bg-[#fbfcfb] py-2 font-mono text-[12.5px] leading-6">{lines.map(([k, l], j) => <div key={j} className={`px-5 ${k === 'add' ? 'bg-[var(--v-green-soft)]' : ''}`}><span className="mr-3 inline-block w-3 select-none text-[var(--v-ink-3)]">{k === 'add' ? '+' : ' '}</span>{l}</div>)}</pre>
+                    {open === i && (lines ? <pre className="overflow-x-auto border-t border-[var(--v-line)] bg-[var(--v-sunken)] py-2 font-mono text-[12.5px] leading-6">{lines.map(([k, l], j) => <div key={j} className={`px-5 ${k === 'add' ? 'bg-[var(--v-green-soft)]' : ''}`}><span className="mr-3 inline-block w-3 select-none text-[var(--v-ink-3)]">{k === 'add' ? '+' : ' '}</span>{l}</div>)}</pre>
                       : <p className="border-t border-[var(--v-line)] px-5 py-3 text-[13px] text-[var(--v-ink-2)]">6 tests covering under 18, inactive licence, both conditions and the eligible case.</p>)}
                   </li>))}
               </ul>

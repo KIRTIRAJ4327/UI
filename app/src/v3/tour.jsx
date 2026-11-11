@@ -28,16 +28,16 @@ export function TourBar() {
   const next = steps.find(s => !s.done);
   const go = s => { if (s.who !== me) setMe(s.who); location.hash = s.href; };
   return (
-    <div role="region" aria-label="Guided tour" className="sticky top-16 z-10 border-b border-[#c9d8f0] bg-[var(--v-blue-soft)] px-8 py-2.5">
+    <div role="region" aria-label="Guided tour" className="sticky top-16 z-10 border-b border-[var(--v-blue-line)] bg-[var(--v-blue-soft)] px-8 py-2.5">
       <div className="flex items-center gap-4">
         <Compass className="size-5 shrink-0 text-[var(--v-blue)]" />
-        <div className="flex shrink-0 items-center gap-1" aria-label={`${doneN} of ${steps.length} steps done`}>{steps.map((s, i) => <button key={i} title={s.t} aria-label={`Step ${i + 1}: ${s.t}${s.done ? ', done' : ''}`} onClick={() => go(s)} className={`grid size-6 place-items-center rounded-full text-[11px] font-semibold ${s.done ? 'bg-[var(--v-green)] text-white' : s === next ? 'bg-[var(--v-blue)] text-white ring-4 ring-[var(--v-blue)]/20' : 'bg-white text-[var(--v-ink-3)] ring-1 ring-[#c9d8f0]'}`}>{s.done ? <Check className="size-3.5" strokeWidth={3} /> : i + 1}</button>)}</div>
+        <div className="flex shrink-0 items-center gap-1" aria-label={`${doneN} of ${steps.length} steps done`}>{steps.map((s, i) => <button key={i} title={s.t} aria-label={`Step ${i + 1}: ${s.t}${s.done ? ', done' : ''}`} onClick={() => go(s)} className={`grid size-6 place-items-center rounded-full text-[11px] font-semibold ${s.done ? 'bg-[var(--v-green)] text-white' : s === next ? 'bg-[var(--v-blue)] text-white ring-4 ring-[var(--v-blue)]/20' : 'bg-[var(--v-surface)] text-[var(--v-ink-3)] ring-1 ring-[var(--v-blue-line)]'}`}>{s.done ? <Check className="size-3.5" strokeWidth={3} /> : i + 1}</button>)}</div>
         <div className="min-w-0 flex-1 text-[14px]">
           {next ? <><b className="font-semibold">Step {steps.indexOf(next) + 1}: {next.t}.</b> <span className="text-[var(--v-ink-2)]">{next.hint}{next.who !== me && ' We will switch you to the right person.'}</span></>
             : <b className="font-semibold text-[var(--v-green)]">Tour complete. You have seen every part of the platform. Use Reset demo data to start again.</b>}
         </div>
         {next && <Button size="sm" className="h-8 shrink-0 rounded-lg" onClick={() => go(next)}>Go<ChevronRight className="size-4" /></Button>}
-        <button aria-label="Close the guided tour" onClick={() => setTour(false)} className="shrink-0 rounded-md p-1 text-[var(--v-ink-2)] hover:bg-white"><X className="size-4" /></button>
+        <button aria-label="Close the guided tour" onClick={() => setTour(false)} className="shrink-0 rounded-md p-1 text-[var(--v-ink-2)] hover:bg-[var(--v-surface)]"><X className="size-4" /></button>
       </div>
     </div>
   );
@@ -51,8 +51,8 @@ export function Welcome() {
   const close = tour => { setWelcomed(); setTour(tour); };
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-[#101429]/45 p-6 backdrop-blur-[2px]">
-      <div role="dialog" aria-modal="true" aria-labelledby="wt" onKeyDown={e => e.key === 'Escape' && close(false)} className="w-full max-w-[560px] overflow-hidden rounded-2xl bg-white shadow-2xl">
-        <div className="bg-[var(--v-ink)] px-7 py-6 text-white">
+      <div role="dialog" aria-modal="true" aria-labelledby="wt" onKeyDown={e => e.key === 'Escape' && close(false)} className="w-full max-w-[560px] overflow-hidden rounded-2xl bg-[var(--v-surface)] shadow-2xl">
+        <div className="bg-[var(--v-side)] px-7 py-6 text-white">
           <div className="flex items-center gap-2 text-[13px] text-[#c8cde0]"><Sparkles className="size-4" />Clickable prototype</div>
           <h2 id="wt" className="mt-1 font-display text-[24px] font-semibold">Unified Product Delivery Platform</h2>
           <p className="mt-2 text-[14.5px] leading-relaxed text-[#dfe3ef]">A business person describes a change, an AI agent delivers it stage by stage, and the right people approve each step. Everything here works, with sample data. Nothing is sent anywhere.</p>

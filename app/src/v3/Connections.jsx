@@ -25,7 +25,7 @@ export default function V3Connections() {
       <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
         <div className="flex flex-wrap items-end gap-4"><div className="min-w-0 flex-1"><h1 className="font-display text-[28px] font-semibold">Connections</h1><p className="mt-1 text-[15px] text-[var(--v-ink-2)]">Systems the platform reads from and writes to. If one stops working, runs that need it pause and you are told here.</p></div>
           <div className="flex gap-2"><Pill tone="done">{teamsOk ? 5 : 4} healthy</Pill><Pill tone="wait">1 needs attention</Pill>{!teamsOk && <Pill tone="bad">1 failing</Pill>}</div></div>
-        {!teamsOk && <div className="flex items-start gap-4 rounded-2xl border border-[#f2c4c0] bg-[var(--v-red-soft)] px-5 py-4">
+        {!teamsOk && <div className="flex items-start gap-4 rounded-2xl border border-[var(--v-red-line)] bg-[var(--v-red-soft)] px-5 py-4">
           <Bell className="mt-0.5 size-5 shrink-0 text-[var(--v-red)]" /><div className="min-w-0 flex-1"><b className="font-semibold">Approval requests are not reaching Teams</b><p className="text-[13.5px] text-[var(--v-ink-2)]">The Teams sign-in expired at 08:12. Approvers still see their items in the platform, but 3 notifications were not delivered.</p></div>
           <Button className="h-9 shrink-0 rounded-lg" onClick={() => { const t = fixTeams(); toast('Signed in to Teams. The 3 missed notifications have been sent.', () => undo(t)); }}>Sign in again</Button>
         </div>}

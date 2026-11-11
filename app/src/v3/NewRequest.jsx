@@ -19,13 +19,13 @@ export default function V3New() {
           <div><h1 className="font-display text-[28px] font-semibold">Describe the change you need</h1><p className="mt-1 max-w-[60ch] text-[15px] text-[var(--v-ink-2)]">Write it the way you would explain it to a colleague. The platform drafts a plan, and nothing starts until you approve it.</p></div>
           <Card className="p-5">
             <label htmlFor="req" className="text-[14px] font-semibold">What should change, and why?</label>
-            <textarea id="req" value={text} onChange={e => setText(e.target.value)} rows={6} className="mt-2 w-full resize-y rounded-xl border border-[var(--v-line)] bg-[var(--v-sunken)] p-4 text-[15px] leading-relaxed outline-none focus:border-[var(--v-blue)] focus:bg-white focus:ring-4 focus:ring-[var(--v-blue)]/15" />
+            <textarea id="req" value={text} onChange={e => setText(e.target.value)} rows={6} className="mt-2 w-full resize-y rounded-xl border border-[var(--v-line)] bg-[var(--v-sunken)] p-4 text-[15px] leading-relaxed outline-none focus:border-[var(--v-blue)] focus:bg-[var(--v-surface)] focus:ring-4 focus:ring-[var(--v-blue)]/15" />
             <div className="mt-1 flex justify-between text-[12.5px] text-[var(--v-ink-3)]"><span>Tip: include the business rule and where it applies.</span><span className="tnum">{text.length} characters</span></div>
             <div className="mt-5 grid grid-cols-2 gap-4">
               <label className="flex flex-col gap-1.5 text-[14px] font-semibold" htmlFor="app">Application
-                <select id="app" value={app} onChange={e => setApp(e.target.value)} className="h-10 rounded-lg border border-[var(--v-line)] bg-white px-3 font-normal"><option>Full Application</option><option>Advisor Portal</option><option>Client Services</option></select></label>
+                <select id="app" value={app} onChange={e => setApp(e.target.value)} className="h-10 rounded-lg border border-[var(--v-line)] bg-[var(--v-surface)] px-3 font-normal"><option>Full Application</option><option>Advisor Portal</option><option>Client Services</option></select></label>
               <label className="flex flex-col gap-1.5 text-[14px] font-semibold" htmlFor="by"><span>Needed by <span className="font-normal text-[var(--v-ink-3)]">(optional)</span></span>
-                <input id="by" type="date" defaultValue="2026-11-20" className="h-10 rounded-lg border border-[var(--v-line)] bg-white px-3 font-normal" /></label>
+                <input id="by" type="date" defaultValue="2026-11-20" className="h-10 rounded-lg border border-[var(--v-line)] bg-[var(--v-surface)] px-3 font-normal" /></label>
             </div>
             <div className="mt-6 flex items-center gap-3 border-t border-[var(--v-line)] pt-5">
               <Button disabled={!ok} onClick={() => { const id = 'WI-' + nextId; createRequest(id, text, app); toast(`${id} started. The agent is drafting the plan.`); location.hash = runHref(id).slice(1); }} className="h-10 rounded-lg px-5"><Sparkles className="size-4" />Draft the plan</Button>

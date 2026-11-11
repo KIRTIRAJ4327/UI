@@ -162,6 +162,8 @@ body { font-size: 13.5px; color: var(--ink); }
   --v-bg: #eef1ed; --v-surface: #ffffff; --v-sunken: #f5f7f4; --v-line: #dfe5df; --v-ink: #101429; --v-ink-2: #4a5550; --v-ink-3: #56615a;
   --v-blue: #2469bc; --v-blue-soft: #e8f0fb; --v-green: #23703a; --v-green-soft: #e6f4e8; --v-amber: #864f00; --v-amber-soft: #fdf1dc; --v-red: #b3261e; --v-red-soft: #fdeceb;
   --primary: #2469bc; --ring: #2469bc;
+  --v-line-strong: #b9c4bb; --v-amber-line: #f0d9a8; --v-red-line: #f2c4c0; --v-blue-line: #c9d8f0; --v-toggle-off: #c3ccc5;
+  --v-inv: #101429; --v-inv-fg: #ffffff; --v-side: #101429;
   font-family: 'Inter Variable', Inter, system-ui, sans-serif; font-size: 14px; color: var(--v-ink); background: var(--v-bg);
   font-feature-settings: "cv11", "ss01";
 }
@@ -169,3 +171,21 @@ body { font-size: 13.5px; color: var(--ink); }
 .v3 .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 .v3 .tnum { font-variant-numeric: tabular-nums; }
 .v3 h1, .v3 h2, .v3 h3 { text-wrap: balance; }
+
+/* Dark mode for the product (round 3). Same navy and blue identity; surfaces step up in lightness, accents brighten for contrast. */
+.v3[data-mode="dark"] {
+  color-scheme: dark;
+  --v-bg: #0d111d; --v-surface: #151a2a; --v-sunken: #1b2134; --v-line: #283048; --v-line-strong: #3a4462;
+  --v-ink: #e8ebf3; --v-ink-2: #b6bdcd; --v-ink-3: #8f99ae;
+  --v-blue: #7aa7ff; --v-blue-soft: #1a2846; --v-blue-line: #2c4370;
+  --v-green: #56c787; --v-green-soft: #12291d;
+  --v-amber: #f2b54b; --v-amber-soft: #2b2212; --v-amber-line: #5b4520;
+  --v-red: #ff8077; --v-red-soft: #33171a; --v-red-line: #5e2a2c;
+  --v-toggle-off: #3a4462; --v-inv: #e8ebf3; --v-inv-fg: #0d111d; --v-side: #090c16;
+  /* shadcn component tokens follow the product palette */
+  --background: var(--v-bg); --foreground: var(--v-ink); --card: var(--v-surface); --card-foreground: var(--v-ink);
+  --popover: var(--v-surface); --popover-foreground: var(--v-ink); --border: var(--v-line); --input: var(--v-line-strong);
+  --muted: var(--v-sunken); --muted-foreground: var(--v-ink-3); --accent: var(--v-sunken); --accent-foreground: var(--v-ink);
+  --secondary: var(--v-sunken); --secondary-foreground: var(--v-ink); --primary: #2f74d6; --primary-foreground: #ffffff; --ring: #7aa7ff;
+}
+.v3[data-mode="dark"] ::placeholder { color: #737d93; }

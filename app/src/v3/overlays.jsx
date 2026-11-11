@@ -36,7 +36,7 @@ export function CommandPalette({ open, onClose }) {
   let last = '';
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-[#101429]/30 px-4 pt-[12vh] backdrop-blur-[2px]" onMouseDown={e => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-modal="true" aria-label="Search and go to" className="w-full max-w-[620px] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10" onKeyDown={key}>
+      <div role="dialog" aria-modal="true" aria-label="Search and go to" className="w-full max-w-[620px] overflow-hidden rounded-2xl bg-[var(--v-surface)] shadow-2xl ring-1 ring-black/10" onKeyDown={key}>
         <div className="flex items-center gap-3 border-b border-[var(--v-line)] px-4">
           <Search className="size-5 text-[var(--v-ink-3)]" />
           <input ref={input} value={q} onChange={e => setQ(e.target.value)} role="combobox" aria-expanded="true" aria-controls="cp-list" aria-activedescendant={res[i] ? `cp-${i}` : undefined} aria-label="Search runs, documents, rules and people" placeholder="Search runs, documents, rules and people…" className="h-14 flex-1 bg-transparent text-[15px] outline-none" />
@@ -74,11 +74,11 @@ export function Notifications() {
   }, [open]);
   return (
     <div ref={ref} className="relative">
-      <button aria-label={`Notifications, ${unread} unread`} aria-expanded={open} onClick={() => setOpen(o => !o)} className="relative grid size-9 place-items-center rounded-lg border border-[var(--v-line)] bg-white hover:bg-[var(--v-sunken)]">
+      <button aria-label={`Notifications, ${unread} unread`} aria-expanded={open} onClick={() => setOpen(o => !o)} className="relative grid size-9 place-items-center rounded-lg border border-[var(--v-line)] bg-[var(--v-surface)] hover:bg-[var(--v-sunken)]">
         <Bell className="size-[18px]" />{unread > 0 && <span className="absolute -top-1 -right-1 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-[var(--v-red)] px-1 text-[11px] font-semibold text-white">{unread}</span>}
       </button>
       {open && (
-        <div role="dialog" aria-label="Notifications" className="absolute right-0 top-11 z-40 w-[380px] overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/10">
+        <div role="dialog" aria-label="Notifications" className="absolute right-0 top-11 z-40 w-[380px] overflow-hidden rounded-2xl bg-[var(--v-surface)] shadow-2xl ring-1 ring-black/10">
           <div className="flex items-center justify-between border-b border-[var(--v-line)] px-4 py-3"><b className="font-semibold">Notifications</b><div className="flex items-center gap-1"><button onClick={markRead} className="rounded-md px-2 py-1 text-[13px] font-medium text-[var(--v-blue)] hover:bg-[var(--v-blue-soft)]">Mark all read</button><button aria-label="Close notifications" onClick={() => setOpen(false)} className="rounded-md p-1 hover:bg-[var(--v-sunken)]"><X className="size-4" /></button></div></div>
           <ul className="max-h-[400px] overflow-y-auto">{notes.map(({ id, t, s, a, href, unread: u }) => (
             <li key={id}><a href={href} onClick={() => { markOne(id); setOpen(false); }} className="flex gap-3 border-b border-[var(--v-line)] px-4 py-3 last:border-0 hover:bg-[var(--v-sunken)]">

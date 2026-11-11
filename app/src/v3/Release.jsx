@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper } from './ui';
 import { useToast } from '@/components/friendly';
 import { CheckCircle2, CalendarClock, RotateCcw, FileText } from 'lucide-react';
+import { AgentPanelButton } from './agentpanel';
 import { useProto } from './store';
 import { useGate, NotYours } from './gate';
 
@@ -18,7 +19,7 @@ function ConfirmRelease({ why, ticket, onCancel, onConfirm }) {
   useEffect(() => { cancel.current?.focus(); }, []);
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-[#101429]/45 p-6" onMouseDown={e => e.target === e.currentTarget && onCancel()}>
-      <div role="alertdialog" aria-modal="true" aria-labelledby="rc-t" aria-describedby="rc-d" onKeyDown={e => e.key === 'Escape' && onCancel()} className="w-full max-w-[480px] rounded-2xl bg-white p-6 shadow-2xl">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="rc-t" aria-describedby="rc-d" onKeyDown={e => e.key === 'Escape' && onCancel()} className="w-full max-w-[480px] rounded-2xl bg-[var(--v-surface)] p-6 shadow-2xl">
         <h2 id="rc-t" className="font-display text-[20px] font-semibold">Release to production now?</h2>
         <p id="rc-d" className="mt-1 text-[14px] text-[var(--v-ink-2)]">This goes live immediately, outside a release window. It cannot be undone from here; use the rollback plan if something goes wrong.</p>
         <dl className="mt-4 grid grid-cols-[120px_1fr] gap-y-1.5 rounded-xl bg-[var(--v-sunken)] p-4 text-[13.5px]">
@@ -59,7 +60,7 @@ export default function V3Release() {
             <h1 className="mt-1 font-display text-[28px] font-semibold">Release the fee schedule update</h1>
             <p className="mt-1 max-w-[70ch] text-[15px] text-[var(--v-ink-2)]">Everything before release is done. Check the list, choose when it goes live, and release to <b>production</b> (version 2026.11.3, merge commit 7c2e1fa).</p>
           </div>
-          <div className="w-56 pt-2"><Stepper s="dddddddw" compact /><div className="mt-1.5 text-[12.5px] text-[var(--v-ink-3)]">Stage 8 of 8 · Release</div></div>
+          <div className="w-56 pt-2"><Stepper s="dddddddw" compact /><div className="mt-1.5 text-[12.5px] text-[var(--v-ink-3)]">Stage 8 of 8 · Release</div><div className="mt-3"><AgentPanelButton stage={7} run="WI-4772" /></div></div>
         </div>
         <div className="grid grid-cols-[minmax(0,1fr)_380px] items-start gap-6">
           <div className="flex flex-col gap-6">
@@ -70,7 +71,7 @@ export default function V3Release() {
             <Card>
               <CardHead title="Release notes" sub="Written by the agent from the approved documents. Edit before sending." right={<FileText className="size-4 text-[var(--v-ink-3)]" />} />
               <label htmlFor="notes" className="sr-only">Release notes</label>
-              <textarea id="notes" rows={5} readOnly={!canAct} aria-readonly={!canAct} defaultValue={'Fee schedule v7 is now live in the Full Application.\n\n• Advisors see the new fee table on Product Selection.\n• Applications started before release keep the v6 fees.\n• No action is needed from advisors.'} className="mx-5 mb-5 w-[calc(100%-40px)] rounded-xl border border-[var(--v-line)] bg-[var(--v-sunken)] p-4 text-[14px] leading-relaxed outline-none focus:border-[var(--v-blue)] focus:bg-white" />
+              <textarea id="notes" rows={5} readOnly={!canAct} aria-readonly={!canAct} defaultValue={'Fee schedule v7 is now live in the Full Application.\n\n• Advisors see the new fee table on Product Selection.\n• Applications started before release keep the v6 fees.\n• No action is needed from advisors.'} className="mx-5 mb-5 w-[calc(100%-40px)] rounded-xl border border-[var(--v-line)] bg-[var(--v-sunken)] p-4 text-[14px] leading-relaxed outline-none focus:border-[var(--v-blue)] focus:bg-[var(--v-surface)]" />
             </Card>
           </div>
           <aside className="flex flex-col gap-4">
@@ -83,7 +84,7 @@ export default function V3Release() {
               </fieldset>
               {w === 2 && <><label htmlFor="why" className="mt-3 block text-[13.5px] font-medium">Reason for releasing outside a window</label><input id="why" className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 text-[14px]" value={why} onChange={e => setWhy(e.target.value)} aria-invalid={needWhy} aria-describedby="why-help" placeholder="e.g. regulatory deadline" /><p id="why-help" className={`mt-1 text-[12.5px] ${needWhy ? 'text-[var(--v-red)]' : 'text-[var(--v-ink-3)]'}`}>Required. At least 10 characters, recorded in the audit log.</p></>}
               <label htmlFor="chg" className="mt-4 block text-[13.5px] font-medium">Change ticket</label><input id="chg" value={ticket} onChange={e => setTicket(e.target.value)} className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 font-mono text-[13.5px]" /><p className="mt-1 text-[12.5px] text-[var(--v-ink-3)]">ServiceNow change request, approved by the change board on Mon 10 Nov.</p>
-              <div className="mt-4 flex items-start gap-2 rounded-lg bg-[var(--v-sunken)] p-3 text-[12.5px] text-[var(--v-ink-2)]"><RotateCcw className="mt-0.5 size-3.5 shrink-0" />You can roll back for 24 hours after release from the run page.</div>
+              <div className="mt-4 flex items-start gap-2 rounded-lg bg-[var(--v-sunken)] p-3 text-[12.5px] text-[var(--v-ink-2)]"><RotateCcw className="mt-0.5 size-3.5 shrink-0" />After release, Release Managers can roll back from the run page; a second Release Manager confirms.</div>
               <div className="mt-4 flex flex-col gap-2"><Button disabled={needWhy || !ticket.trim()} onClick={() => w === 2 ? setConfirm(true) : doRelease()} className="h-11 rounded-lg text-[15px]">{w === 2 ? 'Release now' : 'Schedule release'}</Button><Button variant="outline" onClick={() => { const t = holdRelease(); toast('Release held. Priya and Mara have been told why.', () => undo(t)); go(); }} className="h-11 rounded-lg text-[15px]">Hold release</Button></div>
             </Card>}
           </aside>

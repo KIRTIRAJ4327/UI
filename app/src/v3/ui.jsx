@@ -5,6 +5,7 @@ import { CommandPalette, Notifications } from './overlays';
 import { useProto } from './store';
 import { TourBar, Welcome } from './tour';
 import { PrototypeMenu } from './protomenu';
+import { useTheme, ThemeToggle } from './theme';
 import { Home, FilePlus2, Inbox, Rocket, BookCheck, ShieldCheck, Search, Settings, Check, X, LayoutDashboard, UsersRound, Scale, Contact, Plug, KeyRound, History } from 'lucide-react';
 
 export const PEOPLE = {
@@ -64,9 +65,9 @@ export function Stepper({ s, compact, label }) {
             <span className={cn('relative z-10 grid size-7 place-items-center rounded-full border-2 text-[12px] font-semibold',
               k === 'd' && 'border-[var(--v-green)] bg-[var(--v-green)] text-white',
               k === 'w' && 'border-[#e0a000] bg-[var(--v-amber-soft)] text-[var(--v-amber)] ring-4 ring-[#e0a000]/20',
-              k === 'a' && 'border-[var(--v-blue)] bg-white text-[var(--v-blue)]',
+              k === 'a' && 'border-[var(--v-blue)] bg-[var(--v-surface)] text-[var(--v-blue)]',
               k === 'f' && 'border-[var(--v-red)] bg-[var(--v-red)] text-white ring-4 ring-[var(--v-red)]/20',
-              !k && 'border-[var(--v-line)] bg-white text-[var(--v-ink-3)]')}>
+              !k && 'border-[var(--v-line)] bg-[var(--v-surface)] text-[var(--v-ink-3)]')}>
               {k === 'd' ? <Check className="size-4" strokeWidth={3} /> : k === 'f' ? <X className="size-4" strokeWidth={3} /> : i + 1}
             </span>
             <span className={cn('text-[13px]', k === 'w' ? 'font-semibold' : k === 'f' ? 'font-semibold text-[var(--v-red)]' : 'text-[var(--v-ink-2)]')}>{n}{k === 'f' && <span className="sr-only"> (failed)</span>}</span>
@@ -88,6 +89,7 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
   const me = useProto().me;
   const [cp, setCp] = useState(false);
   const proto = useProto();
+  const { resolved } = useTheme();
   useEffect(() => {
     const k = e => {
       const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '');
@@ -97,9 +99,9 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
     addEventListener('keydown', k); return () => removeEventListener('keydown', k);
   }, []);
   return (
-    <div className="v3 grid min-h-screen grid-cols-[248px_1fr]">
-      <a href="#v3main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2">Skip to content</a>
-      <aside aria-label="Sidebar" className="sticky top-0 flex h-screen flex-col gap-1 bg-[var(--v-ink)] px-3 py-4 text-[#c8cde0]">
+    <div className="v3 grid min-h-screen grid-cols-[248px_1fr]" data-mode={resolved}>
+      <a href="#v3main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-[var(--v-surface)] focus:px-3 focus:py-2">Skip to content</a>
+      <aside aria-label="Sidebar" className="sticky top-0 flex h-screen flex-col gap-1 bg-[var(--v-side)] px-3 py-4 text-[#c8cde0]">
         <div className="mb-5 flex items-center gap-2.5 px-2.5">
           <span className="grid size-8 place-items-center rounded-lg bg-[var(--v-blue)]"><svg viewBox="0 0 20 20" className="size-5" aria-hidden="true"><path d="M4 15V5l6 5 6-5v10" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinejoin="round" strokeLinecap="round"/></svg></span>
           <div className="leading-tight"><div className="font-display text-[15px] font-semibold text-white">Delivery Platform</div><div className="text-[12px] text-[#8f97b3]">Full Application team</div></div>
@@ -128,7 +130,8 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
         <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[var(--v-line)] bg-[var(--v-bg)]/90 px-8 backdrop-blur">
           <nav aria-label="Breadcrumb"><ol className="flex min-w-0 items-center gap-2 text-[14px] text-[var(--v-ink-3)]">{crumbs.map((c, i) => { const last = i === crumbs.length - 1; const href = CRUMB[c]; return <li key={c} className="flex items-center gap-2">{i > 0 && <span aria-hidden="true">/</span>}{last ? <span aria-current="page" className="font-medium text-[var(--v-ink)]">{c}</span> : href ? <a href={href} className="rounded hover:text-[var(--v-ink)] hover:underline">{c}</a> : <span>{c}</span>}</li>; })}</ol></nav>
           <div className="flex-1" />
-          <button onClick={() => setCp(true)} aria-keyshortcuts="Control+K Meta+K /" className="flex h-9 w-72 items-center gap-2 rounded-lg border border-[var(--v-line)] bg-white px-3 text-[13.5px] text-[var(--v-ink-3)] hover:border-[#b9c4bb]"><Search className="size-4" />Search requests, rules, people<kbd className="ml-auto rounded border border-[var(--v-line)] px-1.5 font-mono text-[11px]">⌘K</kbd></button>
+          <button onClick={() => setCp(true)} aria-keyshortcuts="Control+K Meta+K /" className="flex h-9 w-72 items-center gap-2 rounded-lg border border-[var(--v-line)] bg-[var(--v-surface)] px-3 text-[13.5px] text-[var(--v-ink-3)] hover:border-[var(--v-line-strong)]"><Search className="size-4" />Search requests, rules, people<kbd className="ml-auto rounded border border-[var(--v-line)] px-1.5 font-mono text-[11px]">⌘K</kbd></button>
+          <ThemeToggle />
           <Notifications />
           {actions}
         </header>

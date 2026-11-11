@@ -22,7 +22,7 @@ export function SortTh({ label, s, className = '' }) {
   const Icon = s.active ? (s.dir === 'asc' ? ChevronUp : ChevronDown) : ChevronsUpDown;
   return (
     <th aria-sort={s.active ? (s.dir === 'asc' ? 'ascending' : 'descending') : 'none'} className={`font-medium ${className}`}>
-      <button onClick={s.onClick} className={`-mx-1 inline-flex items-center gap-1 rounded px-1 py-0.5 hover:bg-white hover:text-[var(--v-ink)] ${s.active ? 'text-[var(--v-ink)]' : ''}`}>{label}<Icon className="size-3.5 opacity-70" /></button>
+      <button onClick={s.onClick} className={`-mx-1 inline-flex items-center gap-1 rounded px-1 py-0.5 hover:bg-[var(--v-surface)] hover:text-[var(--v-ink)] ${s.active ? 'text-[var(--v-ink)]' : ''}`}>{label}<Icon className="size-3.5 opacity-70" /></button>
     </th>
   );
 }
@@ -32,9 +32,9 @@ export function Pager({ t, noun = 'items' }) {
     <div className="flex items-center gap-3 border-t border-[var(--v-line)] px-5 py-3 text-[13px] text-[var(--v-ink-3)]">
       <span className="tnum">{t.total ? `${t.from}–${t.to} of ${t.total} ${noun}` : `No ${noun}`}</span>
       <div className="ml-auto flex items-center gap-1">
-        <button aria-label="Previous page" disabled={t.page === 0} onClick={() => t.setPage(t.page - 1)} className="grid size-8 place-items-center rounded-md border border-[var(--v-line)] bg-white disabled:opacity-40"><ChevronLeft className="size-4" /></button>
+        <button aria-label="Previous page" disabled={t.page === 0} onClick={() => t.setPage(t.page - 1)} className="grid size-8 place-items-center rounded-md border border-[var(--v-line)] bg-[var(--v-surface)] disabled:opacity-40"><ChevronLeft className="size-4" /></button>
         <span className="tnum px-2">Page {t.page + 1} of {t.pages}</span>
-        <button aria-label="Next page" disabled={t.page >= t.pages - 1} onClick={() => t.setPage(t.page + 1)} className="grid size-8 place-items-center rounded-md border border-[var(--v-line)] bg-white disabled:opacity-40"><ChevronRight className="size-4" /></button>
+        <button aria-label="Next page" disabled={t.page >= t.pages - 1} onClick={() => t.setPage(t.page + 1)} className="grid size-8 place-items-center rounded-md border border-[var(--v-line)] bg-[var(--v-surface)] disabled:opacity-40"><ChevronRight className="size-4" /></button>
       </div>
     </div>
   );

@@ -76,4 +76,4 @@ An independent reviewer agent assessed the prototype against modern enterprise S
 New regression suite: 43 of 43 checks (every reported bug reproduced and confirmed fixed, plus axe WCAG 2 A/AA on 10 changed screens). Earlier suites still pass: journey 35/35, access control 34/34, guided tour 10/10, no dead links or buttons.
 
 ## Still open (larger build-outs)
-Custom and application-scoped roles, SCIM-driven offboarding, saved and shared table views with column configuration and bulk actions, dark mode, workspace and environment switcher, the "How the agent did this" drawer on every gate.
+Custom and application-scoped roles, SCIM-driven offboarding, saved and shared table views with column configuration and bulk actions, workspace and environment switcher. (Dark mode and the "How the agent did this" panel shipped in round 5; see review/panel/VERDICT.md for the next roadmap.)

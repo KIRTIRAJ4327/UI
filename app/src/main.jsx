@@ -4,9 +4,10 @@ import './index.css'
 import App from './App.jsx'
 import { ToastProvider } from '@/components/friendly'
 import { PrototypeProvider } from '@/v3/store'
+import { ThemeProvider } from '@/v3/theme'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <PrototypeProvider><ToastProvider><App /></ToastProvider></PrototypeProvider>
+    <ThemeProvider><PrototypeProvider><ToastProvider><App /></ToastProvider></PrototypeProvider></ThemeProvider>
   </StrictMode>,
 )

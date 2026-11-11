@@ -4,11 +4,13 @@ import AnimatedList from '@/components/AnimatedList';
 import SpotlightCard from '@/components/SpotlightCard';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE } from './ui';
 import { useProto, runHref } from './store';
+import { useTheme } from './theme';
 import { Clock, ArrowRight, Plus, PartyPopper } from 'lucide-react';
 
 export default function V3Home() {
   const { mine, list, feed, me, can, attention, myRole, kpi } = useProto();
   const isAdmin = can('squads.manage');
+  const { resolved } = useTheme();
   const myRequests = list.filter(r => r.by === me).slice(0, 4);
   const inProgress = list.filter(r => r.state !== 'done').length;
   const heading = mine.length ? `${mine.length} ${mine.length === 1 ? 'decision is' : 'decisions are'} waiting for you` : 'You are all caught up';
@@ -22,12 +24,12 @@ export default function V3Home() {
           </div>
           <div className="flex gap-3">
             {[['In progress', kpi.inProgress, 'Work items that are not yet released', '#v3-runs'], ['Released', kpi.released, 'Work items released or scheduled for release', '#v3-runs'], ['Average time to release', '3.2 days', 'From request to release, last 30 days', '#v3-admin']].map(([l, v, tip, href]) => (
-              <a key={l} href={href} title={tip} className="rounded-xl border border-[var(--v-line)] bg-white px-4 py-2.5 hover:border-[#b9c4bb]"><span className="block text-[12.5px] text-[var(--v-ink-3)]">{l}</span><span className="tnum block font-display text-[20px] font-semibold">{v}</span></a>))}
+              <a key={l} href={href} title={tip} className="rounded-xl border border-[var(--v-line)] bg-[var(--v-surface)] px-4 py-2.5 hover:border-[var(--v-line-strong)]"><span className="block text-[12.5px] text-[var(--v-ink-3)]">{l}</span><span className="tnum block font-display text-[20px] font-semibold">{v}</span></a>))}
           </div>
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_340px] items-start gap-6">
-          <SpotlightCard theme="light" spotlightColor="rgba(36,105,188,0.18)" intensity={0.12} spotlightSize={420} borderGlow={0.35} flare={false} className="!rounded-2xl !border !border-[var(--v-line)] !bg-white !p-0 shadow-[0_1px_2px_rgba(16,20,41,.04),0_8px_24px_-12px_rgba(16,20,41,.10)]">
+          <SpotlightCard theme={resolved} spotlightColor={resolved === 'dark' ? 'rgba(122,167,255,0.14)' : 'rgba(36,105,188,0.18)'} intensity={0.12} spotlightSize={420} borderGlow={0.35} flare={false} className="!rounded-2xl !border !border-[var(--v-line)] !bg-[var(--v-surface)] !p-0 shadow-[0_1px_2px_rgba(16,20,41,.04),0_8px_24px_-12px_rgba(16,20,41,.10)]">
             <CardHead title="Waiting for you" sub="Oldest first. Each one names exactly what you are deciding." right={mine.length > 0 && <a href="#v3-approvals" className="text-[13px] font-medium text-[var(--v-blue)]">See all</a>} />
             {mine.length ? (
               <ul className="divide-y divide-[var(--v-line)] border-t border-[var(--v-line)]">
@@ -66,7 +68,7 @@ export default function V3Home() {
             </Card>
             <Card>
               <CardHead title="Recent activity" />
-              <div className="px-2 pb-3"><AnimatedList key={feed.length} ariaLabel="Recent activity" onItemSelect={item => { const id = /WI-\d+/.exec(item.title)?.[0]; if (id) location.hash = `v3-run-${id.toLowerCase()}`; }} theme="light" frame={false} showGradients={false} displayScrollbar={false} selectOnHover={false} enableArrowNavigation={false} animateOnce width="100%" maxHeight={400} gap={2} radius={10} accentColor="#2469bc"
+              <div className="px-2 pb-3"><AnimatedList key={feed.length} ariaLabel="Recent activity" onItemSelect={item => { const id = /WI-\d+/.exec(item.title)?.[0]; if (id) location.hash = `v3-run-${id.toLowerCase()}`; }} theme={resolved} frame={false} showGradients={false} displayScrollbar={false} selectOnHover={false} enableArrowNavigation={false} animateOnce width="100%" maxHeight={400} gap={2} radius={10} accentColor="#2469bc"
                 items={feed.slice(0, 5).map(f => ({ icon: <Avatar p={f.p} size={30} />, title: f.title, description: `${f.who} · ${f.t}` }))} /></div>
             </Card>
           </div>

@@ -4,11 +4,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Shell, Card, Pill, Avatar } from './ui';
 import { useToast } from '@/components/friendly';
 import { AlertTriangle, BookOpen, Link2, CheckCircle2 } from 'lucide-react';
+import { AgentPanelButton } from './agentpanel';
 import { useProto } from './store';
 import { useGate, NotYours } from './gate';
 import { Comments } from './collab';
 
-const Cite = ({ n }) => <a href="#src" className="ml-0.5 rounded bg-[var(--v-blue-soft)] px-1 align-[2px] font-mono text-[10.5px] text-[var(--v-blue)]">{n}</a>;
+const Cite = ({ n }) => <a href="#v3-approve" aria-label={`Source ${n}`} onClick={e => { e.preventDefault(); document.getElementById('src')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="ml-0.5 rounded bg-[var(--v-blue-soft)] px-1 align-[2px] font-mono text-[10.5px] text-[var(--v-blue)]">{n}</a>;
 export default function V3Approve() {
   const toast = useToast();
   const [risk, setRisk] = useState(false);
@@ -25,14 +26,15 @@ export default function V3Approve() {
         <Card className="overflow-hidden">
           <div className="flex items-center gap-3 border-b border-[var(--v-line)] px-7 py-4">
             <BookOpen className="size-5 text-[var(--v-ink-3)]" /><div className="min-w-0 flex-1"><div className="text-[12.5px] text-[var(--v-ink-3)]">Architecture decision · written by the delivery agent · quality check passed</div><div className="font-medium">ADR-0173</div></div>
-            <div role="tablist" aria-label="Detail level" className="flex rounded-lg bg-[var(--v-sunken)] p-1 text-[13px]">{[['summary','Plain summary'],['full','Full technical']].map(([k, l]) => <button key={k} role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={`rounded-md px-3 py-1.5 ${mode === k ? 'bg-white font-medium shadow-sm' : 'text-[var(--v-ink-2)]'}`}>{l}</button>)}</div>
+            <AgentPanelButton stage={3} run="WI-4821" label="How it was made" />
+            <div role="tablist" aria-label="Detail level" className="flex rounded-lg bg-[var(--v-sunken)] p-1 text-[13px]">{[['summary','Plain summary'],['full','Full technical']].map(([k, l]) => <button key={k} role="tab" aria-selected={mode === k} onClick={() => setMode(k)} className={`rounded-md px-3 py-1.5 ${mode === k ? 'bg-[var(--v-surface)] font-medium shadow-sm' : 'text-[var(--v-ink-2)]'}`}>{l}</button>)}</div>
           </div>
           <article className="mx-auto max-w-[680px] px-7 py-8 text-[15.5px] leading-[1.75]">
             <h1 className="font-display text-[26px] font-semibold leading-tight">Enforce the Registered Amortization maximum on Product Selection</h1>
             {mode === 'summary' ? <>
               <h2 className="mt-7 text-[13px] font-semibold uppercase tracking-wide text-[var(--v-ink-3)]">In one paragraph</h2>
               <p className="mt-2">Advisors will no longer be able to enter more than 310 in Registered Amortization on the Product Selection page. They will see a short message explaining the limit. The check reuses the validator the form already uses, so no new service is added<Cite n="1" />.</p>
-              <div className="mt-6 flex gap-3 rounded-xl border border-[#f0d9a8] bg-[var(--v-amber-soft)] p-4"><AlertTriangle className="mt-0.5 size-5 shrink-0 text-[var(--v-amber)]" /><div><b>The gap you are accepting</b><p className="mt-1 text-[14.5px]">The Pricing API is not changed. A system calling the API directly could still save a value above 310. Priya has suggested a follow-up request to close it.</p></div></div>
+              <div className="mt-6 flex gap-3 rounded-xl border border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] p-4"><AlertTriangle className="mt-0.5 size-5 shrink-0 text-[var(--v-amber)]" /><div><b>The gap you are accepting</b><p className="mt-1 text-[14.5px]">The Pricing API is not changed. A system calling the API directly could still save a value above 310. Priya has suggested a follow-up request to close it.</p></div></div>
               <h2 className="mt-7 text-[13px] font-semibold uppercase tracking-wide text-[var(--v-ink-3)]">What gets changed</h2>
               <ul className="mt-2 list-disc pl-5"><li>Product Selection form: blocks values above 310<Cite n="2" /></li><li>Shared amortization validator: gains the maximum<Cite n="3" /></li><li>One new message for advisors, and 3 new unit tests</li></ul>
             </> : <>

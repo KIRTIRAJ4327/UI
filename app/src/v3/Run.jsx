@@ -2,10 +2,11 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE, STAGES } from './ui';
+import { AgentPanelButton } from './agentpanel';
 import { useProto } from './store';
 import { useToast } from '@/components/friendly';
 import { Comments, Activity } from './collab';
-import { FileText, ArrowRight, AlertTriangle, CheckCircle2, Loader2, Clock, Rocket } from 'lucide-react';
+import { FileText, ArrowRight, AlertTriangle, CheckCircle2, Loader2, Clock, Rocket, RotateCcw } from 'lucide-react';
 
 const DOC = ['Delivery plan', 'Specification', 'Impact assessment', 'Architecture decision', 'Completion report', 'Integration evidence', 'Validation report', 'Release record'];
 const DOC_HREF = { 3: '#v3-approve', 4: '#v3-review' };
@@ -17,8 +18,8 @@ function StatusCard({ r }) {
   const holder = PEOPLE[r.holder]?.name || 'the agent';
   if (r.state === 'you') return (
     <Card className="overflow-hidden">
-      <div className="flex items-start gap-4 border-b border-[#f0d9a8] bg-[var(--v-amber-soft)] px-6 py-5">
-        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[var(--v-amber)]"><AlertTriangle className="size-5" /></span>
+      <div className="flex items-start gap-4 border-b border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] px-6 py-5">
+        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--v-surface)] text-[var(--v-amber)]"><AlertTriangle className="size-5" /></span>
         <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">{r.ask}</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">{r.why}</p></div>
         {r.screen ? <Button asChild className="h-10 shrink-0 rounded-lg px-5"><a href={r.screen}>Review<ArrowRight className="size-4" /></a></Button>
           : selfPlan ? <span className="max-w-[220px] shrink-0 text-[13px] text-[var(--v-ink-2)]">You requested this, so another Product Owner must approve the plan.</span>
@@ -36,8 +37,8 @@ function StatusCard({ r }) {
     </Card>);
   if (r.state === 'bad' && r.s.includes('f')) return (
     <Card className="overflow-hidden" role="alert">
-      <div className="flex items-start gap-4 border-b border-[#f2c4c0] bg-[var(--v-red-soft)] px-6 py-5">
-        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-[var(--v-red)]"><AlertTriangle className="size-5" /></span>
+      <div className="flex items-start gap-4 border-b border-[var(--v-red-line)] bg-[var(--v-red-soft)] px-6 py-5">
+        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--v-surface)] text-[var(--v-red)]"><AlertTriangle className="size-5" /></span>
         <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">Validation failed: 2 of 214 tests</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">The agent tried 3 times and stopped. The tests still expect the old 20-minute timeout; the spec now says 15.</p></div>
       </div>
       <ul className="divide-y divide-[var(--v-line)] font-mono text-[13px]">{[['session.spec.js › warns at 18 min', 'expected 18, got 13'], ['logout.spec.js › auto logout', 'expected 20, got 15']].map(([a, b]) => <li key={a} className="flex justify-between gap-4 px-6 py-2.5"><span>{a}</span><span className="text-[var(--v-red)]">{b}</span></li>)}</ul>
@@ -81,15 +82,16 @@ export default function V3Run({ id = 'WI-4821' }) {
             <h1 className="mt-1 font-display text-[28px] font-semibold">{r.t}</h1>
             <p className="mt-1 text-[15px] text-[var(--v-ink-2)]">Stage {cur} of 8 · {STAGES[cur - 1][0]}</p>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-[var(--v-line)] bg-white px-4 py-3"><Avatar p={r.by} size={34} /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Requested by</div><div className="font-medium">{PEOPLE[r.by].name}</div></div><div className="mx-2 h-8 w-px bg-[var(--v-line)]" /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Expected release</div><div className="font-medium">{r.eta}</div></div></div>
+          <div className="flex items-center gap-3 rounded-xl border border-[var(--v-line)] bg-[var(--v-surface)] px-4 py-3"><Avatar p={r.by} size={34} /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Requested by</div><div className="font-medium">{PEOPLE[r.by].name}</div></div><div className="mx-2 h-8 w-px bg-[var(--v-line)]" /><div className="leading-tight"><div className="text-[12.5px] text-[var(--v-ink-3)]">Expected release</div><div className="font-medium">{r.eta}</div></div></div>
         </div>
 
-        <Card className="px-6 py-6"><Stepper s={r.s} /></Card>
+        <Card className="px-6 py-6"><Stepper s={r.s} />{(() => { const at = [...r.s].findIndex(c => c !== 'd'); const st = at < 0 ? r.s.length - 1 : at; return <div className="mt-4 flex items-center justify-between gap-3 border-t border-[var(--v-line)] pt-4 text-[13.5px] text-[var(--v-ink-2)]"><span>See the sources, checks, confidence and cost behind the current stage.</span><AgentPanelButton stage={st} run={r.id} /></div>; })()}</Card>
 
         <div className="grid grid-cols-[minmax(0,1fr)_360px] items-start gap-6">
           <div className="flex flex-col gap-6">
-            {r.paused && <Card className="flex items-center gap-3 border-[#f0d9a8] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><Clock className="size-5 text-[var(--v-amber)]" /><span className="flex-1"><b>Paused by you.</b> The agent and approvers cannot move this run until you resume it.</span><Button className="h-9 rounded-lg" onClick={() => togglePause(r.id)}>Resume run</Button></Card>}
+            {r.paused && <Card className="flex items-center gap-3 border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><Clock className="size-5 text-[var(--v-amber)]" /><span className="flex-1"><b>Paused by you.</b> The agent and approvers cannot move this run until you resume it.</span><Button className="h-9 rounded-lg" onClick={() => togglePause(r.id)}>Resume run</Button></Card>}
             <StatusCard r={r} />
+            {r.state === 'done' && <Card className="px-6 py-5"><div className="flex flex-wrap items-center gap-4"><div className="min-w-0 flex-1"><h2 className="text-[16px] font-semibold">In production</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">Health checks normal since release · error rate 0.02% · no linked incidents. The tested rollback plan is attached to the release record.</p></div>{can('gate.release') ? <Button variant="outline" className="h-10 rounded-lg" onClick={() => toast(`Rollback of ${r.id} prepared. It needs a second Release Manager to confirm before it runs.`)}><RotateCcw className="size-4" />Roll back</Button> : <span className="text-[13px] text-[var(--v-ink-3)]">Release Managers can roll back this change.</span>}</div></Card>}
             <Activity id={r.id} />
             <Comments id={r.id} />
             {r.id === 'WI-4821' && <Card><CardHead title="How the design was made" sub="13 min 48 s · 6 of 6 quality checks passed · 4 sources" right={<Button asChild variant="outline" size="sm" className="rounded-lg"><a href="#v3-evidence">Open</a></Button>} /></Card>}

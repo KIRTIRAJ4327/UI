@@ -8,7 +8,7 @@ body = s[s.index('<body>') + 6:s.index('</body>')]
 for pat in [r'<meta charset="UTF-8" />', r'<link rel="icon"[^>]*>', r'<meta name="viewport"[^>]*>', r'<title>.*?</title>']:
     head = re.sub(pat, '', head)
 out = ('<title>Unified Product Delivery Platform</title>\n'
-       '<style>:root{color-scheme:light}html,body{background:#eef1ed}</style>\n'
+       '<style>:root{color-scheme:light dark}html,body{background:#eef1ed}@media (prefers-color-scheme:dark){html,body{background:#0d111d}}</style>\n'
        + head.strip() + '\n' + body.strip() + '\n')
 open(sys.argv[1], 'w').write(out)
 print(f'{len(out) / 1e6:.1f} MB written to {sys.argv[1]}')
