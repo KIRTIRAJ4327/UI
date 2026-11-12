@@ -16,7 +16,7 @@ export default function V3Runs({ approvals }) {
   const [f, setF] = useState(approvals ? 'you' : 'all');
   const [app, setApp] = useState('All applications');
   const [q, setQ] = useState('');
-  const { list: RUNS } = useProto();
+  const { list: RUNS, me } = useProto();
   const rows = useMemo(() => RUNS.filter(r => (f === 'all' || r.state === f) && (app === 'All applications' || r.app === app) && (`${r.id} ${r.t}`.toLowerCase().includes(q.toLowerCase()))), [f, app, q, RUNS]);
   const tb = useTable(rows, { sort: approvals ? 'age' : null, dir: 'desc', getters: GET, pageSize: 8 });
   const count = k => k === 'all' ? RUNS.length : RUNS.filter(r => r.state === k).length;
@@ -38,7 +38,7 @@ export default function V3Runs({ approvals }) {
             <tbody>
               {tb.view.map(r => (
                 <tr key={r.id} className="border-b border-[var(--v-line)] last:border-0 hover:bg-[var(--v-sunken)]">
-                  <td className="py-3.5 pl-5"><a href={runHref(r.id)} className="font-medium hover:text-[var(--v-blue)]">{r.t}</a><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}{r.by === 'alex' && ' · requested by you'}</div></td>
+                  <td className="py-3.5 pl-5"><a href={runHref(r.id)} className="font-medium hover:text-[var(--v-blue)]">{r.t}</a><div className="font-mono text-[12px] text-[var(--v-ink-3)]">{r.id} · {r.app}{r.by === me && ' · requested by you'}</div></td>
                   <td className="pr-6"><Stepper s={r.s} compact label /></td>
                   <td className="pr-4">{r.state === 'you' ? <a href={r.screen || runHref(r.id)} className="inline-flex"><Pill tone="you">{r.now} →</Pill></a> : <Pill tone={r.state}>{r.now}</Pill>}</td>
                   <td className="pr-4"><span className="flex items-center gap-2"><Avatar p={r.holder} size={24} />{r.holder === 'agent' ? 'Agent' : PEOPLE[r.holder].name.split(' ')[0]}</span></td>

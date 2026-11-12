@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE } from './ui';
 import { useToast } from '@/components/friendly';
+import { saveFile } from './docs';
 import { useProto, runHref } from './store';
 import { AlertTriangle, Clock, UserX, ShieldAlert, FlaskConical, Download, ArrowRight } from 'lucide-react';
 
@@ -15,7 +16,7 @@ const KPIS = [
 const ATTENTION = [
   { icon: UserX, tone: 'bad', id: 'WI-4807', key: 'leave', title: 'Approver is on leave', text: 'Jon Reyes holds the completion review and is away until Friday. It has waited 3 h against a 2 h target.', action: 'Reassign to Lena Brooks', done: 'WI-4807 reassigned to Lena Brooks. Jon has been notified.' },
   { icon: FlaskConical, tone: 'bad', id: 'WI-4790', key: 'agent', title: 'Agent stopped after 3 attempts', text: 'Two regression tests still fail. The agent needs an engineer to decide whether the tests or the code are wrong.', action: 'Assign an engineer', done: 'Engineer assignment opened for WI-4790.' },
-  { icon: ShieldAlert, tone: 'wait', id: 'WI-4830', key: 'freeze', title: 'Release falls in the month-end freeze', text: 'Planned release on 2 Dec is inside the 1–3 Dec freeze. Approve an exception or move the date.', action: 'Review exception', done: 'Freeze exception request opened for WI-4830.' },
+  { icon: ShieldAlert, tone: 'wait', id: 'WI-4830', key: 'freeze', title: 'Release falls in the month-end freeze', text: 'Planned release on 2 Dec is inside the 1–3 Dec freeze. Approve an exception or move the date.', action: 'Review exception', done: 'Freeze exception approved for WI-4830. The release stays on Tue 2 Dec and the exception is in the audit log.' },
   { icon: AlertTriangle, tone: 'wait', id: 'WI-4836', key: 'squad', title: 'Squad is incomplete', text: 'No Integration Lead is assigned. The run will stop at Integrate without one.', action: 'Complete squad', href: '#v3-squad-wi-4836' },
 ];
 
@@ -26,17 +27,17 @@ const LOAD = [['alex', 3, ''], ['priya', 4, ''], ['jon', 2, 'On leave until Fri'
 
 export default function V3Admin() {
   const toast = useToast();
-  const { list, attention, resolve, undo } = useProto();
+  const { list, attention, resolve, undo, audit } = useProto();
   const open = ATTENTION.filter(a => attention.includes(a.key));
   const { kpi: K } = useProto();
   const kpi = [K.inProgress, list.filter(r => r.state === 'you' || r.state === 'wait').length, (attention.includes('leave') ? 1 : 0) + list.filter(r => r.state === 'bad').length, 48.2];
   const ITEMS = list.map(r => ({ id: r.id, t: r.t, app: r.app, s: r.s, holder: r.holder, wait: r.wait || '—', squad: r.squadGap ? '5/6' : '6/6', health: r.state === 'bad' ? ['Blocked', 'bad'] : r.squadGap ? ['Squad gap', 'wait'] : r.freeze ? ['Freeze risk', 'wait'] : r.state === 'done' ? ['Done', 'done'] : ['On track', 'done'] }));
   return (
-    <Shell admin active="admin" crumbs={['Admin', 'Governance']} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={() => toast('Audit pack for this week is being prepared.')}><Download className="size-4" />Export audit pack</Button>}>
+    <Shell admin active="admin" crumbs={['Admin', 'Governance']} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={() => saveFile('audit-pack-2026-w46.json', JSON.stringify({ period: '2026-11-10/2026-11-16', generated: new Date().toISOString(), runs: list.map(r => ({ id: r.id, title: r.t, app: r.app, stages: r.s, state: r.state, holder: r.holder })), audit }, null, 2), toast)}><Download className="size-4" />Export audit pack</Button>}>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-6">
         <div className="flex flex-wrap items-end gap-4">
           <div className="min-w-0 flex-1"><p className="text-[14px] text-[var(--v-ink-3)]">All workspaces · this week</p><h1 className="font-display text-[28px] font-semibold">Governance</h1></div>
-          <div role="tablist" aria-label="Period" className="flex rounded-lg bg-[var(--v-surface)] p-1 text-[13px] ring-1 ring-[var(--v-line)]">{['Today', 'This week', 'This month'].map((p, i) => <button key={p} role="tab" aria-selected={i === 1} className={`rounded-md px-3 py-1.5 ${i === 1 ? 'bg-[var(--v-inv)] text-[var(--v-inv-fg)]' : 'text-[var(--v-ink-2)]'}`}>{p}</button>)}</div>
+          <span className="rounded-lg bg-[var(--v-surface)] px-3 py-1.5 text-[13px] text-[var(--v-ink-2)] ring-1 ring-[var(--v-line)]">Mon 10 – Sun 16 Nov</span>
         </div>
 
         <div className="grid grid-cols-4 gap-4">

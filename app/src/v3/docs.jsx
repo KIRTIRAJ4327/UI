@@ -14,7 +14,6 @@ export const KIND_NAME = { plan: 'Delivery plan', spec: 'Specification', impact:
 const KIND_STAGE = { plan: 0, story: 0, spec: 1, impact: 2, design: 3, assignment: 3, 'handoff-test': 3, completion: 4, integration: 5, validation: 6, release: 7 };
 const REPO = { 'Full Application': 'full-application-ui', 'Advisor Portal': 'advisor-portal-web', 'Client Services': 'client-services-app' };
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 28);
-const fp = s => { let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return (h.toString(16).padStart(8, '0') + ((h * 2654435761) >>> 0).toString(16).padStart(8, '0')).slice(0, 16); };
 const num = id => parseInt(id.replace(/\D/g, ''), 10);
 
 // Stories: the plan splits a request into stories; each is specified, designed and built one at a time.
@@ -129,7 +128,7 @@ function Viewer({ doc, onClose, openDoc }) {
   const title = story ? `Story ${story.n}: ${story.title}` : KIND_NAME[kind];
   const blocks = contentFor(r, kind, story);
   const ver = kind === 'design' && r.id === 'WI-4821' ? 'v2' : 'v1';
-  const id = `${r.id}/${story ? story.id : kind}`; const f = fp(id + ver);
+  const id = `${r.id}/${story ? story.id : kind}`;
   const blob = `artifacts/${slug(r.app)}/${r.id.toLowerCase()}/${story ? `story-${story.n}` : kind}-${ver}.md`;
   const sqlId = 18000 + num(r.id) % 1000 * 7 + (stage || 0) * 3 + (story ? story.n : 0);
   const approver = STAGES[stage]?.[1];
@@ -172,7 +171,7 @@ function Viewer({ doc, onClose, openDoc }) {
               <ul className="mt-2 flex flex-col gap-2.5">
                 <li className="flex gap-2"><HardDrive className="mt-0.5 size-4 shrink-0 text-[var(--v-ink-3)]" /><span className="min-w-0"><b className="font-medium">Azure Blob Storage</b><span className="block break-all font-mono text-[11.5px] text-[var(--v-ink-2)]">{blob}</span></span></li>
                 <li className="flex gap-2"><Database className="mt-0.5 size-4 shrink-0 text-[var(--v-ink-3)]" /><span><b className="font-medium">Azure SQL</b><span className="block font-mono text-[11.5px] text-[var(--v-ink-2)]">dbo.Artifacts · id {sqlId}</span><span className="block text-[12px] text-[var(--v-ink-3)]">Versions, approvals and access</span></span></li>
-                <li className="flex gap-2"><Fingerprint className="mt-0.5 size-4 shrink-0 text-[var(--v-ink-3)]" /><span><b className="font-medium">Fingerprint</b><span className="block font-mono text-[11.5px] text-[var(--v-ink-2)]">sha256:{f}…</span></span></li>
+                <li className="flex gap-2"><Fingerprint className="mt-0.5 size-4 shrink-0 text-[var(--v-ink-3)]" /><span><b className="font-medium">Fingerprint</b><span className="block font-mono text-[11.5px] text-[var(--v-ink-2)]"><Sha md={md} /></span><span className="block text-[12px] text-[var(--v-ink-3)]">SHA-256 of this version</span></span></li>
               </ul>
               <h3 className="mt-5 text-[12px] font-semibold uppercase tracking-wide text-[var(--v-ink-3)]">Linked</h3>
               <ul className="mt-2 flex flex-col gap-1.5">
@@ -191,6 +190,12 @@ function Viewer({ doc, onClose, openDoc }) {
       </div>
     </div>
   );
+}
+
+function Sha({ md }) {
+  const [sha, setSha] = useState(null);
+  useEffect(() => { let live = true; crypto.subtle?.digest('SHA-256', new TextEncoder().encode(md)).then(b => { if (live) setSha([...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('')); }).catch(() => {}); return () => { live = false; }; }, [md]);
+  return sha ? <span title={`sha256:${sha}`}>sha256:{sha.slice(0, 16)}…</span> : 'Calculating…';
 }
 
 function Block({ b, r, openDoc, toast }) {

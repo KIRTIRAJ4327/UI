@@ -5,6 +5,7 @@ import { Shell, Card, CardHead, Pill, Avatar, Stepper } from './ui';
 import { useToast } from '@/components/friendly';
 import { CheckCircle2, CalendarClock, RotateCcw, FileText } from 'lucide-react';
 import { AgentPanelButton } from './agentpanel';
+import { FormDialog, Field } from './forms';
 import { useProto } from './store';
 import { useGate, NotYours } from './gate';
 
@@ -40,6 +41,7 @@ const WINDOWS = [['Thu 13 Nov, 18:00', 'Standard evening window · no conflicts'
 export default function V3Release() {
   const toast = useToast();
   const { runs, scheduleRelease, holdRelease, undo } = useProto();
+  const [hold, setHold] = useState(false); const [holdWhy, setHoldWhy] = useState('');
   const g = useGate('WI-4772', 'gate.release');
   const run = g.run;
   const decided = g.decided;
@@ -85,11 +87,14 @@ export default function V3Release() {
               {w === 2 && <><label htmlFor="why" className="mt-3 block text-[13.5px] font-medium">Reason for releasing outside a window</label><input id="why" className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 text-[14px]" value={why} onChange={e => setWhy(e.target.value)} aria-invalid={needWhy} aria-describedby="why-help" placeholder="e.g. regulatory deadline" /><p id="why-help" className={`mt-1 text-[12.5px] ${needWhy ? 'text-[var(--v-red)]' : 'text-[var(--v-ink-3)]'}`}>Required. At least 10 characters, recorded in the audit log.</p></>}
               <label htmlFor="chg" className="mt-4 block text-[13.5px] font-medium">Change ticket</label><input id="chg" value={ticket} onChange={e => setTicket(e.target.value)} className="mt-1.5 h-10 w-full rounded-lg border border-[var(--v-line)] px-3 font-mono text-[13.5px]" /><p className="mt-1 text-[12.5px] text-[var(--v-ink-3)]">ServiceNow change request, approved by the change board on Mon 10 Nov.</p>
               <div className="mt-4 flex items-start gap-2 rounded-lg bg-[var(--v-sunken)] p-3 text-[12.5px] text-[var(--v-ink-2)]"><RotateCcw className="mt-0.5 size-3.5 shrink-0" />After release, Release Managers can roll back from the run page; a second Release Manager confirms.</div>
-              <div className="mt-4 flex flex-col gap-2"><Button disabled={needWhy || !ticket.trim()} onClick={() => w === 2 ? setConfirm(true) : doRelease()} className="h-11 rounded-lg text-[15px]">{w === 2 ? 'Release now' : 'Schedule release'}</Button><Button variant="outline" onClick={() => { const t = holdRelease(); toast('Release held. Priya and Mara have been told why.', () => undo(t)); go(); }} className="h-11 rounded-lg text-[15px]">Hold release</Button></div>
+              <div className="mt-4 flex flex-col gap-2"><Button disabled={needWhy || !ticket.trim()} onClick={() => w === 2 ? setConfirm(true) : doRelease()} className="h-11 rounded-lg text-[15px]">{w === 2 ? 'Release now' : 'Schedule release'}</Button><Button variant="outline" onClick={() => setHold(true)} className="h-11 rounded-lg text-[15px]">Hold release</Button></div>
             </Card>}
           </aside>
         </div>
       </div>
+      {hold && <FormDialog title="Hold this release" sub="Priya Nair and Mara Lopez are told why, and the run waits until you release it." submitLabel="Hold release" disabled={holdWhy.trim().length < 10} onClose={() => setHold(false)} onSubmit={() => { const t = holdRelease(holdWhy.trim()); setHold(false); toast('Release held. Priya and Mara have been told why.', () => undo(t)); go(); }}>
+        <Field id="hold-why" label="Why are you holding it?" help="At least 10 characters. This goes into the audit log."><textarea id="hold-why" rows={3} value={holdWhy} onChange={e => setHoldWhy(e.target.value)} aria-describedby="hold-why-help" className="w-full rounded-lg border border-[var(--v-line-strong)] bg-[var(--v-surface)] p-3 text-[14px] outline-none focus:border-[var(--v-blue)]" placeholder="e.g. Pricing team asked to wait for the rate change" /></Field>
+      </FormDialog>}
       {confirm && <ConfirmRelease why={why} ticket={ticket} onCancel={() => setConfirm(false)} onConfirm={doRelease} />}
     </Shell>
   );

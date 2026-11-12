@@ -6,7 +6,7 @@ import { Shell, Card, Pill, Avatar, PEOPLE, STAGES } from './ui';
 import { useProto, runHref } from './store';
 import { useTable, SortTh, Pager } from './table';
 import { useToast } from '@/components/friendly';
-import { useDoc, KINDS, storiesFor } from './docs';
+import { useDoc, KINDS, storiesFor, saveFile } from './docs';
 import { FileText, Search, Download, X, ShieldCheck, Lock, History, Link2 } from 'lucide-react';
 
 const DOCS = [
@@ -28,6 +28,7 @@ const PREVIEW = {
 };
 const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7).toString(16).padStart(8, '0');
 
+const csv = rows => rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
 export default function V3Artifacts() {
   const { list, me, can, audit, viewArtifact, exportArtifacts, NAME } = useProto();
   const toast = useToast(); const { openDoc } = useDoc();
@@ -58,7 +59,7 @@ export default function V3Artifacts() {
         <div className="flex flex-wrap items-end gap-4">
           <div className="min-w-0 flex-1"><h1 className="font-display text-[28px] font-semibold">Artifacts</h1><p className="mt-1 max-w-[80ch] text-[15px] text-[var(--v-ink-2)]">{all ? 'Every document and piece of evidence the platform has stored, for every work item.' : 'Documents from the work you requested, hold, or approve. A platform admin or auditor can see everything.'}</p></div>
           <div className="flex items-center gap-3 rounded-xl border border-[var(--v-line)] bg-[var(--v-surface)] px-4 py-2.5 text-[13px]"><ShieldCheck className="size-5 text-[var(--v-green)]" /><div><b className="font-medium">Evidence store</b><div className="text-[var(--v-ink-3)]">Immutable · fingerprinted · kept 7 years</div></div></div>
-          {can('artifacts.export') && <Button variant="outline" className="h-10 rounded-lg" onClick={() => { exportArtifacts(`${visible.length} artifacts`); toast(`Export of ${visible.length} artifacts is being prepared. You will be notified when it is ready.`); }}><Download className="size-4" />Export {visible.length}</Button>}
+          {can('artifacts.export') && <Button variant="outline" className="h-10 rounded-lg" onClick={() => { exportArtifacts(`${visible.length} artifacts`); saveFile('artifacts-index.csv', csv([['artifact', 'work_item', 'stage', 'status', 'version', 'blob_path'], ...visible.map(a => [a.name, a.run, a.stage, a.st, a.v, `artifacts/${a.app.toLowerCase().replace(/ /g, '-')}/${a.run.toLowerCase()}/${a.kind}-${a.v.split(' ')[0]}.md`])]), toast); }}><Download className="size-4" />Export {visible.length}</Button>}
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div role="tablist" aria-label="Status" className="flex gap-1.5">{[['all', 'All'], ['Approved', 'Approved'], ['Waiting for approval', 'Waiting'], ['Draft', 'Draft']].map(([k, l]) => <button key={k} role="tab" aria-selected={status === k} onClick={() => setStatus(k)} className={`h-8 rounded-full px-3.5 text-[13.5px] ring-1 ${status === k ? 'bg-[var(--v-inv)] text-[var(--v-inv-fg)] ring-[var(--v-inv)]' : 'bg-[var(--v-surface)] text-[var(--v-ink-2)] ring-[var(--v-line)]'}`}>{l}</button>)}</div>
@@ -88,7 +89,7 @@ export default function V3Artifacts() {
                 <div className="flex items-start gap-3"><FileText className="mt-0.5 size-5 text-[var(--v-blue)]" /><div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold leading-snug">{sel.name}</h2><a href={runHref(sel.run)} className="text-[13px] text-[var(--v-blue)] hover:underline">{sel.run} · {sel.runTitle}</a></div><button aria-label="Close details" onClick={() => setSel(null)} className="rounded-md p-1 hover:bg-[var(--v-sunken)]"><X className="size-4" /></button></div>
                 <p className="mt-3 rounded-lg bg-[var(--v-sunken)] p-3 text-[14px] leading-relaxed">{PREVIEW[sel.t]}</p>
                 <dl className="mt-4 grid grid-cols-[110px_1fr] gap-y-1.5 text-[13px]"><dt className="text-[var(--v-ink-3)]">Status</dt><dd><Pill tone={sel.st === 'Approved' ? 'done' : 'wait'}>{sel.st}</Pill></dd><dt className="text-[var(--v-ink-3)]">Approver</dt><dd className="flex items-center gap-1.5">{sel.approver ? <><Avatar p={sel.approver} size={18} />{PEOPLE[sel.approver].name}</> : 'Automatic checks'}</dd><dt className="text-[var(--v-ink-3)]">Version</dt><dd>{sel.v}</dd><dt className="text-[var(--v-ink-3)]">Fingerprint</dt><dd className="font-mono text-[12px]">{hash(sel.id)} {hash(sel.name)}</dd></dl>
-                <div className="mt-4 flex flex-wrap gap-2"><Button size="sm" className="rounded-lg" onClick={() => openDoc({ run: sel.run, kind: sel.kind, story: sel.story })}><FileText className="size-3.5" />Open document</Button>{can('artifacts.export') ? <Button size="sm" variant="outline" className="rounded-lg" onClick={() => { exportArtifacts(sel.name + ' · ' + sel.run); toast(`${sel.name} downloaded.`); }}><Download className="size-3.5" />Download</Button> : <span className="flex items-center gap-1.5 text-[12.5px] text-[var(--v-ink-3)]"><Lock className="size-3.5" />Your role cannot download</span>}<Button size="sm" variant="outline" className="rounded-lg" onClick={() => toast('Link copied. Only people with access can open it.')}><Link2 className="size-3.5" />Copy link</Button></div>
+                <div className="mt-4 flex flex-wrap gap-2"><Button size="sm" className="rounded-lg" onClick={() => openDoc({ run: sel.run, kind: sel.kind, story: sel.story })}><FileText className="size-3.5" />Open document</Button>{can('artifacts.export') ? <Button size="sm" variant="outline" className="rounded-lg" onClick={() => { exportArtifacts(sel.name + ' · ' + sel.run); openDoc({ run: sel.run, kind: sel.kind, story: sel.story }); }}><Download className="size-3.5" />Download</Button> : <span className="flex items-center gap-1.5 text-[12.5px] text-[var(--v-ink-3)]"><Lock className="size-3.5" />Your role cannot download</span>}<Button size="sm" variant="outline" className="rounded-lg" onClick={() => toast('Link copied. Only people with access can open it.')}><Link2 className="size-3.5" />Copy link</Button></div>
               </Card>
               <Card className="p-5"><h3 className="text-[14px] font-semibold">Versions</h3>
                 <ol className="mt-2 flex flex-col gap-2 text-[13px]">{(sel.v === 'v2' ? [['v2', 'Approved', 'Today 14:33'], ['v1', 'Superseded: missing AC-3 reference', 'Today 14:31']] : [[sel.v, sel.st, 'Today']]).map(([v, s, t]) => <li key={v} className="flex justify-between gap-2"><span><b className="font-medium">{v}</b> · {s}</span><span className="text-[var(--v-ink-3)]">{t}</span></li>)}</ol></Card>

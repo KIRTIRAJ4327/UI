@@ -1,4 +1,5 @@
 // Admin · Audit log: every action by every person and the agent, with exact times, details and a verifiable chain.
+import { saveFile } from './docs';
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, Pill, Avatar } from './ui';
@@ -15,6 +16,7 @@ const rel = iso => { const m = Math.round((Date.now() - new Date(iso)) / 60000);
 const h = s => [...s].reduce((a, c) => (a * 33 + c.charCodeAt(0)) >>> 0, 5381).toString(16).padStart(8, '0');
 const GET = { at: e => e.at, who: e => e.who, action: e => e.action, cat: e => e.cat };
 
+const csv = rows => rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
 export default function V3Audit() {
   const { audit, NAME, exportArtifacts } = useProto();
   const toast = useToast();
@@ -25,7 +27,7 @@ export default function V3Audit() {
   const rows = chained.filter(e => (cat === 'all' || e.cat === cat) && (who === 'Everyone' || (NAME[e.who] || 'System') === who) && `${e.action} ${e.target}`.toLowerCase().includes(q.toLowerCase())
     && (range === 'all' || (range === 'today' ? new Date(e.at).toDateString() === new Date(now).toDateString() : now - new Date(e.at) < 7 * 864e5)));
   const tb = useTable(rows, { sort: 'at', dir: 'desc', getters: GET, pageSize: 12 });
-  const doExport = () => { exportArtifacts(`audit log, ${rows.length} entries, ${RANGES.find(r => r[0] === range)[1].toLowerCase()}`); toast(`Signed PDF with ${rows.length} entries is being prepared. Its fingerprint will match the chain shown here.`); };
+  const doExport = () => { exportArtifacts(`audit log, ${rows.length} entries, ${RANGES.find(r => r[0] === range)[1].toLowerCase()}`); saveFile(`audit-log-${range}.csv`, csv([['time_utc', 'who', 'action', 'target', 'category', 'ip', 'detail'], ...rows.map(e => [e.at, e.who, e.action, e.target, e.cat, e.ip, e.detail])]), toast); };
   return (
     <Shell active="audit" crumbs={['Admin', 'Audit log']} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={doExport}><Download className="size-4" />Export signed PDF</Button>}>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-5">

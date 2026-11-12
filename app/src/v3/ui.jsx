@@ -20,6 +20,7 @@ export const PEOPLE = {
   lena:  { name: 'Lena Brooks', role: 'Engineering Lead', init: 'LB', hue: '#12806f' },
   tom:   { name: 'Tom Iverson', role: 'Integration Lead', init: 'TI', hue: '#6d5a2b' },
   ana:   { name: 'Ana Costa', role: 'Quality Lead', init: 'AC', hue: '#a84a1f' },
+  ines:  { name: 'Ines Duarte', role: 'Auditor', init: 'ID', hue: '#55607a' },
 };
 export const STAGES = [
   ['Plan','priya'],['Specify','priya'],['Impact',null],['Design','alex'],['Build','jon'],['Integrate','tom'],['Validate','mara'],['Release','sam'],
@@ -122,7 +123,7 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
           <div className="flex items-center gap-2.5"><Avatar p={me} size={32} /><div className="min-w-0 leading-tight"><div className="truncate text-[14px] font-medium text-white">{PEOPLE[me].name}</div><div className="truncate text-[12px] text-[#8f97b3]">{proto.myRole}</div></div></div>
           <label htmlFor="viewas" className="text-[11.5px] text-[#8f97b3]">View as</label>
           <select id="viewas" value={me} onChange={e => { proto.setMe(e.target.value); location.hash = 'v3-home'; }} className="h-8 rounded-md border border-white/15 bg-[#1c2140] px-2 text-[13px] text-white">
-            <option value="alex">Alex Kim · Solution Architect</option><option value="priya">Priya Nair · Product Owner</option><option value="sam">Sam Okafor · Release Manager</option><option value="dana">Dana Whitfield · Platform Admin</option>
+            <option value="alex">Alex Kim · Solution Architect</option><option value="priya">Priya Nair · Product Owner</option><option value="sam">Sam Okafor · Release Manager</option><option value="jon">Jon Reyes · Engineering Lead</option><option value="ines">Ines Duarte · Auditor</option><option value="dana">Dana Whitfield · Platform Admin</option>
           </select>
         </div>
       </aside>

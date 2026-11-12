@@ -10,11 +10,11 @@ export function useSteps() {
   const newId = order.find(id => raw[id]?.fresh);
   return [
     { t: 'Approve a design', who: 'alex', href: 'v3-approve', hint: 'Read the plain summary, accept the risk, approve.', done: raw['WI-4821'].state !== 'wait' },
-    { t: 'Answer the agent’s questions', who: 'alex', href: 'v3-clarify', hint: 'Pick an option for each question and send.', done: raw['WI-4799'].state !== 'wait' },
+    { t: 'Answer the agent’s questions as Priya', who: 'priya', href: 'v3-clarify', hint: 'The requester answers business questions. Pick an option for each and send.', done: raw['WI-4799'].state !== 'wait' },
     { t: 'Review the code as a backup', who: 'alex', href: 'v3-review', hint: 'Open a changed file, then approve the build.', done: raw['WI-4807'].state !== 'wait' },
     { t: 'Start a new request', who: 'alex', href: 'v3-new', hint: 'Draft the plan and watch the agent work.', done: !!newId },
     { t: 'Approve the plan as Priya', who: 'priya', href: newId ? `v3-run-${newId.toLowerCase()}` : 'v3-home', hint: 'Product Owners approve plans.', done: !!newId && raw[newId].s.length > 1 },
-    { t: 'Release as Sam', who: 'sam', href: 'v3-release', hint: 'Choose a window and schedule the release.', done: raw['WI-4772'].state === 'done' },
+    { t: 'Release as Sam', who: 'sam', href: 'v3-release', hint: 'Choose a window and schedule the release.', done: raw['WI-4772'].state !== 'wait' },
     { t: 'Fix a squad as the super admin', who: 'dana', href: 'v3-squads', hint: 'Fix the squad with nobody in Integration Lead.', done: !attention.includes('squad') },
     { t: 'Change a permission, then read the audit log', who: 'dana', href: 'v3-roles', hint: 'Untick any box, then open Audit log.', done: audit.some(e => e.cat === 'rbac' && e.t === 'just now') },
   ].map(s => ({ ...s, current: s.who === me }));

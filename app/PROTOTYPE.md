@@ -24,9 +24,9 @@ Every link and button does something, and decisions change the rest of the produ
 - State survives a page refresh. **Prototype → Reset demo data** (bottom of the sidebar) starts over.
 
 ### Suggested 5-minute demo
-1. **Home**: "3 decisions are waiting for you". Click *Approve the solution design*.
+1. **Home**: "2 decisions are waiting for you". Click *Approve the solution design*.
 2. Read the plain summary, switch to *Full technical*, tick the risk, **Approve design**. You land on the run, now in Build. Try **Undo**, then approve again.
-3. **Approvals** in the menu: answer the 2 questions, then review and **Approve build**.
+3. Switch **View as** to Priya: she answers the agent's 2 questions on her own request. Switch back to Alex, then review and **Approve build**.
 4. **Home** now says *You are all caught up*; open the bell to see what happened.
 5. **New request** → **Draft the plan** and watch the agent hand it to Priya.
 6. Switch to the admin view: **Governance** → *Reassign to Lena Brooks* → *Complete squad* → assign Tom → **Save squad**.

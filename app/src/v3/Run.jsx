@@ -13,7 +13,7 @@ const DOC = ['Delivery plan', 'Specification', 'Impact assessment', 'Architectur
 
 function StatusCard({ r }) {
   const toast = useToast();
-  const { approvePlan, requestPlanChanges, can, undo, me, policy, retryRun, assignEngineer } = useProto();
+  const { approvePlan, requestPlanChanges, can, undo, me, policy, retryRun, assignEngineer, cancelSchedule } = useProto();
   const { openDoc } = useDoc();
   const selfPlan = !r.screen && policy.planSoD && r.by === me;
   const holder = PEOPLE[r.holder]?.name || 'the agent';
@@ -49,6 +49,12 @@ function StatusCard({ r }) {
         {can('squads.manage') && <Button variant="outline" className="h-9 rounded-lg" onClick={() => { const t = assignEngineer(r.id); toast('Lena Brooks is now investigating.', () => undo(t)); }}>Assign an engineer</Button>}
         {!can('runs.pause') && r.by !== me && !can('squads.manage') && <span className="text-[13px] text-[var(--v-ink-2)]">Jon Reyes and the platform admin have been notified.</span>}
       </div>
+    </Card>);
+  if (r.scheduled) return (
+    <Card className="flex flex-wrap items-start gap-4 px-6 py-5">
+      <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--v-blue-soft)] text-[var(--v-blue)]"><Clock className="size-5" /></span>
+      <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">Release scheduled: {r.scheduled}</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">Not live yet. The deployment starts in the window, then health checks run and the record is completed. Until then the release can be cancelled.</p></div>
+      {can('gate.release') && <Button variant="outline" className="h-10 shrink-0 rounded-lg" onClick={() => { const t = cancelSchedule(r.id); toast('Scheduled release cancelled. It is back with the Release Manager.', () => undo(t)); }}>Cancel schedule</Button>}
     </Card>);
   const cfg = {
     work: r.s.length === 5 && r.s[4] === 'a'
@@ -96,6 +102,8 @@ export default function V3Run({ id = 'WI-4821' }) {
             {r.paused && <Card className="flex items-center gap-3 border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><Clock className="size-5 text-[var(--v-amber)]" /><span className="flex-1"><b>Paused by you.</b> The agent and approvers cannot move this run until you resume it.</span><Button className="h-9 rounded-lg" onClick={() => togglePause(r.id)}>Resume run</Button></Card>}
             <StatusCard r={r} />
             {r.state === 'done' && <Card className="px-6 py-5"><div className="flex flex-wrap items-center gap-4"><div className="min-w-0 flex-1"><h2 className="text-[16px] font-semibold">In production</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">Health checks normal since release · error rate 0.02% · no linked incidents. The tested rollback plan is attached to the release record.</p></div>{can('gate.release') ? <Button variant="outline" className="h-10 rounded-lg" onClick={() => toast(`Rollback of ${r.id} prepared. It needs a second Release Manager to confirm before it runs.`)}><RotateCcw className="size-4" />Roll back</Button> : <span className="text-[13px] text-[var(--v-ink-3)]">Release Managers can roll back this change.</span>}</div></Card>}
+            {r.answers && <Card className="px-6 py-5"><h2 className="text-[16px] font-semibold">Answers to the agent’s questions</h2><dl className="mt-2 flex flex-col gap-2 text-[14px]">{r.answers.map(([q, a]) => <div key={q}><dt className="text-[var(--v-ink-3)]">{q}</dt><dd className="font-medium">{a}</dd></div>)}</dl></Card>}
+            {r.hold && <Card className="border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><b className="font-semibold">Release held:</b> {r.hold}</Card>}
             <StoriesCard r={r} />
             <DevAgentCard r={r} />
             <Activity id={r.id} />
