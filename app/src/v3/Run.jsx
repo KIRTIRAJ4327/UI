@@ -1,5 +1,6 @@
 // Run overview for any work item: where it is, who holds it, and what happens next.
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { FormDialog, Field } from './forms';
 import { Button } from '@/components/ui/button';
 import { Shell, Card, CardHead, Pill, Avatar, Stepper, PEOPLE, STAGES } from './ui';
 import { AgentPanelButton } from './agentpanel';
@@ -13,9 +14,12 @@ const DOC = ['Delivery plan', 'Specification', 'Impact assessment', 'Architectur
 
 function StatusCard({ r }) {
   const toast = useToast();
-  const { approvePlan, requestPlanChanges, can, undo, me, policy, retryRun, assignEngineer, cancelSchedule } = useProto();
+  const { approvePlan, requestPlanChanges, can, undo, me, policy, retryRun, assignEngineer, cancelSchedule, approveStage, sendBackStage } = useProto();
+  const [back, setBack] = useState(false); const [backWhy, setBackWhy] = useState('');
+  const stage = r.s.length - 1;
+  const LATE = { 5: ['gate.integrate', 'Approve integration', 'Integration approved. Validation is running.', 'approve integrations'], 6: ['gate.validate', 'Approve validation', 'Validation approved. The release is with Sam Okafor.', 'approve validation'], 7: ['gate.release', 'Schedule for the next window', 'Release scheduled for Thu 13 Nov, 18:00.', 'release'] }[stage];
   const { openDoc } = useDoc();
-  const selfPlan = !r.screen && policy.planSoD && r.by === me;
+  const selfPlan = !r.screen && r.s.length === 1 && policy.planSoD && r.by === me;
   const holder = PEOPLE[r.holder]?.name || 'the agent';
   if (r.state === 'you') return (
     <Card className="overflow-hidden">
@@ -23,11 +27,17 @@ function StatusCard({ r }) {
         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-[var(--v-surface)] text-[var(--v-amber)]"><AlertTriangle className="size-5" /></span>
         <div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold">{r.ask}</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">{r.why}</p></div>
         {r.screen ? <Button asChild className="h-10 shrink-0 rounded-lg px-5"><a href={r.screen}>Review<ArrowRight className="size-4" /></a></Button>
+          : LATE ? (can(LATE[0]) ? <div className="flex shrink-0 gap-2"><Button className="h-10 rounded-lg px-5" onClick={() => { const t = approveStage(r.id); toast(LATE[2], () => undo(t)); }}>{LATE[1]}</Button>{stage < 7 && <Button variant="outline" className="h-10 rounded-lg" onClick={() => setBack(true)}>Send back</Button>}</div> : <span className="shrink-0 text-[13px] text-[var(--v-ink-3)]">Your role cannot {LATE[3]}</span>)
           : selfPlan ? <span className="max-w-[220px] shrink-0 text-[13px] text-[var(--v-ink-2)]">You requested this, so another Product Owner must approve the plan.</span>
           : can('gate.plan') ? <div className="flex shrink-0 gap-2"><Button className="h-10 rounded-lg px-5" onClick={() => { const t = approvePlan(r.id); toast('Plan approved. The agent is writing the specification.', () => undo(t)); }}>Approve plan</Button><Button variant="outline" className="h-10 rounded-lg" onClick={() => { const t = requestPlanChanges(r.id); toast('Plan sent back to the agent.', () => undo(t)); }}>Send back</Button></div>
           : <span className="shrink-0 text-[13px] text-[var(--v-ink-3)]">Your role cannot approve plans</span>}
       </div>
-      {!r.screen && <div className="grid grid-cols-3 divide-x divide-[var(--v-line)] text-[14px]">
+      {!r.screen && stage === 5 && <table className="w-full text-[14px]"><caption className="sr-only">Integration pipelines</caption><thead><tr className="border-b border-[var(--v-line)] bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]"><th className="px-6 py-2 font-medium">Pipeline (Azure DevOps)</th><th className="font-medium">Result</th><th className="pr-6 font-medium">Duration</th></tr></thead><tbody>{[['Build and unit tests on the merge commit', '6 min'], ['Deploy to staging', '4 min'], ['Contract tests with dependent services', '3 min']].map(([n, d]) => <tr key={n} className="border-b border-[var(--v-line)] last:border-0"><td className="px-6 py-2.5">{n}</td><td><span className="inline-flex items-center gap-1.5 text-[var(--v-green)]"><CheckCircle2 className="size-4" />Passed</span></td><td className="tnum pr-6 text-[var(--v-ink-2)]">{d}</td></tr>)}</tbody></table>}
+      {!r.screen && stage === 6 && <div className="grid grid-cols-3 divide-x divide-[var(--v-line)] text-[14px]">{[['Acceptance criteria', 'All met, each linked to its test'], ['Regression tests', '214 of 214 pass'], ['User acceptance', 'Signed off by the Product Owner']].map(([h, t]) => <div key={h} className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">{h}</h3><p className="mt-1 flex items-start gap-1.5"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[var(--v-green)]" />{t}</p></div>)}</div>}
+      {back && <FormDialog title={`Send back the ${stage === 5 ? 'integration' : 'validation'}`} sub="The agent gets your note, fixes the problem and submits again." submitLabel="Send back" disabled={backWhy.trim().length < 10} onClose={() => setBack(false)} onSubmit={() => { const t = sendBackStage(r.id, backWhy.trim()); setBack(false); setBackWhy(''); toast('Sent back to the agent with your note.', () => undo(t)); }}>
+        <Field id="back-why" label="What needs to change?" help="At least 10 characters. This goes into the audit log."><textarea id="back-why" rows={3} value={backWhy} onChange={e => setBackWhy(e.target.value)} aria-describedby="back-why-help" className="w-full rounded-lg border border-[var(--v-line-strong)] bg-[var(--v-surface)] p-3 text-[14px] outline-none focus:border-[var(--v-blue)]" /></Field>
+      </FormDialog>}
+      {!r.screen && stage === 0 && <div className="grid grid-cols-3 divide-x divide-[var(--v-line)] text-[14px]">
         <div className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">Objective</h3><p className="mt-1 leading-relaxed">{r.t.replace(/…$/, '')}.</p></div>
         <div className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">Stories</h3><ol className="mt-1 list-decimal pl-4 leading-relaxed">{storiesFor(r).map(s => <li key={s.n}><button onClick={() => openDoc({ run: r.id, kind: 'story', story: s.n })} className="text-left text-[var(--v-blue)] hover:underline">{s.title}</button></li>)}</ol><button onClick={() => openDoc({ run: r.id, kind: 'plan' })} className="mt-2 text-[13px] font-medium text-[var(--v-blue)] hover:underline">Open the full plan</button></div>
         <div className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">Agent assumptions</h3><ul className="mt-1 list-disc pl-4 leading-relaxed"><li>Only {r.app} is affected</li><li>No API change in this request</li></ul></div>
@@ -103,6 +113,7 @@ export default function V3Run({ id = 'WI-4821' }) {
             <StatusCard r={r} />
             {r.state === 'done' && <Card className="px-6 py-5"><div className="flex flex-wrap items-center gap-4"><div className="min-w-0 flex-1"><h2 className="text-[16px] font-semibold">In production</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">Health checks normal since release · error rate 0.02% · no linked incidents. The tested rollback plan is attached to the release record.</p></div>{can('gate.release') ? <Button variant="outline" className="h-10 rounded-lg" onClick={() => toast(`Rollback of ${r.id} prepared. It needs a second Release Manager to confirm before it runs.`)}><RotateCcw className="size-4" />Roll back</Button> : <span className="text-[13px] text-[var(--v-ink-3)]">Release Managers can roll back this change.</span>}</div></Card>}
             {r.answers && <Card className="px-6 py-5"><h2 className="text-[16px] font-semibold">Answers to the agent’s questions</h2><dl className="mt-2 flex flex-col gap-2 text-[14px]">{r.answers.map(([q, a]) => <div key={q}><dt className="text-[var(--v-ink-3)]">{q}</dt><dd className="font-medium">{a}</dd></div>)}</dl></Card>}
+            {r.sentBack && r.state === 'work' && <Card className="border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><b className="font-semibold">Sent back:</b> {r.sentBack}</Card>}
             {r.hold && <Card className="border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><b className="font-semibold">Release held:</b> {r.hold}</Card>}
             <StoriesCard r={r} />
             <DevAgentCard r={r} />

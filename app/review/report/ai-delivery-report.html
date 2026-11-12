@@ -1,0 +1,218 @@
+<title>AI Delivery Report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: one reading column (max 980px), summary first, each chart in a white panel with its source line directly under it. */
+:root{--bg:#eef1ed;--surface:#ffffff;--sunken:#e6eae4;--ink:#101429;--ink2:#444b63;--mute:#6b7389;--line:#d5dad6;--grid:#e2e6ea;--band:#dbe8fb;--accent:#2469bc;--warn-bg:#fdf3dc;--warn-line:#e9cf8b;--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--display:"Space Grotesk",Inter,system-ui,sans-serif;--body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d111d;--surface:#151a2a;--sunken:#1b2134;--ink:#e8ebf3;--ink2:#b6bdcd;--mute:#8f99ae;--line:#283048;--grid:#262e45;--band:#1c2c4a;--accent:#7aa7ff;--warn-bg:#2b2413;--warn-line:#5d4d1f;--c1:#3987e5;--c2:#d95926;--c3:#199e70;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d111d;--surface:#151a2a;--sunken:#1b2134;--ink:#e8ebf3;--ink2:#b6bdcd;--mute:#8f99ae;--line:#283048;--grid:#262e45;--band:#1c2c4a;--accent:#7aa7ff;--warn-bg:#2b2413;--warn-line:#5d4d1f;--c1:#3987e5;--c2:#d95926;--c3:#199e70;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+h1{font:600 clamp(28px,5vw,40px)/1.12 var(--display);margin:6px 0 0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:600 26px/1.2 var(--display);margin:26px 0 0;text-wrap:balance}
+h3{font:600 18px/1.3 var(--display);margin:0 0 6px}
+p{margin:0;max-width:72ch}.lede{font-size:18px;color:var(--ink2)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;min-width:0}
+.scroll{overflow-x:auto}.scroll>div{min-width:660px}
+.src{font-size:13px;color:var(--mute);margin-top:10px;max-width:none}
+.note{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:12px;padding:14px 18px;font-size:15px}
+ul{margin:0;padding-left:20px}li{margin:5px 0;max-width:72ch}
+svg{width:100%;height:auto;display:block}svg text{font-family:var(--body);fill:var(--ink)}
+.lb{font-size:13px}.vl{font-size:12px;fill:var(--ink2)}.tk{font-size:11.5px;fill:var(--mute)}.b{font-weight:600}
+.lg{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13.5px;color:var(--ink2);margin-bottom:12px}.lg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-weight:600;color:var(--ink2);font-size:13px;background:var(--sunken)}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr.ca td{background:var(--band);font-weight:500}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.kpi .panel b{display:block;font:600 30px/1.1 var(--display);color:var(--accent)}.kpi span{font-size:14.5px;color:var(--ink2)}
+.tag{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--sunken);color:var(--ink2)}.done{background:var(--band);color:var(--accent)}
+a{color:var(--accent)}nav.toc{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14.5px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+</style>
+<div class="wrap">
+<header><div class="eyebrow">Stakeholder report · 12 November 2026</div>
+<h1>Governed AI delivery: how the platform compares, and where the market stands</h1>
+<p class="lede" style="margin-top:12px">Part 1 compares the Unified Product Delivery Platform with spec-driven tools and IDE-only working, role by role. Part 2 reviews the state of AI in software and product delivery, with a focus on Canadian banks and a region-by-region view.</p></header>
+<nav class="toc" aria-label="Contents"><a href="#summary">Summary</a><a href="#compare">Part 1: Three approaches</a><a href="#maturity">Part 2: State of maturity</a><a href="#canada">Canada</a><a href="#regions">Regions</a><a href="#means">What it means</a><a href="#method">Method and limits</a></nav>
+
+<div class="note"><b>How to read the numbers.</b> Persona scores and maturity levels are our own estimates. Survey and bank figures come from published summaries and press coverage of the named sources: the researchers could not open the primary pages in this environment. Two key facts were re-checked by search (the Evident ranking and the OSFI dates). Verify any figure before it is quoted externally.</div>
+
+<section id="summary"><h2>Summary</h2>
+<div class="kpi" style="margin-top:14px">
+<div class="panel"><b>74 / 56 / 53</b><span>Total persona score out of 108: this platform, spec-driven tools, IDE only.</span></div>
+<div class="panel"><b>90% vs 6.6%</b><span>Developers who use AI at work, against those who would trust it with an important decision.</span></div>
+<div class="panel"><b>Level 1.5</b><span>Where Canadian banks sit on a 0 to 4 scale of AI in software delivery (our estimate).</span></div>
+<div class="panel"><b>No bank at level 3</b><span>No bank in any region has publicly described governed, multi-stage agentic delivery with named approvers.</span></div></div>
+<ul style="margin-top:16px">
+<li><b>The platform is the best fit for non-developer roles.</b> It leads for the product owner, architect, release manager, administrator and auditor, mainly on evidence and on understanding what the AI did.</li>
+<li><b>Developers are better served by tools in their editor.</b> Spec Kit and IDE agents are free or already licensed, live in the repository and have a faster loop. The platform's copy-and-paste hand-off costs it points.</li>
+<li><b>The platform adds waits.</b> A one-field change needs 8 waits for a person, against 6 for the alternatives in a regulated organisation and 1 in a small team. A fast path for low-risk changes is the first priority.</li>
+<li><b>The market is strong on coding assistants and weak on governance.</b> Individual output is up, but review time, bugs and incidents are up too. Review is the bottleneck.</li>
+<li><b>Canada's regulator is explicit.</b> OSFI published a bulletin on generative and agentic AI on 13 July 2026, and Guideline E-23 on model risk takes effect on 1 May 2027.</li></ul></section>
+
+<section id="compare"><div class="eyebrow">Part 1</div><h2>Three ways to run AI-assisted delivery</h2>
+<p style="margin-top:8px"><b>A. This platform</b> (prototype): a business request goes through eight gated stages with named approvers and one evidence trail; the Developer Agent runs standalone in VS Code. <b>B. Spec-driven in the repo</b>: GitHub Spec Kit and AWS Kiro, where developers write and approve markdown specifications next to the code. <b>C. IDE only</b>: everyone works from VS Code with an AI coding agent, plus Azure DevOps or GitHub for pull requests and pipelines.</p>
+
+<h3 style="margin-top:22px">Score by role, out of 12</h3>
+<div class="panel"><div id="lg1"></div><div class="scroll"><div id="c-personas"></div></div>
+<p class="src">Four criteria, 0 to 3 each: works in their natural tool, understands what the AI did, control (approve, stop, send back), evidence kept automatically. Our assessment; the platform is scored as a prototype, the other two as shipping products. No users were observed or timed.</p></div>
+
+<h3 style="margin-top:22px">Average by criterion, 0 to 3</h3>
+<div class="panel"><div id="lg2"></div><div class="scroll"><div id="c-criteria"></div></div>
+<p class="src">The platform leads on evidence and on explaining the AI's work. IDE-only working leads on staying in the person's natural tool.</p></div>
+
+<h3 style="margin-top:22px">One small change, walked through all three</h3>
+<div class="panel"><div id="lg3"></div><div class="scroll"><div id="c-walk"></div></div>
+<p class="src">The change: block values above 310 on one form. Counts are for a regulated organisation with tester and release roles. In a small team, approaches B and C need 2 tools, 1 wait and 1 recorded approval. Elapsed time was not measured.</p></div>
+
+<h3 style="margin-top:22px">What the experience is like</h3>
+<div class="grid2">
+<div class="panel"><h3>This platform</h3><ul><li>Non-developers work in a browser, in plain language, and never open a repository.</li><li>Status, who holds the work and what happens next are always visible.</li><li>Every approval is explained by "How the agent did this" and recorded.</li><li>Cost: more gates and more waiting; developers leave their editor to pick up work.</li></ul></div>
+<div class="panel"><h3>Spec-driven in the repo</h3><ul><li>Natural for developers: specifications are files next to the code.</li><li>Product owners and auditors must read markdown in a repository or rely on a developer.</li><li>Published reviews describe long specifications that are heavier to review than the code.</li><li>Approval is a pull-request review; nothing is approved before code exists.</li></ul></div>
+<div class="panel"><h3>IDE only</h3><ul><li>Fastest loop for a developer, with no new process to learn.</li><li>Other roles see only tickets and pull requests, not what the AI did or why.</li><li>Evidence is spread across the editor, the repository and the pipeline.</li><li>Works well for small teams and developer-only changes.</li></ul></div></div>
+
+<h3 style="margin-top:22px">Improvements this comparison led to</h3>
+<div class="panel scroll"><table><thead><tr><th>Improvement</th><th>Why</th><th>Status</th></tr></thead><tbody>
+<tr><td>Approval screens for the Integration Lead and Quality Lead, with send-back notes; both added to "View as"</td><td>They had permissions but no screen to approve on</td><td><span class="tag done">Done in the prototype</span></td></tr>
+<tr><td>"How the agent did this" for the Impact and Integrate stages</td><td>The panel showed design-stage content for those stages</td><td><span class="tag done">Done in the prototype</span></td></tr>
+<tr><td>Fast path for low-risk changes and a bug-fix request type</td><td>8 waits for a one-field change</td><td><span class="tag">Next</span></td></tr>
+<tr><td>Direct hand-off to the VS Code agent in place of copy and paste</td><td>The developer's biggest loss against B and C</td><td><span class="tag">Next</span></td></tr>
+<tr><td>Read-only copy of the approved specification in the pull request</td><td>Developers review where the code is</td><td><span class="tag">Next</span></td></tr>
+<tr><td>Insights view for the executive sponsor</td><td>No approach serves this role today</td><td><span class="tag">Later</span></td></tr></tbody></table></div>
+</section>
+
+<section id="maturity"><div class="eyebrow">Part 2</div><h2>State of AI maturity in software and product delivery</h2>
+<h3 style="margin-top:16px">A five-level scale</h3>
+<div class="panel scroll"><table><thead><tr><th>Level</th><th>Name</th><th>Who does the work, who decides</th><th>Public evidence at banks</th></tr></thead><tbody>
+<tr><td>L0</td><td>None or unsanctioned</td><td>People do everything; any AI use is individual</td><td>Nothing disclosed, or bans</td></tr>
+<tr><td>L1</td><td>Assisted coding in the IDE</td><td>The developer writes; AI suggests</td><td>"N developers on a coding assistant"</td></tr>
+<tr><td>L2</td><td>Task agents that open pull requests</td><td>An agent completes a bounded task; a developer reviews</td><td>Agent adoption rates, AI share of code</td></tr>
+<tr class="ca"><td>L3</td><td>Governed multi-stage delivery with human gates</td><td>Agents draft across stages; named people approve at gates</td><td>Not found at any bank. This platform's target.</td></tr>
+<tr><td>L4</td><td>Policy-driven autonomous delivery</td><td>A versioned policy approves low-risk change</td><td>Not found at any bank</td></tr></tbody></table></div>
+
+<h3 style="margin-top:22px">Use is near universal; trust is not</h3>
+<div class="panel"><div class="lg"><span><i style="background:var(--c1)"></i>Use</span><span><i style="background:var(--c2)"></i>Trust or autonomy</span></div><div class="scroll"><div id="c-trust"></div></div>
+<p class="src">Sources: Google DORA 2025; Stack Overflow Developer Survey 2026; Bank of England and FCA AI survey 2026. Different surveys and bases, shown side by side for shape only.</p></div>
+
+<h3 style="margin-top:22px">Individual output is up; delivery as a whole is strained</h3>
+<div class="panel"><div class="lg"><span><i style="background:var(--c1)"></i>Output</span><span><i style="background:var(--c2)"></i>Cost to delivery</span></div><div class="scroll"><div id="c-impact"></div></div>
+<p class="src">Source: Faros AI 2026, a vendor's telemetry study of about 22,000 developers, via secondary coverage. Controlled studies are mixed: one small trial (METR, 2025) found experienced developers 19% slower with AI, and others found tasks completed 21% to 26% faster.</p></div>
+
+<h3 style="margin-top:22px">Where in the lifecycle AI is used</h3>
+<div class="panel"><div class="scroll"><div id="c-stages"></div></div>
+<p class="src">Percent of respondents; DORA 2025 and Stack Overflow 2026, different bases. No survey figure was found for requirements or design, which is where this platform starts.</p></div>
+</section>
+
+<section id="canada"><h2>Canada</h2>
+<div class="grid2" style="margin-top:14px">
+<div class="panel scroll"><h3>Evident AI Index for Banks 2026</h3><table><thead><tr><th class="n">Rank of 50</th><th>Bank</th><th>Country</th></tr></thead><tbody id="t-evident"></tbody></table>
+<p class="src">Published 6 Oct 2026. Selected banks; ranks via Evident and press coverage. The index measures overall AI maturity, not software delivery.</p></div>
+<div class="panel"><h3>Regulation that shapes delivery</h3><ul>
+<li><b>13 July 2026:</b> OSFI bulletin on generative and agentic AI, covering technology, cyber security and operational resilience, including software development.</li>
+<li><b>1 May 2027:</b> OSFI Guideline E-23 on model risk takes effect and covers AI models.</li>
+<li>Existing guidelines B-13 (technology and cyber risk) and B-10 (third-party risk) already apply to change control and to vendors.</li>
+<li>There is no federal AI statute in force, so OSFI guidance is what binds.</li></ul></div></div>
+<h3 style="margin-top:22px">Placement from public evidence only</h3>
+<div class="panel scroll"><table><thead><tr><th>Institution</th><th class="n">Level (range)</th><th>Confidence</th><th>Basis reported in public sources</th></tr></thead><tbody>
+<tr><td>RBC</td><td class="n">1.5 (1 to 2)</td><td>Medium</td><td>Central platform with AI code generation for its developers; no agent adoption rate or gated workflow disclosed</td></tr>
+<tr><td>TD</td><td class="n">1.5 (1 to 2)</td><td>Medium</td><td>Coding assistant enabled for all engineers, with reported adoption and throughput gains</td></tr>
+<tr><td>Scotiabank</td><td class="n">1.5 (1 to 2)</td><td>Medium</td><td>Its own coding assistant; investment in agent governance</td></tr>
+<tr><td>CIBC</td><td class="n">1.0 (1 to 1.5)</td><td>Medium</td><td>Coding assistant for part of its developers</td></tr>
+<tr><td>BMO</td><td class="n">1.0 (1 to 1.5)</td><td>Medium</td><td>Coding assistant roll-out with a stated productivity target</td></tr>
+<tr><td>National Bank</td><td class="n">1.0 (0.5 to 1.5)</td><td>Low</td><td>Job postings only</td></tr>
+<tr><td>Manulife, Sun Life</td><td class="n">1.5 (1 to 2)</td><td>Low</td><td>Statements on assisted and agentic coding; no method or adoption rate</td></tr></tbody></table>
+<p class="src">Our estimate. A bank may be further ahead internally than it has disclosed; differences of 0.25 are not significant. Details and sources per institution are in the full research file.</p></div>
+</section>
+
+<section id="regions"><h2>Region by region</h2>
+<div class="panel" style="margin-top:14px"><div class="scroll"><div id="c-regions"></div></div>
+<p class="src">Dot: our estimate of where most bank engineering work sits. Line: plausible range. Confidence is medium for the US, UK, Australia, Canada and the EU, and low elsewhere.</p></div>
+<ul style="margin-top:14px">
+<li><b>United States (about 2.0):</b> the leading banks show the most public evidence of coding agents in daily engineering work. Model-risk guidance leaves generative and agentic AI out of scope.</li>
+<li><b>United Kingdom and Australia (about 1.75):</b> wide use of assistants and some agent programmes; UK firms keep agents on a short leash, with 2% allowing broad autonomy.</li>
+<li><b>European Union (about 1.5):</b> the AI Act and DORA put change control and evidence first.</li>
+<li><b>Asia-Pacific, Middle East, Latin America (1.0 to 1.5):</b> evidence is thinner and confidence is low.</li></ul></section>
+
+<section id="means"><h2>What it means for a Canadian bank</h2><ul style="margin-top:10px">
+<li><b>The platform targets a level no bank has publicly reached.</b> There is no peer to copy, so plan a staged pilot with its own baseline.</li>
+<li><b>It lines up with what OSFI asks for.</b> Map each gate and evidence record to the expectation it meets, and put the platform's own agents in the model inventory before May 2027.</li>
+<li><b>Eight gates will collide with the review bottleneck</b> unless gates are risk-tiered from day one.</li>
+<li><b>The value is at the two ends of the lifecycle</b>, the business request and the release evidence. Banks already have coding tools.</li>
+<li><b>Keeping the developer agent in VS Code fits</b> the tools Canadian banks have disclosed, but the hand-off must be tracked.</li>
+<li><b>Measure delivery outcomes</b> (lead time, change failure rate, review wait, send-back rate) and expect a dip in the first months.</li>
+<li><b>Treat the vendor and model providers as critical third parties</b> and plan where prompts and code are processed.</li></ul></section>
+
+<section id="method"><h2>Method and limits</h2><ul style="margin-top:10px">
+<li>Part 1 is an assessment by an analyst reading the prototype and public documentation of Spec Kit, Kiro and IDE agents. No users were observed.</li>
+<li>Part 2 rests on about 95 web searches on 12 November 2026. No primary page could be opened, so every figure comes from a search excerpt or secondary coverage.</li>
+<li>Bank figures are self-reported and not comparable with each other. Vendor telemetry studies come from companies that sell a remedy for the problem they measure.</li>
+<li>Not found: any survey figure for AI use in requirements or design; Evident point scores; the exact wording of OSFI's bulletin on AI-generated code.</li></ul>
+<h3 style="margin-top:18px">Main sources</h3><ul style="font-size:14.5px">
+<li><a href="https://dora.dev/ai/">Google DORA: AI-assisted software development</a></li>
+<li><a href="https://stackoverflow.blog/2026/10/06/the-results-of-the-2026-developer-survey-are-here/">Stack Overflow Developer Survey 2026</a></li>
+<li><a href="https://www.bankofengland.co.uk/report/2026/artificial-intelligence-in-uk-financial-services-2026">Bank of England and FCA: AI in UK financial services 2026</a></li>
+<li><a href="https://www.faros.ai/research/ai-acceleration-whiplash">Faros AI 2026 telemetry study</a></li>
+<li><a href="https://evidentinsights.com/ai-index/">Evident AI Index for Banks</a> and <a href="https://www.advisor.ca/industry-news/industry/rbc-td-rank-among-top-10-banks-for-ai-maturity/">Advisor.ca coverage</a></li>
+<li><a href="https://www.osfi-bsif.gc.ca/en/risks/technology-cyber-risk-management/technology-risk-bulletin/generative-agentic-artificial-intelligence-implications-technology-cyber-security-operational">OSFI bulletin on generative and agentic AI</a> and <a href="https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/guideline-e-23-model-risk-management-2027">Guideline E-23</a></li>
+<li><a href="https://github.com/github/spec-kit">GitHub Spec Kit</a></li></ul>
+<p class="src">The full research files, with every source tagged by type, are in the project repository under app/review/panel: compare.md and maturity.md.</p></section>
+</div>
+<script>
+// Shared chart builders (inline SVG strings). Colours come from CSS variables so both themes work.
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const DATA = {
+  personas: [
+    ['Business requester / Product Owner', 11, 5, 4], ['Solution Architect', 10, 9, 7], ['Developer / Engineering Lead', 7, 11, 9],
+    ['Integration Lead', 5, 7, 8], ['Quality Lead / tester', 7, 7, 5], ['Release Manager', 11, 7, 7],
+    ['Platform Admin', 9, 5, 7], ['Auditor / risk and compliance', 9, 4, 2], ['Executive sponsor', 5, 1, 4]],
+  criteria: [['Works in their natural tool', 1.78, 1.67, 2.11], ['Understands what the AI did', 2.11, 1.44, 0.89], ['Control: approve, stop, send back', 1.67, 1.44, 1.56], ['Evidence kept automatically', 2.67, 1.67, 1.33]],
+  walk: [['Tools a person must open', 3, 6, 6], ['Waits for a person', 8, 6, 6], ['Enforced, recorded approvals', 7, 2, 2], ['Approvals before code is written', 3, 0, 0]],
+  regions: [['United States', 2.0, 1.5, 2.5], ['United Kingdom', 1.75, 1.5, 2.0], ['Australia', 1.75, 1.5, 2.0], ['Canada', 1.5, 1.0, 2.0], ['EU and Switzerland', 1.5, 1.0, 2.0], ['Singapore', 1.5, 1.0, 2.0], ['China', 1.5, 1.0, 2.0], ['UAE', 1.5, 1.0, 2.0], ['Brazil', 1.5, 1.0, 2.0], ['Hong Kong', 1.25, 1.0, 1.5], ['Japan', 1.25, 1.0, 1.5], ['India', 1.0, 0.5, 1.5], ['Saudi Arabia', 1.0, 0.5, 1.5]],
+  trust: [['Developers who use AI at work', 90, 'DORA 2025'], ['Developers who would trust AI with an important decision', 6.6, 'Stack Overflow 2026'], ['UK financial firms with AI agents in production', 80, 'BoE / FCA 2026'], ['UK financial firms that allow agents broad autonomy', 2, 'BoE / FCA 2026']],
+  impact: [['Tasks completed per developer', 33.7], ['Bugs per developer', 54], ['Incidents per pull request', 242.7], ['Median pull-request review time', 441.5]],
+  stages: [['Writing new code', 71, 'DORA 2025'], ['Documentation', 64, 'DORA 2025'], ['Creating test cases', 62, 'DORA 2025'], ['Debugging', 61, 'Stack Overflow 2026'], ['Code review', 56, 'DORA 2025'], ['Deploy and operate', 20, 'Stack Overflow 2026']],
+  evident: [[1, 'JPMorgan Chase', 'US'], [2, 'Capital One', 'US'], [3, 'RBC', 'Canada'], [4, 'Commonwealth Bank', 'Australia'], [10, 'TD', 'Canada'], [11, 'HSBC', 'UK'], [20, 'BMO', 'Canada'], [21, 'CIBC', 'Canada'], [25, 'DBS', 'Singapore'], [30, 'Scotiabank', 'Canada']],
+};
+const SERIES = ['Our platform (prototype)', 'Spec-driven in the repo (Spec Kit, Kiro)', 'IDE only (AI agent + Azure DevOps)'];
+function legend(names) { return `<div class="lg">${names.map((n, i) => `<span><i style="background:var(--c${i + 1})"></i>${esc(n)}</span>`).join('')}</div>`; }
+// Horizontal grouped bars: rows [label, a, b, c]
+function grouped(rows, max, { w = 900, lab = 300, fmt = v => v, barH = 11, gap = 3, rowGap = 14 } = {}) {
+  const rowH = 3 * barH + 2 * gap + rowGap, h = rows.length * rowH + 28, x0 = lab, pw = w - lab - 44;
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Grouped bar chart">`;
+  for (let t = 0; t <= 4; t++) { const x = x0 + pw * t / 4; s += `<line x1="${x}" y1="0" x2="${x}" y2="${h - 24}" stroke="var(--grid)"/><text x="${x}" y="${h - 8}" text-anchor="middle" class="tk">${fmt(max * t / 4)}</text>`; }
+  rows.forEach(([l, ...v], i) => { const y = i * rowH + 4; s += `<text x="${lab - 12}" y="${y + 1.5 * barH + gap + 4}" text-anchor="end" class="lb">${esc(l)}</text>`;
+    v.forEach((val, j) => { const bw = Math.max(2, pw * val / max), by = y + j * (barH + gap); s += `<rect x="${x0}" y="${by}" width="${bw}" height="${barH}" rx="3" fill="var(--c${j + 1})"><title>${esc(l)} · ${SERIES[j]}: ${fmt(val)}</title></rect><text x="${x0 + bw + 6}" y="${by + barH - 1.5}" class="vl">${fmt(val)}</text>`; }); });
+  return s + '</svg>';
+}
+// Single-series horizontal bars: rows [label, value, note]
+function bars(rows, max, { w = 900, lab = 430, unit = '%', color = 'var(--c1)', barH = 20, rowGap = 16, colors } = {}) {
+  const rowH = barH + rowGap, h = rows.length * rowH + 6, pw = w - lab - 190;
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Bar chart">`;
+  rows.forEach(([l, v, note], i) => { const y = i * rowH + 2, bw = Math.max(3, pw * v / max);
+    s += `<text x="${lab - 12}" y="${y + barH - 5}" text-anchor="end" class="lb">${esc(l)}</text><rect x="${lab}" y="${y}" width="${bw}" height="${barH}" rx="4" fill="${colors ? colors[i] : color}"><title>${esc(l)}: ${v}${unit}</title></rect><text x="${lab + bw + 8}" y="${y + barH - 5}" class="vl b">${v}${unit}</text>${note ? `<text x="${w}" y="${y + barH - 5}" text-anchor="end" class="tk">${esc(note)}</text>` : ''}`; });
+  return s + '</svg>';
+}
+// Level with range: rows [label, level, low, high]
+function ranges(rows, { w = 900, lab = 190, hi = 'Canada' } = {}) {
+  const rowH = 30, top = 40, h = rows.length * rowH + top + 34, pw = w - lab - 30, X = v => lab + pw * v / 4;
+  const names = ['L0 None', 'L1 Assisted coding', 'L2 Task agents', 'L3 Governed delivery', 'L4 Policy-driven'];
+  let s = `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Maturity level by region with ranges">`;
+  s += `<rect x="${X(3) - 46}" y="${top - 8}" width="92" height="${rows.length * rowH + 8}" rx="8" fill="var(--band)"/><text x="${X(3)}" y="14" text-anchor="middle" class="tk b">Where this platform aims</text>`;
+  names.forEach((n, i) => { s += `<line x1="${X(i)}" y1="${top - 8}" x2="${X(i)}" y2="${h - 30}" stroke="var(--grid)"/><text x="${X(i)}" y="${h - 10}" text-anchor="${i === 0 ? 'start' : i === 4 ? 'end' : 'middle'}" class="tk">${n}</text>`; });
+  rows.forEach(([l, v, lo, hi2], i) => { const y = top + i * rowH + 12, on = l === hi;
+    s += `<text x="${lab - 14}" y="${y + 4}" text-anchor="end" class="lb${on ? ' b' : ''}">${esc(l)}</text><line x1="${X(lo)}" y1="${y}" x2="${X(hi2)}" y2="${y}" stroke="${on ? 'var(--c1)' : 'var(--mute)'}" stroke-width="4" stroke-linecap="round" opacity="${on ? .45 : .5}"/><circle cx="${X(v)}" cy="${y}" r="${on ? 8 : 6}" fill="${on ? 'var(--c1)' : 'var(--ink2)'}" stroke="var(--surface)" stroke-width="2"><title>${esc(l)}: about level ${v} (range ${lo} to ${hi2})</title></circle>`; });
+  return s + '</svg>';
+}
+
+
+const $ = id => document.getElementById(id);
+$('lg1').innerHTML = $('lg2').innerHTML = $('lg3').innerHTML = legend(SERIES);
+$('c-personas').innerHTML = grouped(DATA.personas, 12, { w: 900, lab: 250 });
+$('c-criteria').innerHTML = grouped(DATA.criteria, 3, { w: 900, lab: 250, fmt: v => (+v).toFixed(v % 1 ? 2 : 0), barH: 13 });
+$('c-walk').innerHTML = grouped(DATA.walk, 8, { w: 900, lab: 250, barH: 14 });
+$('c-trust').innerHTML = bars(DATA.trust, 100, { w: 900, lab: 400, colors: ['var(--c1)', 'var(--c2)', 'var(--c1)', 'var(--c2)'] });
+$('c-impact').innerHTML = bars(DATA.impact, 480, { w: 900, lab: 260, unit: '% more', colors: ['var(--c1)', 'var(--c2)', 'var(--c2)', 'var(--c2)'] });
+$('c-stages').innerHTML = bars(DATA.stages, 100, { w: 900, lab: 200 });
+$('c-regions').innerHTML = ranges(DATA.regions, { w: 900, lab: 150 });
+$('t-evident').innerHTML = DATA.evident.map(([r, b, c]) => `<tr class="${c === 'Canada' ? 'ca' : ''}"><td class="n">${r}</td><td>${b}</td><td>${c}</td></tr>`).join('');
+</script>

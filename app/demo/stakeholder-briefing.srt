@@ -1,0 +1,207 @@
+1
+00:00:01,197 --> 00:00:10,387
+This briefing covers three things. Why governed AI delivery matters now. How the platform works. And how it compares with the alternatives.
+
+2
+00:00:11,191 --> 00:00:20,317
+AI coding tools are now close to universal. In Google's DORA survey, ninety percent of developers use AI at work. But trust has not kept up.
+
+3
+00:00:20,317 --> 00:00:24,684
+Fewer than seven percent would trust AI with an important decision.
+
+4
+00:00:24,684 --> 00:00:32,441
+In the United Kingdom, eighty percent of financial firms run AI agents, but only two percent allow them broad autonomy.
+
+5
+00:00:33,246 --> 00:00:37,759
+Each developer produces more, but delivery as a whole is under strain.
+
+6
+00:00:37,759 --> 00:00:43,820
+One vendor study of about twenty-two thousand developers reports a third more tasks completed.
+
+7
+00:00:43,820 --> 00:00:51,686
+It also reports more bugs, more incidents, and review times more than five times longer. Review has become the bottleneck.
+
+8
+00:00:52,491 --> 00:01:01,011
+On a five-level scale, most regions sit between assisted coding and task agents. This is our estimate from public evidence.
+
+9
+00:01:01,011 --> 00:01:08,076
+Canada sits at about level one and a half. No bank, in any region, has publicly described level three:
+
+10
+00:01:08,076 --> 00:01:14,171
+governed delivery with named approvers at every stage. That is where this platform aims.
+
+11
+00:01:14,976 --> 00:01:27,003
+Canadian banks are strong on AI overall. RBC ranks third of fifty banks on the 2026 Evident AI Index, and TD is in the top ten.
+
+12
+00:01:27,003 --> 00:01:36,378
+The regulator is explicit too. OSFI published a bulletin on generative and agentic AI in July 2026.
+
+13
+00:01:36,378 --> 00:01:41,776
+Its model risk guideline, E-23, takes effect in May 2027.
+
+14
+00:01:42,579 --> 00:01:50,504
+The platform answers that gap. A business person describes a change. An AI agent carries it through eight stages.
+
+15
+00:01:50,504 --> 00:01:58,779
+A named person approves each gate, and every decision lands in one evidence trail. Developers keep working in VS Code.
+
+16
+00:02:00,894 --> 00:02:08,074
+This is the working prototype. Everything you see is clickable, with sample data. Let's follow one working day.
+
+17
+00:02:08,875 --> 00:02:17,195
+Alex is a solution architect. His home page shows only the decisions waiting for him, oldest first, and says exactly what each one is.
+
+18
+00:02:17,995 --> 00:02:24,671
+The agent has written an architecture decision. Alex can read a plain summary, or switch to the full technical version.
+
+19
+00:02:24,671 --> 00:02:26,915
+Every statement is linked to its source.
+
+20
+00:02:27,718 --> 00:02:36,994
+How the agent did this shows its confidence and why, what it is unsure about, the sources and checks it used, each step it took, and its time and cost.
+
+21
+00:02:36,994 --> 00:02:40,188
+Alex can ask the agent a question before he decides.
+
+22
+00:02:40,990 --> 00:02:50,100
+Alex accepts the one gap the agent called out, and approves. Each decision can be undone for a short time, and is recorded in the audit log.
+
+23
+00:02:50,901 --> 00:02:59,067
+The run page shows where the work is. The plan is split into stories, and each story is specified, designed and built one at a time.
+
+24
+00:02:59,067 --> 00:03:08,161
+Any document opens in place, with where it is stored: the file in Azure Blob Storage, its versions and approvals in Azure SQL, and its fingerprint.
+
+25
+00:03:08,964 --> 00:03:13,807
+Building happens on the developer's machine. The platform prepares the assignment.
+
+26
+00:03:13,807 --> 00:03:24,614
+The developer copies the prompt into the standalone Developer Agent in VS Code, and the platform tracks the branch, the Azure Boards task, the pull request, and the completion report.
+
+27
+00:03:25,416 --> 00:03:30,569
+When the agent is unsure what the business meant, it asks the person who made the request.
+
+28
+00:03:30,569 --> 00:03:35,836
+Priya, the product owner, picks an answer, and the agent goes on to write the specification.
+
+29
+00:03:36,637 --> 00:03:45,397
+Jon, the engineering lead, is on leave, so Alex reviews the code as his named backup. He opens a changed file, and approves the build.
+
+30
+00:03:46,197 --> 00:03:55,454
+After the build is approved, integration runs. Tom, the integration lead, sees the pipeline results and approves, or sends the work back with a note.
+
+31
+00:03:55,454 --> 00:03:58,747
+Mara, the quality lead, does the same for validation.
+
+32
+00:04:05,648 --> 00:04:14,803
+Anyone with the right role can start a new request in plain language. The agent drafts a delivery plan in seconds, and the product owner approves it.
+
+33
+00:04:14,803 --> 00:04:17,568
+A requester can never approve their own plan.
+
+34
+00:04:18,369 --> 00:04:26,009
+Sam, the release manager, checks that validation and acceptance testing are done, picks a release window, and schedules the release.
+
+35
+00:04:26,009 --> 00:04:30,639
+Until it goes live it can be cancelled, and after release it can be rolled back.
+
+36
+00:04:31,439 --> 00:04:40,498
+Dana, the platform administrator, sees everything that needs attention: approvers on leave, stuck agents, change freezes, and incomplete squads.
+
+37
+00:04:40,498 --> 00:04:42,259
+She fixes each one in place.
+
+38
+00:04:43,666 --> 00:04:49,436
+She invites people, sets up cover while someone is away, and decides what each role is allowed to do.
+
+39
+00:04:50,237 --> 00:04:58,697
+Every action, by a person or by the agent, lands in an audit log with a tamper-evident chain, and can be exported for auditors.
+
+40
+00:04:59,497 --> 00:05:01,757
+The whole product also works in dark mode.
+
+41
+00:05:02,558 --> 00:05:09,131
+How does this compare with the alternatives? We scored three ways of working for nine roles. This platform.
+
+42
+00:05:09,131 --> 00:05:17,669
+Spec-driven tools such as Spec Kit, which keep specifications in the code repository. And working only in the code editor with an AI agent.
+
+43
+00:05:17,669 --> 00:05:24,181
+The platform scores highest for the product owner, the release manager, the administrator and the auditor.
+
+44
+00:05:24,181 --> 00:05:33,088
+Developers score higher with the tools that live in their editor. These scores are our own assessment, and the platform is scored as a prototype.
+
+45
+00:05:33,896 --> 00:05:41,625
+We walked one small change through all three. In a regulated organisation, the platform needs three tools instead of six.
+
+46
+00:05:41,625 --> 00:05:50,630
+It records seven approvals instead of two, three of them before any code is written. It also adds more waits for a person, eight against six.
+
+47
+00:05:50,630 --> 00:05:54,846
+That is why a fast path for low-risk changes is the next priority.
+
+48
+00:05:55,647 --> 00:06:01,709
+So the fit is clear. For small teams and developer-only changes, the editor tools are enough.
+
+49
+00:06:01,709 --> 00:06:09,074
+For regulated, audited change that involves several roles, the platform is the better fit. And they combine well:
+
+50
+00:06:09,074 --> 00:06:13,637
+the platform governs, and the developer's agent connects from VS Code.
+
+51
+00:06:15,436 --> 00:06:23,965
+One governed flow, from business request to release. Named people accountable at every gate, and one evidence trail an auditor can follow.
+
+52
+00:06:23,965 --> 00:06:25,386
+Thank you for watching.

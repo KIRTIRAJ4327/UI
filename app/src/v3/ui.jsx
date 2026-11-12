@@ -123,7 +123,7 @@ export function Shell({ active, crumbs = [], actions, children, admin, user }) {
           <div className="flex items-center gap-2.5"><Avatar p={me} size={32} /><div className="min-w-0 leading-tight"><div className="truncate text-[14px] font-medium text-white">{PEOPLE[me].name}</div><div className="truncate text-[12px] text-[#8f97b3]">{proto.myRole}</div></div></div>
           <label htmlFor="viewas" className="text-[11.5px] text-[#8f97b3]">View as</label>
           <select id="viewas" value={me} onChange={e => { proto.setMe(e.target.value); location.hash = 'v3-home'; }} className="h-8 rounded-md border border-white/15 bg-[#1c2140] px-2 text-[13px] text-white">
-            <option value="alex">Alex Kim · Solution Architect</option><option value="priya">Priya Nair · Product Owner</option><option value="sam">Sam Okafor · Release Manager</option><option value="jon">Jon Reyes · Engineering Lead</option><option value="ines">Ines Duarte · Auditor</option><option value="dana">Dana Whitfield · Platform Admin</option>
+            <option value="alex">Alex Kim · Solution Architect</option><option value="priya">Priya Nair · Product Owner</option><option value="sam">Sam Okafor · Release Manager</option><option value="jon">Jon Reyes · Engineering Lead</option><option value="tom">Tom Iverson · Integration Lead</option><option value="mara">Mara Lopez · Quality Lead</option><option value="ines">Ines Duarte · Auditor</option><option value="dana">Dana Whitfield · Platform Admin</option>
           </select>
         </div>
       </aside>

@@ -1,0 +1,75 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Briefing slides</title>
+<style>
+@font-face{font-family:Inter;src:url(file:///home/user/UI/app/node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2);font-weight:100 900}
+@font-face{font-family:"Space Grotesk";src:url(file:///home/user/UI/app/node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2);font-weight:600}
+:root{--bg:#eef1ed;--surface:#fff;--ink:#101429;--ink2:#444b63;--mute:#8a91a6;--grid:#dfe3ea;--band:#dbe8fb;--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--side:#101429}
+*{box-sizing:border-box}html,body{margin:0;width:1440px;height:900px;overflow:hidden;background:var(--bg);color:var(--ink);font:400 20px/1.45 Inter,system-ui,sans-serif}
+section{display:none;position:absolute;inset:0;padding:56px 90px 150px}section.on{display:block}
+.eyebrow{font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c1)}
+h1{font:600 44px/1.12 "Space Grotesk",Inter,sans-serif;margin:10px 0 8px;max-width:1150px;text-wrap:balance;letter-spacing:-.01em}
+.sub{color:var(--ink2);max-width:1050px;margin:0 0 26px}
+.card{background:var(--surface);border-radius:16px;padding:26px 30px;border:1px solid var(--grid)}
+.src{position:absolute;left:90px;right:90px;bottom:118px;font-size:13.5px;color:var(--mute)}
+svg{width:100%;height:auto;display:block}svg text{font-family:Inter,sans-serif;fill:var(--ink)}
+.lb{font-size:15px}.vl{font-size:13px;fill:var(--ink2)}.tk{font-size:12.5px;fill:var(--mute)}.b{font-weight:600}
+.lg{display:flex;gap:26px;font-size:15px;color:var(--ink2);margin-bottom:14px}.lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:8px}
+.cols{display:grid;gap:22px}.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}
+.title{background:var(--side);color:#fff}.title h1{font-size:64px;margin-top:230px;color:#fff}.title .sub{color:#c8cde0;font-size:24px}.title .eyebrow{color:#8fb6f2}
+ol.rank{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:18px}ol.rank li{display:flex;gap:14px;align-items:center;padding:7px 12px;border-radius:9px}
+ol.rank b{width:34px;text-align:right;font-variant-numeric:tabular-nums}ol.rank .ca{background:var(--band);font-weight:600}ol.rank span{margin-left:auto;font-size:14px;color:var(--mute);font-weight:400}
+.fact{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--grid)}.fact:last-child{border:0}.fact b{font:600 22px "Space Grotesk";color:var(--c1);min-width:150px}
+.flow{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-top:8px}.st{background:var(--surface);border:1px solid var(--grid);border-radius:12px;padding:14px 10px;text-align:center;position:relative}
+.st .n{width:30px;height:30px;border-radius:50%;background:var(--c1);color:#fff;display:grid;place-items:center;margin:0 auto 8px;font-weight:600;font-size:15px}.st b{display:block;font-size:17px}.st small{font-size:13px;color:var(--ink2)}
+.pill{display:inline-block;background:var(--side);color:#fff;border-radius:999px;padding:9px 18px;font-size:17px}.arrow{font-size:26px;color:var(--mute);margin:0 14px}
+.k3 h3{font:600 22px "Space Grotesk";margin:0 0 8px}.k3 ul{margin:0;padding-left:20px;font-size:17.5px;color:var(--ink2)}.k3 li{margin:5px 0}.k3 .card{border-top:5px solid var(--cc)}
+</style></head><body>
+<section id="title" class="title"><div class="eyebrow">Stakeholder briefing · November 2026</div><h1>Unified Product Delivery Platform</h1><p class="sub">Why governed AI delivery matters now, how the platform works, and how it compares with the alternatives.</p></section>
+
+<section id="why"><div class="eyebrow">Why now</div><h1>AI is used almost everywhere. Trust has not kept up.</h1><p class="sub">Share of respondents, from three 2025 and 2026 surveys.</p>
+<div class="card"><div class="lg"><span><i style="background:var(--c1)"></i>Use</span><span><i style="background:var(--c2)"></i>Trust or autonomy</span></div><div id="c-trust"></div></div>
+<p class="src">Sources: Google DORA 2025; Stack Overflow Developer Survey 2026; Bank of England and FCA AI survey 2026. Figures taken from published summaries and press coverage.</p></section>
+
+<section id="strain"><div class="eyebrow">Why now</div><h1>Each developer produces more. Delivery as a whole is under strain.</h1><p class="sub">Change after AI adoption, in percent. Review is now the bottleneck.</p>
+<div class="card"><div class="lg"><span><i style="background:var(--c1)"></i>Output</span><span><i style="background:var(--c2)"></i>Cost to delivery</span></div><div id="c-impact"></div></div>
+<p class="src">Source: Faros AI 2026, a vendor's telemetry study of about 22,000 developers, as reported in secondary coverage. One study, not a controlled experiment.</p></section>
+
+<section id="maturity"><div class="eyebrow">State of maturity</div><h1>Most regions sit between assisted coding and task agents</h1><p class="sub">AI in software delivery at banks, on a five-level scale. Dot: our estimate. Line: plausible range.</p>
+<div class="card" style="padding:18px 30px"><div id="c-regions"></div></div>
+<p class="src">Analyst estimate from public statements by named banks, November 2026. Confidence is medium for the US, UK, Australia, Canada and the EU, and low elsewhere.</p></section>
+
+<section id="canada"><div class="eyebrow">Canada</div><h1>Strong on AI overall, and a regulator that is explicit</h1><p class="sub">No bank, in any region, has publicly described governed, multi-stage agentic delivery with named approvers.</p>
+<div class="cols two"><div class="card"><div style="font-size:15px;color:var(--ink2);margin-bottom:10px">Evident AI Index for Banks 2026 · rank of 50 · selected banks</div><ol class="rank" id="c-evident"></ol></div>
+<div class="card"><div class="fact"><b>13 Jul 2026</b><span>OSFI bulletin on generative and agentic AI: sound practices for technology, cyber and operational risk, including software development.</span></div><div class="fact"><b>1 May 2027</b><span>OSFI Guideline E-23 on model risk takes effect and covers AI models.</span></div><div class="fact"><b>Level 1.5</b><span>Our estimate for Canadian banks: coding assistants at scale, agents emerging.</span></div></div></div>
+<p class="src">Sources: Evident AI Index for Banks, published 6 Oct 2026 (ranks via Evident and press coverage; the index measures overall AI maturity, not software delivery); OSFI.</p></section>
+
+<section id="purpose"><div class="eyebrow">What the platform does</div><h1>One governed flow, from business request to release</h1><p class="sub">An AI agent does the work at each stage. A named person approves each gate.</p>
+<div style="margin:6px 0 20px"><span class="pill">Business request, in plain language</span><span class="arrow">→</span><span style="color:var(--ink2)">eight gated stages</span><span class="arrow">→</span><span class="pill">Released change + evidence trail</span></div>
+<div class="flow" id="c-flow"></div>
+<div class="cols three" style="margin-top:24px;font-size:18px"><div class="card"><b>Named approver at every gate</b><br><span style="color:var(--ink2)">With backups and separation of duties.</span></div><div class="card"><b>One evidence trail</b><br><span style="color:var(--ink2)">Documents in Azure Blob, approvals in Azure SQL.</span></div><div class="card"><b>Developers stay in VS Code</b><br><span style="color:var(--ink2)">The Developer Agent runs on their machine.</span></div></div></section>
+
+<section id="personas"><div class="eyebrow">How it compares</div><h1>Three ways to work, scored for nine roles</h1><p class="sub">Score out of 12: natural tool, understanding what the AI did, control, and evidence kept.</p>
+<div class="card" style="padding:16px 30px"><div id="lg-p"></div><div id="c-personas"></div></div>
+<p class="src">Our assessment, November 2026. The platform is scored as a prototype; the other two are shipping products. No users were observed or timed.</p></section>
+
+<section id="walk"><div class="eyebrow">How it compares</div><h1>One small change, walked through all three</h1><p class="sub">Blocking values above 310 on one form, in a regulated organisation with tester and release roles.</p>
+<div class="card"><div id="lg-w"></div><div id="c-walk"></div></div>
+<p class="src">Step counts from a written walk-through of each approach; elapsed time was not measured. The platform's eight waits are the case for a fast path for low-risk changes.</p></section>
+
+<section id="fit" class="k3"><div class="eyebrow">Where each fits</div><h1>Use the right approach for the change, and combine them</h1><p class="sub">The platform governs and keeps the record; the developer's agent connects from VS Code.</p>
+<div class="cols three"><div class="card" style="--cc:var(--c1)"><h3>This platform</h3><ul><li>Business-rule, pricing or customer-facing change</li><li>Several roles and repositories</li><li>Anything that will be audited</li></ul></div>
+<div class="card" style="--cc:var(--c2)"><h3>Spec-driven in the repo</h3><ul><li>Developer-led features</li><li>New projects and prototypes</li><li>Teams already on GitHub</li></ul></div>
+<div class="card" style="--cc:var(--c3)"><h3>IDE only</h3><ul><li>Small teams</li><li>Refactors and dependency updates</li><li>Clear-cause bug fixes</li></ul></div></div>
+<div class="card" style="margin-top:22px;font-size:18.5px"><b>Next for the platform:</b> a fast path for low-risk changes, a direct hand-off to the VS Code agent in place of copy and paste, and a choice of AI model per stage.</div></section>
+
+<script src="charts.js"></script><script>
+const $ = id => document.getElementById(id);
+$('c-trust').innerHTML = bars(DATA.trust, 100, { w: 1200, lab: 560, barH: 26, rowGap: 20, colors: ['var(--c1)', 'var(--c2)', 'var(--c1)', 'var(--c2)'] });
+$('c-impact').innerHTML = bars(DATA.impact.map(([l, v]) => [l, v]), 480, { w: 1200, lab: 400, unit: '% more', barH: 30, rowGap: 24, colors: ['var(--c1)', 'var(--c2)', 'var(--c2)', 'var(--c2)'] });
+$('c-regions').innerHTML = ranges(DATA.regions, { w: 1200, lab: 210 });
+$('c-evident').innerHTML = DATA.evident.map(([r, b, c]) => `<li class="${c === 'Canada' ? 'ca' : ''}"><b>${r}</b>${b}<span>${c}</span></li>`).join('');
+$('c-flow').innerHTML = [['Plan', 'Product Owner'], ['Specify', 'Product Owner'], ['Impact', 'Automatic'], ['Design', 'Solution Architect'], ['Build', 'Engineering Lead'], ['Integrate', 'Integration Lead'], ['Validate', 'Quality Lead'], ['Release', 'Release Manager']].map(([s, a], i) => `<div class="st"><div class="n">${i + 1}</div><b>${s}</b><small>${a}</small></div>`).join('');
+$('lg-p').innerHTML = legend(SERIES); $('lg-w').innerHTML = legend(SERIES);
+$('c-personas').innerHTML = grouped(DATA.personas, 12, { w: 1200, lab: 330, barH: 10, gap: 2, rowGap: 11 });
+$('c-walk').innerHTML = grouped(DATA.walk, 8, { w: 1200, lab: 330, barH: 22, gap: 4, rowGap: 26 });
+const show = () => { const h = location.hash.slice(1) || 'title'; document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === h)); }; addEventListener('hashchange', show); show();
+</script></body></html>

@@ -82,6 +82,7 @@ const load = () => { try { const s = sessionStorage.getItem(KEY); return s ? JSO
 
 const Ctx = createContext(null);
 export function PrototypeProvider({ children }) {
+  const actionsRef = useRef(null);
   const [st, setSt] = useState(load);
   useEffect(() => { try { sessionStorage.setItem(KEY, JSON.stringify(st)); } catch { /* storage unavailable: demo still works in memory */ } }, [st]);
 
@@ -93,6 +94,11 @@ export function PrototypeProvider({ children }) {
   const feed = (s, p, title, who) => { s.feed.unshift({ p: s.me, title, who: NAME[s.me], t: 'just now' }); log(s, title.split(' · ')[0], title.split(' · ')[1] || ''); };
   const advance = (r, now, holder = 'agent', state = 'work') => { r.s = r.s.slice(0, -1) + 'd' + 'a'; r.state = state; r.now = now; r.holder = holder; r.wait = undefined; r.decidedAt = 'just now'; };
 
+  // The agent's own integration and validation runs finish a few seconds after they start.
+  useEffect(() => {
+    const ids = Object.values(st.runs).filter(r => r.state === 'work' && !r.paused && !r.retrying && (r.s.length === 6 || r.s.length === 7) && r.s.at(-1) === 'a').map(r => r.id);
+    if (!ids.length) return; const t = setTimeout(() => ids.forEach(id => actionsRef.current?.finishAuto(id)), 5000); return () => clearTimeout(t);
+  }, [st.runs]);
   const actions = useMemo(() => ({
     approveDesign: () => upd(s => { const r = s.runs['WI-4821']; advance(r, 'Agent building the change'); feed(s, 'alex', 'Design approved · WI-4821', 'Alex Kim'); note(s, 'Build started for WI-4821', 'The agent is writing the code and unit tests', '#v3-run-wi-4821'); return s; }),
     requestDesignChanges: () => upd(s => { const r = s.runs['WI-4821']; r.state = 'work'; r.now = 'Agent revising the design'; r.holder = 'agent'; r.s = 'ddda'; r.decidedAt = 'just now'; feed(s, 'alex', 'Changes requested · WI-4821', 'Alex Kim'); return s; }),
@@ -106,6 +112,13 @@ export function PrototypeProvider({ children }) {
     setCover: c => upd(s => { (s.covers ||= []).unshift(c); log(s, `Set up cover: ${NAME[c.by] || c.by} covers for ${NAME[c.who] || c.who} until ${c.until}`, 'People and access', 'admin'); note(s, `You are covering for ${NAME[c.who] || c.who}`, `Until ${c.until} · set by ${NAME[s.me]}`, '#v3-approvals', [c.by]); return s; }),
     createRequest: (id, text, app) => upd(s => { s.nextId++; s.runs[id] = { id, t: titleFrom(text), app, by: s.me, s: 'a', state: 'work', now: 'Agent drafting the plan', holder: 'agent', age: 'just now', eta: 'About 3 days', fresh: true }; s.order.unshift(id); feed(s, 'alex', `Request started · ${id}`, 'Alex Kim'); return s; }),
     finishPlan: id => upd(s => { const r = s.runs[id]; if (r && r.s === 'a') { r.s = 'w'; r.state = 'wait'; r.now = 'Plan waiting for approval'; const sod = s.policy.planSoD && r.by === 'priya'; r.holder = sod ? 'dana' : 'priya'; r.ask = 'Approve the delivery plan'; r.why = sod ? 'Priya Nair requested this, so separation of duties sends the plan to Dana Whitfield as second approver.' : 'The agent turned the request into 1 objective and 2 stories.'; r.wait = 'just now'; log(s, sod ? 'Opened approval gate (second approver, separation of duties)' : 'Opened approval gate (Product Owner)', id, 'gate', 'agent'); note(s, `Plan waiting for your approval`, `${id} · drafted by the agent`, `#v3-run-${id.toLowerCase()}`, [r.holder]); if (r.by !== r.holder) note(s, `Plan drafted for ${id}`, `${sod ? 'Dana Whitfield' : 'Priya Nair'} has been asked to approve it`, `#v3-run-${id.toLowerCase()}`, [r.by]); } return s; }),
+    // Integrate and Validate gates: the agent finishes its run, then the named lead approves or sends back.
+    finishAuto: id => upd(s => { const r = s.runs[id]; if (!r || r.state !== 'work' || r.paused || r.retrying) return s; const i = r.s.length - 1; if (r.s[i] !== 'a' || (i !== 5 && i !== 6)) return s;
+      r.screen = undefined; r.s = r.s.slice(0, -1) + 'w'; r.state = 'wait'; r.wait = 'just now'; r.holder = i === 5 ? 'tom' : 'mara'; r.now = i === 5 ? 'Integration waiting for approval' : 'Validation waiting for approval';
+      r.ask = i === 5 ? 'Approve the integration' : 'Approve validation'; r.why = (i === 5 ? '3 pipelines passed on the merge commit and staging is deployed.' : 'Every acceptance criterion is met and 214 of 214 regression tests pass.') + (r.sentBack ? ' Resubmitted after your feedback.' : '');
+      log(s, `Opened approval gate (${i === 5 ? 'Integration Lead' : 'Quality Lead'})`, id, 'gate', 'agent'); note(s, `${i === 5 ? 'Integration' : 'Validation'} waiting for your approval`, `${id} · ${r.t}`, `#v3-run-${id.toLowerCase()}`, [r.holder]); return s; }),
+    approveStage: id => upd(s => { const r = s.runs[id]; const i = r.s.length - 1; if (i === 5) { advance(r, 'Validation running: acceptance and regression tests'); feed(s, s.me, `Integration approved · ${id}`); } else if (i === 6) { r.s = r.s.slice(0, -1) + 'dw'; r.state = 'wait'; r.holder = 'sam'; r.now = 'Release waiting for sign-off'; r.ask = `Release ${r.t.toLowerCase()}`; r.why = 'Validation and acceptance testing are approved.'; r.wait = 'just now'; r.decidedAt = 'just now'; feed(s, s.me, `Validation approved · ${id}`); note(s, 'Release waiting for your sign-off', `${id} · ${r.t}`, `#v3-run-${id.toLowerCase()}`, ['sam']); } else if (i === 7) { r.scheduled = 'Thu 13 Nov, 18:00'; r.state = 'work'; r.now = 'Release scheduled Thu 13 Nov, 18:00'; r.eta = 'Thu 13 Nov, 18:00'; r.decidedAt = 'just now'; feed(s, s.me, `Release scheduled · ${id}`); } return s; }),
+    sendBackStage: (id, why) => upd(s => { const r = s.runs[id]; const i = r.s.length - 1; r.s = r.s.slice(0, -1) + 'a'; r.state = 'work'; r.holder = 'agent'; r.now = i === 5 ? 'Agent fixing the integration after feedback' : 'Agent reworking after validation feedback'; r.sentBack = why; r.decidedAt = 'just now'; log(s, `Sent back ${i === 5 ? 'integration' : 'validation'}`, id, 'gate', s.me, why); return s; }),
     approvePlan: id => upd(s => { const r = s.runs[id]; advance(r, 'Agent writing the specification'); feed(s, s.me, `Plan approved · ${id}`); return s; }),
     requestPlanChanges: id => upd(s => { const r = s.runs[id]; r.state = 'work'; r.now = 'Agent revising the plan'; r.holder = 'agent'; r.s = 'a'; r.decidedAt = 'just now'; feed(s, s.me, `Plan sent back · ${id}`); return s; }),
     setMe: p => upd(s => { log(s, `Signed in as ${NAME[p]}`, 'Demo role switch', 'access', p); s.me = p; return s; }),
@@ -129,6 +142,7 @@ export function PrototypeProvider({ children }) {
     reset: () => setSt(s => ({ ...INITIAL, welcomed: true, tour: s.tour })),
   }), [upd]);
 
+  actionsRef.current = actions;
   const derived = useMemo(() => {
     const view = r => ({ ...r, state: r.state === 'wait' && r.holder === st.me ? 'you' : r.state, now: r.state === 'wait' ? (r.holder === st.me ? r.now.replace('waiting for approval', 'waiting for your approval').replace('waiting for an answer', 'waiting for your answer') : r.now) : r.now });
     const runs = Object.fromEntries(Object.entries(st.runs).map(([k, r]) => [k, view(r)]));

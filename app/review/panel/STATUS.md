@@ -30,6 +30,9 @@ Every "Fixed" item is covered by an automated check. Six suites cover journeys, 
 | "Requested by you" was hard-coded to Alex | Personas | Fixed |
 | Governance period switch did nothing | Designer | Fixed: replaced by a plain date label |
 | Fingerprint was a 32-bit hash | Future review | Fixed: real SHA-256 of each document version |
+| Integration Lead and Quality Lead had permissions but no screen to approve on, and were not in "View as" | Persona comparison | Fixed: approval screens with pipeline and test results, send-back with a required note, both in "View as" |
+| "How the agent did this" showed design content for the Impact and Integrate stages | Persona comparison | Fixed: each stage has its own content |
+| Audit export button said "signed PDF" but saved a CSV | Video recording | Fixed |
 
 ## Still open
 These are product capabilities rather than prototype bugs. They are listed in priority order, and the full reasoning is in `future-readiness.md` and `market-agentic-sdlc.md`.
