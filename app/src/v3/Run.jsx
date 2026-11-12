@@ -6,14 +6,15 @@ import { AgentPanelButton } from './agentpanel';
 import { useProto } from './store';
 import { useToast } from '@/components/friendly';
 import { Comments, Activity } from './collab';
+import { useDoc, StoriesCard, DevAgentCard, KINDS, storiesFor } from './docs';
 import { FileText, ArrowRight, AlertTriangle, CheckCircle2, Loader2, Clock, Rocket, RotateCcw } from 'lucide-react';
 
 const DOC = ['Delivery plan', 'Specification', 'Impact assessment', 'Architecture decision', 'Completion report', 'Integration evidence', 'Validation report', 'Release record'];
-const DOC_HREF = { 3: '#v3-approve', 4: '#v3-review' };
 
 function StatusCard({ r }) {
   const toast = useToast();
   const { approvePlan, requestPlanChanges, can, undo, me, policy, retryRun, assignEngineer } = useProto();
+  const { openDoc } = useDoc();
   const selfPlan = !r.screen && policy.planSoD && r.by === me;
   const holder = PEOPLE[r.holder]?.name || 'the agent';
   if (r.state === 'you') return (
@@ -28,7 +29,7 @@ function StatusCard({ r }) {
       </div>
       {!r.screen && <div className="grid grid-cols-3 divide-x divide-[var(--v-line)] text-[14px]">
         <div className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">Objective</h3><p className="mt-1 leading-relaxed">{r.t.replace(/…$/, '')}.</p></div>
-        <div className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">Stories</h3><ol className="mt-1 list-decimal pl-4 leading-relaxed"><li>Make the change on the {r.app} screens</li><li>Explain the rule to the advisor inline</li></ol></div>
+        <div className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">Stories</h3><ol className="mt-1 list-decimal pl-4 leading-relaxed">{storiesFor(r).map(s => <li key={s.n}><button onClick={() => openDoc({ run: r.id, kind: 'story', story: s.n })} className="text-left text-[var(--v-blue)] hover:underline">{s.title}</button></li>)}</ol><button onClick={() => openDoc({ run: r.id, kind: 'plan' })} className="mt-2 text-[13px] font-medium text-[var(--v-blue)] hover:underline">Open the full plan</button></div>
         <div className="px-6 py-5"><h3 className="text-[13px] font-semibold text-[var(--v-ink-3)]">Agent assumptions</h3><ul className="mt-1 list-disc pl-4 leading-relaxed"><li>Only {r.app} is affected</li><li>No API change in this request</li></ul></div>
       </div>}
       {r.id === 'WI-4821' && <div className="grid grid-cols-3 divide-x divide-[var(--v-line)]">
@@ -50,7 +51,9 @@ function StatusCard({ r }) {
       </div>
     </Card>);
   const cfg = {
-    work: [Loader2, 'bg-[var(--v-blue-soft)] text-[var(--v-blue)]', 'The agent is working', r.now + '. You will be notified when a person is needed.', null],
+    work: r.s.length === 5 && r.s[4] === 'a'
+      ? [Loader2, 'bg-[var(--v-blue-soft)] text-[var(--v-blue)]', r.dev === 'working' ? 'The Developer Agent is building in VS Code' : 'Ready for the Developer Agent in VS Code', r.now + (r.dev === 'working' ? '. The completion report comes back here automatically.' : '. A developer copies the prompt below into the Agent in VS Code.'), null]
+      : [Loader2, 'bg-[var(--v-blue-soft)] text-[var(--v-blue)]', 'The agent is working', r.now + '. You will be notified when a person is needed.', null],
     wait: [Clock, 'bg-[var(--v-amber-soft)] text-[var(--v-amber)]', `Waiting for ${holder}`, r.now + '.', ['Send a reminder', () => toast(`Reminder sent to ${holder}.`)]],
     bad: [AlertTriangle, 'bg-[var(--v-red-soft)] text-[var(--v-red)]', 'Needs attention', r.now + '. The run is paused until someone decides what to do.', null],
     done: [CheckCircle2, 'bg-[var(--v-green-soft)] text-[var(--v-green)]', r.now, 'Every stage is complete and the evidence is saved.', null],
@@ -66,6 +69,7 @@ function StatusCard({ r }) {
 
 export default function V3Run({ id = 'WI-4821' }) {
   const { runs, finishPlan, togglePause, can, approver, me, finishRetry } = useProto();
+  const { openDoc } = useDoc();
   const toast = useToast();
   const r = runs[id];
   useEffect(() => { if (r?.retrying) { const t = setTimeout(() => finishRetry(id), 3500); return () => clearTimeout(t); } }, [r?.retrying, id, finishRetry]);
@@ -92,6 +96,8 @@ export default function V3Run({ id = 'WI-4821' }) {
             {r.paused && <Card className="flex items-center gap-3 border-[var(--v-amber-line)] bg-[var(--v-amber-soft)] px-6 py-4 text-[14px]"><Clock className="size-5 text-[var(--v-amber)]" /><span className="flex-1"><b>Paused by you.</b> The agent and approvers cannot move this run until you resume it.</span><Button className="h-9 rounded-lg" onClick={() => togglePause(r.id)}>Resume run</Button></Card>}
             <StatusCard r={r} />
             {r.state === 'done' && <Card className="px-6 py-5"><div className="flex flex-wrap items-center gap-4"><div className="min-w-0 flex-1"><h2 className="text-[16px] font-semibold">In production</h2><p className="mt-0.5 text-[14px] text-[var(--v-ink-2)]">Health checks normal since release · error rate 0.02% · no linked incidents. The tested rollback plan is attached to the release record.</p></div>{can('gate.release') ? <Button variant="outline" className="h-10 rounded-lg" onClick={() => toast(`Rollback of ${r.id} prepared. It needs a second Release Manager to confirm before it runs.`)}><RotateCcw className="size-4" />Roll back</Button> : <span className="text-[13px] text-[var(--v-ink-3)]">Release Managers can roll back this change.</span>}</div></Card>}
+            <StoriesCard r={r} />
+            <DevAgentCard r={r} />
             <Activity id={r.id} />
             <Comments id={r.id} />
             {r.id === 'WI-4821' && <Card><CardHead title="How the design was made" sub="13 min 48 s · 6 of 6 quality checks passed · 4 sources" right={<Button asChild variant="outline" size="sm" className="rounded-lg"><a href="#v3-evidence">Open</a></Button>} /></Card>}
@@ -100,7 +106,8 @@ export default function V3Run({ id = 'WI-4821' }) {
             <Card>
               <CardHead title="Documents" sub="Created at each stage" />
               <ul className="flex flex-col px-3 pb-3">
-                {DOC.slice(0, r.s.replace(/[^dw]/g, '').length).map((t, i) => { const ok = r.s[i] === 'd'; return <li key={t}><a href={DOC_HREF[i] && (r.id === 'WI-4821' || r.id === 'WI-4807') ? DOC_HREF[i] : '#v3-artifacts'} className="flex items-center gap-3 rounded-lg px-2 py-2.5 hover:bg-[var(--v-sunken)]"><FileText className="size-[18px] shrink-0 text-[var(--v-ink-3)]" /><div className="min-w-0 flex-1"><div className="truncate font-medium">{t}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">{STAGES[i][0]} · {ok ? 'Approved' : 'Waiting for approval'}</div></div>{ok ? <CheckCircle2 className="size-4 text-[var(--v-green)]" /> : <span className="size-2 rounded-full bg-[#e0a000]" />}</a></li>; })}
+                {DOC.slice(0, r.s.replace(/[^dw]/g, '').length).map((t, i) => { const ok = r.s[i] === 'd'; return <li key={t}><button onClick={() => openDoc({ run: r.id, kind: KINDS[i] })} className="flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left hover:bg-[var(--v-sunken)]"><FileText className="size-[18px] shrink-0 text-[var(--v-ink-3)]" /><div className="min-w-0 flex-1"><div className="truncate font-medium">{t}</div><div className="text-[12.5px] text-[var(--v-ink-3)]">{STAGES[i][0]} · {ok ? 'Approved' : 'Waiting for approval'}</div></div>{ok ? <CheckCircle2 className="size-4 text-[var(--v-green)]" /> : <span className="size-2 rounded-full bg-[#e0a000]" />}</button></li>; })}
+                {r.s[3] === 'd' && <li><button onClick={() => openDoc({ run: r.id, kind: 'assignment' })} className="flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left hover:bg-[var(--v-sunken)]"><FileText className="size-[18px] shrink-0 text-[var(--v-ink-3)]" /><div className="min-w-0 flex-1"><div className="truncate font-medium">Developer assignment</div><div className="text-[12.5px] text-[var(--v-ink-3)]">Build · prompt for the Agent in VS Code</div></div></button></li>}
                 {!r.s.replace(/[^dw]/g, '').length && <li className="px-2 py-3 text-[13.5px] text-[var(--v-ink-2)]">The first document appears when the plan is drafted.</li>}
               </ul>
             </Card>

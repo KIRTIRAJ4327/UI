@@ -6,13 +6,14 @@ import { Shell, Card, Pill, Avatar, PEOPLE, STAGES } from './ui';
 import { useProto, runHref } from './store';
 import { useTable, SortTh, Pager } from './table';
 import { useToast } from '@/components/friendly';
+import { useDoc, KINDS, storiesFor } from './docs';
 import { FileText, Search, Download, X, ShieldCheck, Lock, History, Link2 } from 'lucide-react';
 
 const DOCS = [
   ['Delivery plan', 'Plan'], ['Specification', 'Specification'], ['Impact assessment', 'Impact'], ['Architecture decision record', 'Design'],
   ['Developer completion report', 'Code and tests'], ['Integration evidence', 'Pipeline'], ['Validation report', 'Test report'], ['Release record', 'Release'],
 ];
-const EXTRA = { 3: [['Developer handoff', 'Handoff'], ['Tester handoff', 'Handoff']] };
+const EXTRA = { 3: [['Developer assignment', 'Handoff', 'assignment'], ['Tester handoff', 'Handoff', 'handoff-test']] };
 const PREVIEW = {
   Plan: 'Objective: stop advisors entering a value above the documented maximum. Stories: (1) block the value on Product Selection, (2) explain the limit inline.',
   Specification: '8 acceptance criteria. AC-3: when the value exceeds 310, the form blocks submission and shows the reason next to the field.',
@@ -22,13 +23,14 @@ const PREVIEW = {
   Pipeline: 'Merge commit built and deployed to staging. 3 pipelines passed.',
   'Test report': 'All acceptance criteria met. 214 regression tests green.',
   Release: 'Release window, approver, release notes and rollback plan, with the deployment receipt.',
-  Handoff: 'Instructions generated from the approved design for the people who build and test it.',
+  Handoff: 'Instructions generated from the approved design. The developer assignment carries the prompt for the standalone Developer Agent in VS Code.',
+  Story: 'A user story with acceptance criteria. Each story is specified, designed and built one at a time.',
 };
 const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7).toString(16).padStart(8, '0');
 
 export default function V3Artifacts() {
   const { list, me, can, audit, viewArtifact, exportArtifacts, NAME } = useProto();
-  const toast = useToast();
+  const toast = useToast(); const { openDoc } = useDoc();
   const all = can('artifacts.all');
   const [q, setQ] = useState(''); const [type, setType] = useState('All types'); const [status, setStatus] = useState('all'); const [sel, setSel] = useState(null);
   const items = useMemo(() => list.flatMap(r => {
@@ -38,8 +40,9 @@ export default function V3Artifacts() {
       const [name, t] = DOCS[i]; const approver = STAGES[i][1];
       const st = k === 'd' ? 'Approved' : k === 'w' ? 'Waiting for approval' : k === 'f' ? 'Failed' : 'Draft';
       const base = { run: r.id, runTitle: r.t, app: r.app, stage: STAGES[i][0], approver, st, owner: r.by, holder: r.holder };
-      out.push({ ...base, id: `${r.id}-${i}`, name, t, v: k === 'd' ? (i === 3 ? 'v2' : 'v1') : 'v1 draft' });
-      (k === 'd' && EXTRA[i] || []).forEach(([n2, t2], j) => out.push({ ...base, id: `${r.id}-${i}-x${j}`, name: n2, t: t2, v: 'v1' }));
+      out.push({ ...base, id: `${r.id}-${i}`, name, t, kind: KINDS[i], v: k === 'd' ? (i === 3 && r.id === 'WI-4821' ? 'v2' : 'v1') : 'v1 draft' });
+      (k === 'd' && EXTRA[i] || []).forEach(([n2, t2, kd], j) => out.push({ ...base, id: `${r.id}-${i}-x${j}`, name: n2, t: t2, kind: kd, v: 'v1' }));
+      if (i === 0 && k === 'd') storiesFor(r).forEach(st => out.push({ ...base, id: `${r.id}-s${st.n}`, name: `Story ${st.n}: ${st.title}`, t: 'Story', kind: 'story', story: st.n, v: 'v1' }));
     });
     return out;
   }), [list]);
@@ -69,7 +72,7 @@ export default function V3Artifacts() {
               <thead><tr className="border-b border-[var(--v-line)] bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]"><SortTh label="Artifact" s={tb.by('name')} className="py-2.5 pl-5" /><SortTh label="Work item" s={tb.by('run')} className="pr-4" /><SortTh label="Stage" s={tb.by('stage')} className="pr-4" /><SortTh label="Status" s={tb.by('st')} className="pr-4" /><th className="pr-5 font-medium">Version</th></tr></thead>
               <tbody>{tb.view.map(a => (
                 <tr key={a.id} onClick={() => open(a)} className={`cursor-pointer border-b border-[var(--v-line)] last:border-0 hover:bg-[var(--v-sunken)] ${sel?.id === a.id ? 'bg-[var(--v-blue-soft)]' : ''}`}>
-                  <td className="py-3 pl-5"><button onClick={e => { e.stopPropagation(); open(a); }} className="flex items-center gap-2.5 text-left font-medium hover:text-[var(--v-blue)]"><FileText className="size-4 shrink-0 text-[var(--v-ink-3)]" />{a.name}</button><div className="pl-[26px] text-[12px] text-[var(--v-ink-3)]">{a.t}</div></td>
+                  <td className="py-3 pl-5"><button onClick={e => { e.stopPropagation(); setSel(a); openDoc({ run: a.run, kind: a.kind, story: a.story }); }} className="flex items-center gap-2.5 text-left font-medium hover:text-[var(--v-blue)]"><FileText className="size-4 shrink-0 text-[var(--v-ink-3)]" />{a.name}</button><div className="pl-[26px] text-[12px] text-[var(--v-ink-3)]">{a.t}</div></td>
                   <td className="pr-4"><span className="font-mono text-[12px]">{a.run}</span><div className="max-w-[220px] truncate text-[12px] text-[var(--v-ink-3)]">{a.runTitle}</div></td>
                   <td className="pr-4">{a.stage}</td>
                   <td className="pr-4"><Pill tone={a.st === 'Approved' ? 'done' : a.st === 'Failed' ? 'bad' : a.st === 'Draft' ? 'mute' : 'wait'}>{a.st}</Pill></td>
@@ -85,14 +88,14 @@ export default function V3Artifacts() {
                 <div className="flex items-start gap-3"><FileText className="mt-0.5 size-5 text-[var(--v-blue)]" /><div className="min-w-0 flex-1"><h2 className="text-[17px] font-semibold leading-snug">{sel.name}</h2><a href={runHref(sel.run)} className="text-[13px] text-[var(--v-blue)] hover:underline">{sel.run} · {sel.runTitle}</a></div><button aria-label="Close details" onClick={() => setSel(null)} className="rounded-md p-1 hover:bg-[var(--v-sunken)]"><X className="size-4" /></button></div>
                 <p className="mt-3 rounded-lg bg-[var(--v-sunken)] p-3 text-[14px] leading-relaxed">{PREVIEW[sel.t]}</p>
                 <dl className="mt-4 grid grid-cols-[110px_1fr] gap-y-1.5 text-[13px]"><dt className="text-[var(--v-ink-3)]">Status</dt><dd><Pill tone={sel.st === 'Approved' ? 'done' : 'wait'}>{sel.st}</Pill></dd><dt className="text-[var(--v-ink-3)]">Approver</dt><dd className="flex items-center gap-1.5">{sel.approver ? <><Avatar p={sel.approver} size={18} />{PEOPLE[sel.approver].name}</> : 'Automatic checks'}</dd><dt className="text-[var(--v-ink-3)]">Version</dt><dd>{sel.v}</dd><dt className="text-[var(--v-ink-3)]">Fingerprint</dt><dd className="font-mono text-[12px]">{hash(sel.id)} {hash(sel.name)}</dd></dl>
-                <div className="mt-4 flex gap-2">{can('artifacts.export') ? <Button size="sm" className="rounded-lg" onClick={() => { exportArtifacts(sel.name + ' · ' + sel.run); toast(`${sel.name} downloaded.`); }}><Download className="size-3.5" />Download</Button> : <span className="flex items-center gap-1.5 text-[12.5px] text-[var(--v-ink-3)]"><Lock className="size-3.5" />Your role cannot download</span>}<Button size="sm" variant="outline" className="rounded-lg" onClick={() => toast('Link copied. Only people with access can open it.')}><Link2 className="size-3.5" />Copy link</Button></div>
+                <div className="mt-4 flex flex-wrap gap-2"><Button size="sm" className="rounded-lg" onClick={() => openDoc({ run: sel.run, kind: sel.kind, story: sel.story })}><FileText className="size-3.5" />Open document</Button>{can('artifacts.export') ? <Button size="sm" variant="outline" className="rounded-lg" onClick={() => { exportArtifacts(sel.name + ' · ' + sel.run); toast(`${sel.name} downloaded.`); }}><Download className="size-3.5" />Download</Button> : <span className="flex items-center gap-1.5 text-[12.5px] text-[var(--v-ink-3)]"><Lock className="size-3.5" />Your role cannot download</span>}<Button size="sm" variant="outline" className="rounded-lg" onClick={() => toast('Link copied. Only people with access can open it.')}><Link2 className="size-3.5" />Copy link</Button></div>
               </Card>
               <Card className="p-5"><h3 className="text-[14px] font-semibold">Versions</h3>
                 <ol className="mt-2 flex flex-col gap-2 text-[13px]">{(sel.v === 'v2' ? [['v2', 'Approved', 'Today 14:33'], ['v1', 'Superseded: missing AC-3 reference', 'Today 14:31']] : [[sel.v, sel.st, 'Today']]).map(([v, s, t]) => <li key={v} className="flex justify-between gap-2"><span><b className="font-medium">{v}</b> · {s}</span><span className="text-[var(--v-ink-3)]">{t}</span></li>)}</ol></Card>
               <Card className="p-5"><h3 className="flex items-center gap-2 text-[14px] font-semibold"><History className="size-4" />Who has opened this</h3>
                 <ol className="mt-2 flex flex-col gap-2 text-[13px]">{access.length ? access.map((e, i) => <li key={i} className="flex justify-between gap-2"><span>{NAME[e.who] || e.who} · {e.action.toLowerCase()}</span><span className="shrink-0 text-[var(--v-ink-3)]">{e.t}</span></li>) : <li className="text-[var(--v-ink-2)]">No other access recorded.</li>}</ol>
                 {can('audit.view') && <a href="#v3-audit" className="mt-3 inline-block text-[13px] font-medium text-[var(--v-blue)]">Full audit log</a>}</Card>
-              <Card className="px-5 py-4 text-[12.5px] text-[var(--v-ink-2)]"><b className="text-[var(--v-ink)]">Storage:</b> Evidence store, {sel.app} partition. Write-once, encrypted at rest, kept for 7 years after release.</Card>
+              <Card className="px-5 py-4 text-[12.5px] text-[var(--v-ink-2)]"><b className="text-[var(--v-ink)]">Storage:</b> the document is in Azure Blob Storage (immutable container, {sel.app} folder); its versions, approvals and access are recorded in Azure SQL. Encrypted at rest, kept for 7 years after release.</Card>
             </aside>)}
         </div>
       </div>

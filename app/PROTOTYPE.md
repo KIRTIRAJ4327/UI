@@ -17,6 +17,10 @@ Every link and button does something, and decisions change the rest of the produ
 - **New request** creates a new run (WI-4841, WI-4842, and so on); the agent drafts the plan and hands it to Priya after a few seconds.
 - **Governance** problems disappear when you fix them (reassign, complete a squad), and **Connections** recovers when you sign in to Teams again.
 - **Pause run / Resume run**, search (⌘K or `/`), notifications, breadcrumbs and the Approvals list all work.
+- **Every document opens in place.** Click any document on a run page or in Artifacts (plan, stories, specification, impact assessment, architecture decision, developer assignment, completion report and so on) to read the document itself. Each one shows where it is stored (file in Azure Blob Storage; versions, approvals and access in Azure SQL), its fingerprint, and the Azure Boards and Azure Repos links. It also has a Markdown source tab and a download. Links such as `#v3-run-wi-4821/design` or `#v3-run-wi-4821/story-1` open a document directly.
+- **Stories.** The plan splits each request into stories, and each story is specified, designed and built one at a time. Run pages show progress per story.
+- **Developer Agent in VS Code.** After design approval, the run shows the Build card. Copy the Developer prompt for the standalone agent in VS Code. The platform tracks the agent connecting, the branch and Azure Boards task, the pull request, and the completion report.
+- **How the agent did this** (on every gate) and **dark mode** (top bar).
 - State survives a page refresh. **Prototype → Reset demo data** (bottom of the sidebar) starts over.
 
 ### Suggested 5-minute demo

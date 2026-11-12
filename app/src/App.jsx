@@ -129,7 +129,7 @@ export default function App() {
   const [wide, setWide] = useState(false);
   const ALL = [...V3, ['v3-approvals','Approvals','',ApprovalsList], ...ROUND2, ...CONCEPTS];
   useEffect(() => { window.scrollTo(0, 0); }, [h]);
-  const runId = h.startsWith('v3-run-') ? h.slice(7).toUpperCase() : null;
+  const runId = h.startsWith('v3-run-') ? h.slice(7).split('/')[0].toUpperCase() : null;
   const squadId = h.startsWith('v3-squad-') ? h.slice(9).toUpperCase() : null;
   const GUARD = { 'v3-admin': 'squads.manage', 'v3-squad': 'squads.manage', 'v3-squads': 'squads.manage', 'v3-people': 'people.manage', 'v3-policies': 'policies.manage', 'v3-connections': 'connections.manage', 'v3-roles': 'roles.manage', 'v3-audit': 'audit.view' };
   const guardKey = squadId ? 'v3-squad' : h;
