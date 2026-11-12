@@ -89,6 +89,16 @@ function contentFor(r, kind, story) {
 }
 const devPrompt = r => `You are the Developer Agent for ${r.id} (${r.t}).\nRepository: ${REPO[r.app] || 'app-web'} · base branch: main\nRead the approved design (ADR) and developer handoff from the platform.\nImplement only the approved changes, add unit tests, and open a pull request.\nLink Azure Boards task #${88000 + num(r.id) % 1000}. Post the completion report when done.`;
 
+
+// Save a generated file: on the shared link the viewer confirms the save; locally it is a normal download.
+export async function saveFile(filename, data, toast) {
+  const dl = window.claude?.use ? await window.claude.use('downloads').catch(() => null) : undefined;
+  if (dl) { try { await dl.save({ filename, data }); toast(`${filename} saved.`); } catch (e) { toast(e?.code === 'declined' ? 'Download cancelled.' : 'Downloads are not available in this view.'); } return; }
+  if (dl === null) { toast('Downloads are not available in this view.'); return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], { type: 'text/markdown' })); a.download = filename; a.click(); toast(`${filename} downloaded.`);
+}
+export const copyText = (text, toast, okMsg) => (navigator.clipboard?.writeText(text) || Promise.reject()).then(() => toast(okMsg), () => toast('Copy is blocked in this view. Open the Developer assignment and select the prompt to copy it.'));
+
 const toMd = (title, blocks) => [`# ${title}`, ...blocks.filter(Boolean).map(b => b.h ? `\n## ${b.h}` : b.p ? b.p : b.callout ? `> ${b.callout}` : b.ul ? b.ul.map(x => `- ${x}`).join('\n') : b.ol ? b.ol.map((x, i) => `${i + 1}. ${x}`).join('\n') : b.code ? '```\n' + b.code + '\n```' : b.table ? [`| ${b.table.head.join(' | ')} |`, `|${b.table.head.map(() => '---').join('|')}|`, ...b.table.rows.map(x => `| ${x.join(' | ')} |`)].join('\n') : b.stories ? b.stories.map(s => `${s.n}. ${s.title} (${s.status})`).join('\n') : b.diff ? b.diff.map(([s, t]) => `${s === '+' ? '+' : '-'} ${t}`).join('\n') : b.diagram ? `\n\`${b.diagram.join(' → ')}\`` : '')].join('\n');
 
 const Ctx = createContext({ openDoc: () => {} });
@@ -172,8 +182,8 @@ function Viewer({ doc, onClose, openDoc }) {
                 {kind === 'story' && <li><button onClick={() => openDoc({ run: r.id, kind: 'plan' })} className="text-[var(--v-blue)] hover:underline">Delivery plan</button></li>}
               </ul>
               <div className="mt-5 flex flex-col gap-2">
-                {can('artifacts.export') || can('artifacts.own') ? <Button variant="outline" size="sm" className="justify-start rounded-lg" onClick={() => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([md], { type: 'text/markdown' })); a.download = `${r.id}-${story ? `story-${story.n}` : kind}-${ver}.md`; a.click(); toast(`${title} downloaded.`); }}><Download className="size-3.5" />Download .md</Button> : null}
-                <Button variant="outline" size="sm" className="justify-start rounded-lg" onClick={() => { navigator.clipboard?.writeText(`${location.origin}${location.pathname}#v3-run-${r.id.toLowerCase()}/${story ? `story-${story.n}` : kind}`).catch(() => {}); toast('Link copied.'); }}><Link2 className="size-3.5" />Copy link</Button>
+                {can('artifacts.export') || can('artifacts.own') ? <Button variant="outline" size="sm" className="justify-start rounded-lg" onClick={() => saveFile(`${r.id}-${story ? `story-${story.n}` : kind}-${ver}.md`, md, toast)}><Download className="size-3.5" />Download .md</Button> : null}
+                <Button variant="outline" size="sm" className="justify-start rounded-lg" onClick={() => copyText(`${location.origin}${location.pathname}#v3-run-${r.id.toLowerCase()}/${story ? `story-${story.n}` : kind}`, toast, 'Link copied.')}><Link2 className="size-3.5" />Copy link</Button>
               </div>
             </aside>
           </div>
@@ -189,7 +199,7 @@ function Block({ b, r, openDoc, toast }) {
   if (b.callout) return <p className="mb-3 rounded-lg border-l-4 border-[var(--v-blue)] bg-[var(--v-blue-soft)] px-4 py-3">{b.callout}</p>;
   if (b.ul) return <ul className="mb-3 list-disc space-y-1 pl-5">{b.ul.map(x => <li key={x}>{x}</li>)}</ul>;
   if (b.ol) return <ol className="mb-3 list-decimal space-y-1 pl-5">{b.ol.map(x => <li key={x}>{x}</li>)}</ol>;
-  if (b.code) return <div className="mb-3 overflow-hidden rounded-lg border border-[var(--v-line)]"><div className="flex items-center justify-between border-b border-[var(--v-line)] bg-[var(--v-sunken)] px-3 py-1.5 text-[12px] text-[var(--v-ink-3)]"><span>Paste into the Agent in VS Code</span><button onClick={() => { navigator.clipboard?.writeText(b.code).catch(() => {}); toast('Developer prompt copied. Paste it into the Agent in VS Code.'); }} className="flex items-center gap-1 rounded px-1.5 py-0.5 font-medium text-[var(--v-blue)] hover:bg-[var(--v-surface)]"><Copy className="size-3.5" />Copy</button></div><pre className="whitespace-pre-wrap px-4 py-3 font-mono text-[12.5px] leading-relaxed">{b.code}</pre></div>;
+  if (b.code) return <div className="mb-3 overflow-hidden rounded-lg border border-[var(--v-line)]"><div className="flex items-center justify-between border-b border-[var(--v-line)] bg-[var(--v-sunken)] px-3 py-1.5 text-[12px] text-[var(--v-ink-3)]"><span>Paste into the Agent in VS Code</span><button onClick={() => copyText(b.code, toast, 'Developer prompt copied. Paste it into the Agent in VS Code.')} className="flex items-center gap-1 rounded px-1.5 py-0.5 font-medium text-[var(--v-blue)] hover:bg-[var(--v-surface)]"><Copy className="size-3.5" />Copy</button></div><pre className="whitespace-pre-wrap px-4 py-3 font-mono text-[12.5px] leading-relaxed">{b.code}</pre></div>;
   if (b.table) return <div className="mb-3 overflow-hidden rounded-lg border border-[var(--v-line)]"><table className="w-full text-[13.5px]"><thead><tr className="bg-[var(--v-sunken)] text-left text-[12.5px] text-[var(--v-ink-3)]">{b.table.head.map(h => <th key={h} className="px-3 py-2 font-medium">{h}</th>)}</tr></thead><tbody>{b.table.rows.map((row, i) => <tr key={i} className="border-t border-[var(--v-line)]">{row.map((c, j) => <td key={j} className={`px-3 py-2 ${/gap|Not changed/.test(c) ? 'text-[var(--v-amber)]' : ''}`}>{c}</td>)}</tr>)}</tbody></table></div>;
   if (b.stories) return <ol className="mb-3 flex flex-col gap-2">{b.stories.map(s => <li key={s.n}><button onClick={() => openDoc({ run: r.id, kind: 'story', story: s.n })} className="flex w-full items-center gap-3 rounded-lg border border-[var(--v-line)] px-3 py-2.5 text-left hover:border-[var(--v-blue)] hover:bg-[var(--v-blue-soft)]"><span className="grid size-6 shrink-0 place-items-center rounded-full bg-[var(--v-sunken)] text-[12px] font-semibold">{s.n}</span><span className="min-w-0 flex-1"><b className="block font-medium">{s.title}</b><span className="text-[12.5px] text-[var(--v-ink-3)]">As {s.who}, I want {s.want}</span></span><StoryBar s={s} /></button></li>)}</ol>;
   if (b.progress) return <div className="mb-3 flex items-center gap-3"><StoryBar s={b.progress} wide /><span className="text-[13px] text-[var(--v-ink-2)]">{b.progress.status}</span></div>;
@@ -243,7 +253,7 @@ export function DevAgentCard({ r }) {
       <div className="flex flex-wrap items-start gap-3 px-6 pt-5">
         <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--v-sunken)]"><Laptop className="size-5 text-[var(--v-ink-2)]" /></span>
         <div className="min-w-0 flex-1"><h2 id="dev-h" className="text-[16px] font-semibold">Build · Developer Agent in VS Code</h2><p className="text-[13px] text-[var(--v-ink-3)]">The agent runs standalone on the developer’s machine. The platform prepares its assignment and tracks the result.</p></div>
-        {!built && phase !== 'working' && <Button className="h-9 rounded-lg" onClick={() => { navigator.clipboard?.writeText(devPrompt(r)).catch(() => {}); setDev(r.id, 'copied'); toast('Developer prompt copied. Paste it into the Agent in VS Code.'); }}><Copy className="size-4" />Copy Developer prompt</Button>}
+        {!built && phase !== 'working' && <Button className="h-9 rounded-lg" onClick={() => { copyText(devPrompt(r), toast, 'Developer prompt copied. Paste it into the Agent in VS Code.'); setDev(r.id, 'copied'); }}><Copy className="size-4" />Copy Developer prompt</Button>}
       </div>
       <ol className="flex flex-col px-6 py-4">{steps.map(([t, sub, ok, open, busy], i) => (
         <li key={t} className="relative flex gap-3 pb-3 last:pb-0">
