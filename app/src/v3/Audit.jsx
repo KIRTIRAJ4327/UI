@@ -29,7 +29,7 @@ export default function V3Audit() {
   const tb = useTable(rows, { sort: 'at', dir: 'desc', getters: GET, pageSize: 12 });
   const doExport = () => { exportArtifacts(`audit log, ${rows.length} entries, ${RANGES.find(r => r[0] === range)[1].toLowerCase()}`); saveFile(`audit-log-${range}.csv`, csv([['time_utc', 'who', 'action', 'target', 'category', 'ip', 'detail'], ...rows.map(e => [e.at, e.who, e.action, e.target, e.cat, e.ip, e.detail])]), toast); };
   return (
-    <Shell active="audit" crumbs={['Admin', 'Audit log']} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={doExport}><Download className="size-4" />Export signed PDF</Button>}>
+    <Shell active="audit" crumbs={['Admin', 'Audit log']} actions={<Button variant="outline" className="h-9 rounded-lg" onClick={doExport}><Download className="size-4" />Export CSV</Button>}>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-5">
         <div className="flex flex-wrap items-end gap-4">
           <div className="min-w-0 flex-1"><h1 className="font-display text-[28px] font-semibold">Audit log</h1><p className="mt-1 max-w-[80ch] text-[15px] text-[var(--v-ink-2)]">Every decision, document, access and permission change. Entries cannot be edited or deleted, and each one is linked to the one before it. Times are in UTC.</p></div>
