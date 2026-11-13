@@ -5,7 +5,7 @@ const D = JSON.parse(fs.readFileSync('durations.json')); const N = Object.fromEn
 const U = 'http://localhost:4173/'; const SL = '/tmp/claude-0/-home-user-UI/88bfff22-1691-53d5-ab19-4aff22ef43ff/scratchpad/report/slides.html';
 (async () => {
   const b = await chromium.launch();
-  const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, recordVideo: { dir: 'raw3', size: { width: 1440, height: 900 } } });
+  const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, recordVideo: { dir: 'raw4', size: { width: 1440, height: 900 } } });
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: 'http://localhost:4173' });
   const p = await ctx.newPage(); const t0 = Date.now(); const errs = []; p.on('pageerror', e => errs.push(e.message));
   const wait = ms => p.waitForTimeout(ms);
@@ -59,7 +59,7 @@ const U = 'http://localhost:4173/'; const SL = '/tmp/claude-0/-home-user-UI/88bf
   await scene('people', async () => { await nav('v3-people'); await click(p.getByRole('button', { name: 'Invite person' })); await p.locator('#iv-e').pressSequentially('new.reviewer@example.com', { delay: 30 }); await wait(500); await click(p.getByRole('button', { name: 'Send invitation' })); await wait(1200); await overlay(curText); });
   await scene('audit', async () => { await nav('v3-audit'); await wait(3000); await scroll(400); });
   await scene('dark', async () => { await nav('v3-home'); await wait(300); await click(p.getByRole('button', { name: /^Theme:/ })); await wait(900); await overlay(curText); });
-  for (const k of ['personas', 'walk', 'fit']) await slide(k);
+  for (const k of ['layers', 'speckit', 'versus', 'position', 'answer']) await slide(k);
   await p.goto(U + '#v3-run-wi-4821'); await wait(900);
   await scene('close', async () => { await nav('v3-run-wi-4821'); await wait(2500); });
   await overlay(''); await wait(800);

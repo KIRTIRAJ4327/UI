@@ -2,7 +2,7 @@
 <style>
 @font-face{font-family:Inter;src:url(file:///home/user/UI/app/node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2);font-weight:100 900}
 @font-face{font-family:"Space Grotesk";src:url(file:///home/user/UI/app/node_modules/@fontsource/space-grotesk/files/space-grotesk-latin-600-normal.woff2);font-weight:600}
-:root{--bg:#eef1ed;--surface:#fff;--ink:#101429;--ink2:#444b63;--mute:#8a91a6;--grid:#dfe3ea;--band:#dbe8fb;--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--side:#101429}
+:root{--bg:#eef1ed;--surface:#fff;--ink:#101429;--ink2:#444b63;--mute:#8a91a6;--grid:#dfe3ea;--band:#dbe8fb;--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--side:#101429;--sunken:#e6eae4;--line:#d5dad6;--accent:#2469bc}
 *{box-sizing:border-box}html,body{margin:0;width:1440px;height:900px;overflow:hidden;background:var(--bg);color:var(--ink);font:400 20px/1.45 Inter,system-ui,sans-serif}
 section{display:none;position:absolute;inset:0;padding:56px 90px 150px}section.on{display:block}
 .eyebrow{font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c1)}
@@ -22,8 +22,10 @@ ol.rank b{width:34px;text-align:right;font-variant-numeric:tabular-nums}ol.rank 
 .st .n{width:30px;height:30px;border-radius:50%;background:var(--c1);color:#fff;display:grid;place-items:center;margin:0 auto 8px;font-weight:600;font-size:15px}.st b{display:block;font-size:17px}.st small{font-size:13px;color:var(--ink2)}
 .pill{display:inline-block;background:var(--side);color:#fff;border-radius:999px;padding:9px 18px;font-size:17px}.arrow{font-size:26px;color:var(--mute);margin:0 14px}
 .k3 h3{font:600 22px "Space Grotesk";margin:0 0 8px}.k3 ul{margin:0;padding-left:20px;font-size:17.5px;color:var(--ink2)}.k3 li{margin:5px 0}.k3 .card{border-top:5px solid var(--cc)}
+.lay{border-left:8px solid var(--cc);padding:18px 26px}.lay b{display:block;font:600 24px "Space Grotesk"}.lay span{display:block;color:var(--ink2);margin:2px 0 4px}.lay small{font-size:15.5px;color:var(--mute)}
+table.vs{width:100%;border-collapse:collapse;font-size:19px}table.vs th,table.vs td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--grid);vertical-align:top}table.vs tr:last-child td{border:0}table.vs th{font:600 20px "Space Grotesk"}table.vs th i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:8px}table.vs td:first-child{color:var(--ink2);width:230px;font-weight:600}.fact span{font-size:19px}
 </style></head><body>
-<section id="title" class="title"><div class="eyebrow">Stakeholder briefing · November 2026</div><h1>Unified Product Delivery Platform</h1><p class="sub">Why governed AI delivery matters now, how the platform works, and how it compares with the alternatives.</p></section>
+<section id="title" class="title"><div class="eyebrow">Stakeholder briefing · November 2026</div><h1>Unified Product Delivery Platform</h1><p class="sub">Why governed AI delivery matters now, how the platform works, and how it compares with Spec Kit and the wider market.</p></section>
 
 <section id="why"><div class="eyebrow">Why now</div><h1>AI is used almost everywhere. Trust has not kept up.</h1><p class="sub">Share of respondents, from three 2025 and 2026 surveys.</p>
 <div class="card"><div class="lg"><span><i style="background:var(--c1)"></i>Use</span><span><i style="background:var(--c2)"></i>Trust or autonomy</span></div><div id="c-trust"></div></div>
@@ -47,19 +49,41 @@ ol.rank b{width:34px;text-align:right;font-variant-numeric:tabular-nums}ol.rank 
 <div class="flow" id="c-flow"></div>
 <div class="cols three" style="margin-top:24px;font-size:18px"><div class="card"><b>Named approver at every gate</b><br><span style="color:var(--ink2)">With backups and separation of duties.</span></div><div class="card"><b>One evidence trail</b><br><span style="color:var(--ink2)">Documents in Azure Blob, approvals in Azure SQL.</span></div><div class="card"><b>Developers stay in VS Code</b><br><span style="color:var(--ink2)">The Developer Agent runs on their machine.</span></div></div></section>
 
-<section id="personas"><div class="eyebrow">How it compares</div><h1>Three ways to work, scored for nine roles</h1><p class="sub">Score out of 12: natural tool, understanding what the AI did, control, and evidence kept.</p>
-<div class="card" style="padding:16px 30px"><div id="lg-p"></div><div id="c-personas"></div></div>
-<p class="src">Our assessment, November 2026. The platform is scored as a prototype; the other two are shipping products. No users were observed or timed.</p></section>
+<section id="layers"><div class="eyebrow">How it compares</div><h1>AI-driven delivery has three layers</h1><p class="sub">Each layer depends on the one below it. This platform is in the third.</p>
+<div class="cols" style="gap:14px">
+<div class="card lay" style="--cc:var(--c1)"><b>3 · Governed delivery platforms</b><span>Decide who approves, record what happened, control release.</span><small>This platform · GitHub Agent HQ · GitLab Duo Agent Platform · Atlassian Rovo · ServiceNow · Harness · IBM Bob</small></div>
+<div class="card lay" style="--cc:var(--c2)"><b>2 · Spec-driven toolkits</b><span>Make the agent work from a written requirement, plan and task list.</span><small>GitHub Spec Kit · AWS AI-DLC · OpenSpec · BMad Method · Kiro specs</small></div>
+<div class="card lay" style="--cc:var(--c3)"><b>1 · Coding agents</b><span>Write and change the code.</span><small>Claude Code · Cursor · GitHub Copilot · OpenAI Codex · Kiro · Devin</small></div></div>
+<p class="src">Vendor products as announced in 2026; we have not tested them.</p></section>
 
-<section id="walk"><div class="eyebrow">How it compares</div><h1>One small change, walked through all three</h1><p class="sub">Blocking values above 310 on one form, in a regulated organisation with tester and release roles.</p>
-<div class="card"><div id="lg-w"></div><div id="c-walk"></div></div>
-<p class="src">Step counts from a written walk-through of each approach; elapsed time was not measured. The platform's eight waits are the case for a fast path for low-risk changes.</p></section>
+<section id="speckit"><div class="eyebrow">Spec Kit today</div><h1>Spec Kit is more capable than its reputation</h1><p class="sub">GitHub's open-source toolkit for spec-driven development.</p>
+<div class="card" style="padding:10px 30px">
+<div class="fact"><b>Free</b><span>MIT licence. Version 1.4.0, released 10 November 2026.</span></div>
+<div class="fact"><b>43 agents</b><span>Works with Copilot, Claude Code, Codex, Cursor, Gemini and more.</span></div>
+<div class="fact"><b>198 extensions</b><span>Plus 42 presets in the community catalog. Private catalogs for approved add-ons.</span></div>
+<div class="fact"><b>Review gates</b><span>Workflows pause for a person after the specification and after the plan.</span></div>
+<div class="fact"><b>Add-ons</b><span>Multi-repository dispatch, and Azure DevOps with human sign-off. Community-built, not vetted by GitHub.</span></div></div>
+<p class="src">Read in the Spec Kit source code and catalogs on 13 November 2026. We did not install or run it.</p></section>
 
-<section id="fit" class="k3"><div class="eyebrow">Where each fits</div><h1>Use the right approach for the change, and combine them</h1><p class="sub">The platform governs and keeps the record; the developer's agent connects from VS Code.</p>
-<div class="cols three"><div class="card" style="--cc:var(--c1)"><h3>This platform</h3><ul><li>Business-rule, pricing or customer-facing change</li><li>Several roles and repositories</li><li>Anything that will be audited</li></ul></div>
-<div class="card" style="--cc:var(--c2)"><h3>Spec-driven in the repo</h3><ul><li>Developer-led features</li><li>New projects and prototypes</li><li>Teams already on GitHub</li></ul></div>
-<div class="card" style="--cc:var(--c3)"><h3>IDE only</h3><ul><li>Small teams</li><li>Refactors and dependency updates</li><li>Clear-cause bug fixes</li></ul></div></div>
-<div class="card" style="margin-top:22px;font-size:18.5px"><b>Next for the platform:</b> a fast path for low-risk changes, a direct hand-off to the VS Code agent in place of copy and paste, and a choice of AI model per stage.</div></section>
+<section id="versus"><div class="eyebrow">Spec Kit or the platform?</div><h1>They control different things</h1><p class="sub">Spec Kit ships today. The platform is a prototype.</p>
+<div class="card" style="padding:8px 30px"><table class="vs"><tr><th></th><th><i style="background:var(--c2)"></i>Spec Kit</th><th><i style="background:var(--c1)"></i>This platform</th></tr>
+<tr><td>Controls</td><td>What the agent is asked to build</td><td>Who approves, and what is released</td></tr>
+<tr><td>Used by</td><td>Developers, in the repository</td><td>Nine roles, in the browser</td></tr>
+<tr><td>Approval</td><td>A prompt in the terminal; named sign-off through an add-on</td><td>A named person per stage, with backup</td></tr>
+<tr><td>Record</td><td>Text files and Git history</td><td>One audit log and fingerprinted documents</td></tr>
+<tr><td>After the pull request</td><td>Left to other tools</td><td>Integration, validation, release, rollback</td></tr>
+<tr><td>Status</td><td>Released, free</td><td>Prototype on sample data</td></tr></table></div></section>
+
+<section id="position"><div class="eyebrow">The wider market</div><h1>Toolkits cover the work. Platforms add governance.</h1>
+<div class="cols" style="grid-template-columns:860px 1fr;gap:26px;align-items:start"><div class="card" style="padding:14px 20px">
+<div class="lg" style="margin-bottom:6px"><span><i style="background:var(--c2)"></i>Spec-driven toolkit</span><span><i style="background:var(--c1)"></i>Governed delivery platform</span><span><i style="background:var(--c3)"></i>This platform (prototype)</span></div><svg viewBox="0 0 820 440" role="img" aria-label="Positioning chart: lifecycle scope against governance depth"><rect x="395.0" y="26" width="325.0" height="177.0" fill="var(--band)" opacity=".55"/><line x1="70.0" y1="26" x2="70.0" y2="380" stroke="var(--grid)"/><line x1="70" y1="380.0" x2="720" y2="380.0" stroke="var(--grid)"/><text x="70.0" y="398" text-anchor="middle" class="tk">0</text><text x="60" y="384.0" text-anchor="end" class="tk">0</text><line x1="286.66666666666663" y1="26" x2="286.66666666666663" y2="380" stroke="var(--grid)"/><line x1="70" y1="262.0" x2="720" y2="262.0" stroke="var(--grid)"/><text x="286.66666666666663" y="398" text-anchor="middle" class="tk">1</text><text x="60" y="266.0" text-anchor="end" class="tk">1</text><line x1="503.3333333333333" y1="26" x2="503.3333333333333" y2="380" stroke="var(--grid)"/><line x1="70" y1="144.0" x2="720" y2="144.0" stroke="var(--grid)"/><text x="503.3333333333333" y="398" text-anchor="middle" class="tk">2</text><text x="60" y="148.0" text-anchor="end" class="tk">2</text><line x1="720.0" y1="26" x2="720.0" y2="380" stroke="var(--grid)"/><line x1="70" y1="26.0" x2="720" y2="26.0" stroke="var(--grid)"/><text x="720.0" y="398" text-anchor="middle" class="tk">3</text><text x="60" y="30.0" text-anchor="end" class="tk">3</text><text x="395.0" y="428" text-anchor="middle" class="lb">Scope of the lifecycle covered (average of five rows)</text><text transform="translate(18,203.0) rotate(-90)" text-anchor="middle" class="lb">Depth of governance (average of four rows)</text><text x="712" y="193.0" text-anchor="end" class="tk b" style="fill:var(--accent)">Broad scope, deep governance</text><circle cx="503.3333333333333" cy="350.5" r="7" fill="var(--c2)" stroke="var(--surface)" stroke-width="2"/><text x="513.3333333333333" y="354.5" text-anchor="start" class="lb">Spec Kit core</text><circle cx="590.0" cy="144.0" r="7" fill="var(--c2)" stroke="var(--surface)" stroke-width="2"/><text x="579.0" y="148.0" text-anchor="end" class="lb">Spec Kit + add-ons</text><circle cx="676.6666666666666" cy="232.49999999999997" r="7" fill="var(--c2)" stroke="var(--surface)" stroke-width="2"/><text x="665.6666666666666" y="236.49999999999997" text-anchor="end" class="lb">AWS AI-DLC</text><circle cx="460.0" cy="173.5" r="7" fill="var(--c1)" stroke="var(--surface)" stroke-width="2"/><text x="449.0" y="177.5" text-anchor="end" class="lb">GitHub Agent HQ</text><circle cx="590.0" cy="173.5" r="7" fill="var(--c1)" stroke="var(--surface)" stroke-width="2"/><text x="601.0" y="177.5" text-anchor="start" class="lb">GitLab Duo</text><circle cx="416.6666666666667" cy="26.0" r="7" fill="var(--c1)" stroke="var(--surface)" stroke-width="2"/><text x="405.6666666666667" y="30.0" text-anchor="end" class="lb">Atlassian Rovo</text><circle cx="460.0" cy="26.0" r="7" fill="var(--c1)" stroke="var(--surface)" stroke-width="2"/><text x="470.0" y="44.0" text-anchor="start" class="lb">ServiceNow</text><circle cx="416.6666666666667" cy="84.99999999999999" r="7" fill="var(--c1)" stroke="var(--surface)" stroke-width="2"/><text x="427.6666666666667" y="88.99999999999999" text-anchor="start" class="lb">Harness</text><circle cx="647.7777777777777" cy="144.0" r="7" fill="var(--c1)" stroke="var(--surface)" stroke-width="2"/><text x="647.7777777777777" y="131.0" text-anchor="middle" class="lb">Thoughtworks *</text><circle cx="633.3333333333334" cy="26.0" r="7" fill="var(--c3)" stroke="var(--surface)" stroke-width="2"/><text x="644.3333333333334" y="30.0" text-anchor="start" class="lb">This platform</text></svg></div>
+<div class="k3"><ul style="font-size:19px"><li>Toolkits score well on requirements and code, and low on governance.</li><li>With add-ons, Spec Kit moves up.</li><li>Vendor platforms govern well but start from a ticket, not a reviewed specification.</li></ul></div></div>
+<p class="src">Our judgement from public source code, documentation and announcements. Not test results. * Thoughtworks is only partly scored.</p></section>
+
+<section id="answer" class="k3"><div class="eyebrow">Our answer</div><h1>Both, not either: Spec Kit builds, the platform governs</h1><p class="sub">A specification prevents the wrong thing being built. An approval record proves a responsible person accepted it.</p>
+<div class="cols three"><div class="card" style="--cc:var(--c2)"><h3>Spec Kit, in the repository</h3><ul><li>Requirement, plan and tasks before code</li><li>Any coding agent</li><li>Developer-led changes</li></ul></div>
+<div class="card" style="--cc:var(--c1)"><h3>The platform, above it</h3><ul><li>Business approvals in plain language</li><li>Separation of duties and one audit record</li><li>Release, freeze, hold and rollback</li></ul></div>
+<div class="card" style="--cc:var(--c3)"><h3>Next</h3><ul><li>A fast path for low-risk changes</li><li>A direct connection to the developer's agent</li><li>A pilot with a measured baseline</li></ul></div></div></section>
 
 <script src="charts.js"></script><script>
 const $ = id => document.getElementById(id);
@@ -68,8 +92,8 @@ $('c-impact').innerHTML = bars(DATA.impact.map(([l, v]) => [l, v]), 480, { w: 12
 $('c-regions').innerHTML = ranges(DATA.regions, { w: 1200, lab: 210 });
 $('c-evident').innerHTML = DATA.evident.map(([r, b, c]) => `<li class="${c === 'Canada' ? 'ca' : ''}"><b>${r}</b>${b}<span>${c}</span></li>`).join('');
 $('c-flow').innerHTML = [['Plan', 'Product Owner'], ['Specify', 'Product Owner'], ['Impact', 'Automatic'], ['Design', 'Solution Architect'], ['Build', 'Engineering Lead'], ['Integrate', 'Integration Lead'], ['Validate', 'Quality Lead'], ['Release', 'Release Manager']].map(([s, a], i) => `<div class="st"><div class="n">${i + 1}</div><b>${s}</b><small>${a}</small></div>`).join('');
-$('lg-p').innerHTML = legend(SERIES); $('lg-w').innerHTML = legend(SERIES);
-$('c-personas').innerHTML = grouped(DATA.personas, 12, { w: 1200, lab: 330, barH: 10, gap: 2, rowGap: 11 });
-$('c-walk').innerHTML = grouped(DATA.walk, 8, { w: 1200, lab: 330, barH: 22, gap: 4, rowGap: 26 });
+
+
+
 const show = () => { const h = location.hash.slice(1) || 'title'; document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === h)); }; addEventListener('hashchange', show); show();
 </script></body></html>

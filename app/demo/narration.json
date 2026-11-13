@@ -1,7 +1,7 @@
 [
  [
   "title",
-  "This briefing covers three things. Why governed AI delivery matters now. How the platform works. And how it compares with the alternatives."
+  "This briefing covers three things. Why governed AI delivery matters now. How the platform works. And how it compares with Spec Kit and the wider market."
  ],
  [
   "why",
@@ -88,16 +88,24 @@
   "The whole product also works in dark mode."
  ],
  [
-  "personas",
-  "How does this compare with the alternatives? We scored three ways of working for nine roles. This platform. Spec-driven tools such as Spec Kit, which keep specifications in the code repository. And working only in the code editor with an AI agent. The platform scores highest for the product owner, the release manager, the administrator and the auditor. Developers score higher with the tools that live in their editor. These scores are our own assessment, and the platform is scored as a prototype."
+  "layers",
+  "How does this compare with the alternatives? AI-driven delivery has three layers. Coding agents write the code. Spec-driven toolkits, such as GitHub Spec Kit, make the agent work from a written requirement and plan. Governed delivery platforms decide who approves, and what is released. This platform is in the third layer."
  ],
  [
-  "walk",
-  "We walked one small change through all three. In a regulated organisation, the platform needs three tools instead of six. It records seven approvals instead of two, three of them before any code is written. It also adds more waits for a person, eight against six. That is why a fast path for low-risk changes is the next priority."
+  "speckit",
+  "Spec Kit deserves a fair description. It is free and open source, and it is now at version one point four. It works with forty-three coding agents, and has almost two hundred community extensions. It has review gates. Community add-ons handle multiple repositories, and Azure DevOps with human sign-off. We read this in its source code this week."
  ],
  [
-  "fit",
-  "So the fit is clear. For small teams and developer-only changes, the editor tools are enough. For regulated, audited change that involves several roles, the platform is the better fit. And they combine well: the platform governs, and the developer's agent connects from VS Code."
+  "versus",
+  "So, Spec Kit or the platform? They control different things. Spec Kit controls what the agent is asked to build. It lives in the repository, and developers use it. The platform controls who approves, and what is released. It serves nine roles, keeps one audit record, and covers integration, validation, release and rollback. One caveat matters. Spec Kit ships today. The platform is still a prototype."
+ ],
+ [
+  "position",
+  "We also scored ten options on how much of the lifecycle they cover, and how deep their governance goes. Toolkits cover requirements and code well, but score low on governance. Platforms from GitHub, GitLab, Atlassian and ServiceNow score higher on governance. With add-ons, Spec Kit moves up. These scores are our own judgement from public material, not test results."
+ ],
+ [
+  "answer",
+  "Our answer is both, not either. Use Spec Kit inside the repository, as the build engine. Use the platform above it, for business approvals, separation of duties, release control, and the audit record. Next, we will add a fast path for low-risk changes, and replace copy and paste with a direct connection to the developer's agent."
  ],
  [
   "close",
