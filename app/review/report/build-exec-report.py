@@ -209,7 +209,7 @@ body = f'''<div class="wrap">
 <ul style="margin-top:14px">
 <li><b>Layer 1 is a settled, crowded market.</b> Gartner's first Magic Quadrant for Enterprise AI Coding Agents (May 2026) names Anthropic, Cursor, GitHub and OpenAI as Leaders, with AWS, Google, Alibaba Cloud and Cognition as Challengers. {X}</li>
 <li><b>Layer 2 is open source and moving fast.</b> All four toolkits we read had commits in the two days before this report. {S}</li>
-<li><b>Layer 3 is where the large vendors are now competing.</b> Each one extends the system of record it already owns: the repository, the work tracker, the service desk or the pipeline. {J}</li>
+<li><b>Layer 3 is where the large vendors are now competing.</b> Each one extends the system of record it already owns: repository, tracker, service desk or pipeline. {J}</li>
 </ul></section>
 
 <section id="sdd"><div class="eyebrow">Section 3</div><h2>Approach A: spec-driven toolkits</h2>
