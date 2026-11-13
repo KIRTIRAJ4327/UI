@@ -155,7 +155,7 @@ Said plainly for engineers: **B and C are better for this persona.** They are fr
 | Sees of the AI | A pipeline results table. The agent panel has no Integrate data and shows the Design stage's content instead [V: agentpanel.jsx] | Contracts in `plan.md` if the developer generated them; one repo at a time [3P] | Whatever the PR description says |
 | Approve / reject | The `gate.integrate` permission exists; no button uses it [V] | Pipeline environment approvals and checks, branch policies | The same |
 | Evidence | Integration evidence document with fingerprint [V] | Pipeline run logs and approval records in Azure DevOps | The same |
-| Missing or painful | No gate screen, not in "View as", no link to the real pipeline run | Spec Kit is not multi-repo natively; teams use workarounds [V/3P via market-agentic-sdlc.md] | No cross-repo impact view; finds breaking changes when the pipeline fails |
+| Missing or painful | No gate screen, not in "View as", no link to the real pipeline run | Multi-repo works via community extensions (central spec repo, branch sync); no cross-repo impact view or per-repo approval evidence [3P excerpts] | No cross-repo impact view; finds breaking changes when the pipeline fails |
 
 | Criterion | A | B | C |
 |---|---|---|---|
