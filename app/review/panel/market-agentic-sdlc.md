@@ -1,5 +1,7 @@
 # Market analysis, round 2: agentic SDLC/PDLC and spec-driven development (12 Nov 2026)
 
+> **Update, 13 Nov 2026.** The Spec Kit facts in this file are partly out of date. Spec Kit 1.4.0 has workflow review gates, a converge step, and community add-ons for multi-repo and Azure DevOps. See `review/report/spec-kit-vs-platform.html` (PDF alongside), which was checked against the source code.
+
 **Scope.** This round goes deeper than `review/panel/market.md` (11 Nov) on five things: who covers which lifecycle stage, Spec Kit and Kiro in detail, the standalone IDE-agent pattern, where artifacts should live, and spec-driven UX. It ends with ranked recommendations that fit the existing architecture: Azure DevOps, Azure SQL + Blob, and a standalone Developer Agent in VS Code.
 
 **Method.** About 45 web searches in Nov 2026, run in parallel batches. Direct page fetches worked only for github.com/github/spec-kit. kiro.dev, martinfowler.com and infoq.com could not be reached from this session (they are not on the network allowlist), so claims about those pages come from search excerpts and secondary coverage. They are tagged to say so.

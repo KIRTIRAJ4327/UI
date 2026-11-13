@@ -1,5 +1,7 @@
 # Three ways to run AI-assisted delivery, compared persona by persona (12 Nov 2026)
 
+> **Update, 13 Nov 2026.** The Spec Kit facts in this file are partly out of date. Spec Kit 1.4.0 has workflow review gates, a converge step, and community add-ons for multi-repo and Azure DevOps. See `review/report/spec-kit-vs-platform.html` (PDF alongside), which was checked against the source code.
+
 **Approaches**
 - **A. Our platform**: the Unified Product Delivery Platform prototype (browser console, 8 gated stages, named approvers, Azure SQL + Blob record, standalone Developer Agent in VS Code).
 - **B. Spec-driven development in the repo**: GitHub Spec Kit and AWS Kiro, on top of the team's normal boards, repos and pipelines.

@@ -1,0 +1,254 @@
+<title>Spec Kit Comparison</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: one reading column (max 980px), summary first, each chart in a white panel with its source line directly under it. */
+:root{--bg:#eef1ed;--surface:#ffffff;--sunken:#e6eae4;--ink:#101429;--ink2:#444b63;--mute:#6b7389;--line:#d5dad6;--grid:#e2e6ea;--band:#dbe8fb;--accent:#2469bc;--warn-bg:#fdf3dc;--warn-line:#e9cf8b;--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--display:"Space Grotesk",Inter,system-ui,sans-serif;--body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d111d;--surface:#151a2a;--sunken:#1b2134;--ink:#e8ebf3;--ink2:#b6bdcd;--mute:#8f99ae;--line:#283048;--grid:#262e45;--band:#1c2c4a;--accent:#7aa7ff;--warn-bg:#2b2413;--warn-line:#5d4d1f;--c1:#3987e5;--c2:#d95926;--c3:#199e70;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d111d;--surface:#151a2a;--sunken:#1b2134;--ink:#e8ebf3;--ink2:#b6bdcd;--mute:#8f99ae;--line:#283048;--grid:#262e45;--band:#1c2c4a;--accent:#7aa7ff;--warn-bg:#2b2413;--warn-line:#5d4d1f;--c1:#3987e5;--c2:#d95926;--c3:#199e70;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);margin:0}
+.wrap{max-width:980px;margin:0 auto;padding-block:40px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+h1{font:600 clamp(28px,5vw,40px)/1.12 var(--display);margin:6px 0 0;text-wrap:balance;letter-spacing:-.01em}
+h2{font:600 26px/1.2 var(--display);margin:26px 0 0;text-wrap:balance}
+h3{font:600 18px/1.3 var(--display);margin:0 0 6px}
+p{margin:0;max-width:72ch}.lede{font-size:18px;color:var(--ink2)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;min-width:0}
+.scroll{overflow-x:auto}.scroll>div{min-width:660px}
+.src{font-size:13px;color:var(--mute);margin-top:10px;max-width:none}
+.note{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:12px;padding:14px 18px;font-size:15px}
+ul{margin:0;padding-left:20px}li{margin:5px 0;max-width:72ch}
+svg{width:100%;height:auto;display:block}svg text{font-family:var(--body);fill:var(--ink)}
+.lb{font-size:13px}.vl{font-size:12px;fill:var(--ink2)}.tk{font-size:11.5px;fill:var(--mute)}.b{font-weight:600}
+.lg{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13.5px;color:var(--ink2);margin-bottom:12px}.lg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-weight:600;color:var(--ink2);font-size:13px;background:var(--sunken)}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}tr.ca td{background:var(--band);font-weight:500}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.kpi .panel b{display:block;font:600 30px/1.1 var(--display);color:var(--accent)}.kpi span{font-size:14.5px;color:var(--ink2)}
+.tag{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;background:var(--sunken);color:var(--ink2)}.done{background:var(--band);color:var(--accent)}
+a{color:var(--accent)}nav.toc{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14.5px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+.ev{font-size:12px;font-weight:600;border-radius:999px;padding:1px 8px;white-space:nowrap}.ev.s{background:var(--band);color:var(--accent)}.ev.x{background:var(--sunken);color:var(--ink2)}.ev.p{background:var(--warn-bg);color:var(--ink2);border:1px solid var(--warn-line)}td code,li code,p code{font-size:.92em;background:var(--sunken);padding:1px 5px;border-radius:5px}
+</style>
+<div class="wrap">
+<header><div class="eyebrow">Research report · 13 November 2026</div>
+<h1>Spec-driven development and the governed delivery platform</h1>
+<p class="lede" style="margin-top:12px">Each approach described on its own terms, then compared fact by fact. Spec-driven development is represented by GitHub Spec Kit, the most widely used open-source toolkit for it.</p></header>
+<nav class="toc" aria-label="Contents"><a href="#summary">Summary</a><a href="#sdd">Part 1: Spec Kit</a><a href="#platform">Part 2: The platform</a><a href="#compare">Part 3: Comparison</a><a href="#means">What to do</a><a href="#corrections">Corrections</a><a href="#method">Method and sources</a></nav>
+
+<div class="note"><b>How to read the evidence.</b> Every fact carries one of four labels.
+<span class="ev s">Source</span> read directly in the public source code of Spec Kit and three add-ons, cloned on 13 November 2026.
+<span class="ev x">Search</span> taken from a web search summary; the original page was not opened.
+<span class="ev p">Prototype</span> true of our clickable prototype, which uses demo data and has no back end.
+<span class="ev x">Our view</span> our own judgement.</div>
+
+<section id="summary"><h2>Summary</h2>
+<div class="kpi" style="margin-top:14px">
+<div class="panel"><b>1.4.0</b><span>Spec Kit release of 10 November 2026, MIT licensed</span></div>
+<div class="panel"><b>198</b><span>community extensions in its catalog, plus 42 presets</span></div>
+<div class="panel"><b>43</b><span>coding agents it can drive</span></div>
+<div class="panel"><b>0</b><span>live customers on our platform: it is a prototype</span></div>
+</div>
+<ul style="margin-top:16px">
+<li><b>Spec Kit is far more capable than our earlier reports said.</b> It is no longer only "specify, plan, tasks, implement". It now has automated workflows with human review gates, a completeness check, bug-fix and idea-assessment processes, private catalogs, and a large add-on ecosystem. <span class="ev s">Source</span></li>
+<li><b>Multi-repo and Azure DevOps both exist as community add-ons, not in the core.</b> One add-on dispatches work to several repositories in dependency order. Another takes an Azure DevOps story to Done with a human approval before every board change. <span class="ev s">Source</span></li>
+<li><b>The two approaches solve different problems.</b> Spec Kit is a developer toolkit that lives in the repository and the terminal. Our platform is a governance console for nine business and technical roles, with one approval record across the whole change. <span class="ev x">Our view</span></li>
+<li><b>Our real advantages are narrower than we claimed.</b> They are: a screen for non-developers, enforced roles and separation of duties, one audit record, and coverage of integration, validation, release and rollback. <span class="ev p">Prototype</span></li>
+<li><b>Our real weakness is that nothing is built.</b> Spec Kit ships today. Our platform is a design with 12 open capabilities. <span class="ev p">Prototype</span></li>
+<li><b>Independent evidence that written specifications reduce defects is weak.</b> The largest study found no effect, although it did not test Spec Kit output itself. <span class="ev x">Search</span></li>
+<li><b>Recommendation: treat Spec Kit as the build engine under the platform, not as a rival.</b> <span class="ev x">Our view</span></li>
+</ul></section>
+
+<section id="sdd"><div class="eyebrow">Part 1</div><h2>Spec-driven development with Spec Kit</h2>
+<p style="margin-top:10px">In spec-driven development the team writes down what to build and why before the AI agent writes code. The specification, plan and task list are Markdown files kept in the repository next to the code.</p>
+
+<h3 style="margin-top:20px">Facts about the project</h3>
+<div class="panel scroll"><div><table>
+<tr><th>Item</th><th>Fact</th><th>Evidence</th></tr>
+<tr><td>Owner and licence</td><td><code>github/spec-kit</code>, MIT licence, free</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Age</td><td>First commit 21 August 2025. Community-led since January 2026</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Current release</td><td>1.4.0 on 10 November 2026. Three releases in the five days before that</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>How it is installed</td><td>A command-line tool, <code>specify</code>. Needs Python 3.11 or later and a supported coding agent</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Coding agents supported</td><td>43, including Copilot, Claude Code, Codex, Cursor, Gemini and Kiro</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Add-ons</td><td>198 community extensions, 42 community presets, 4 community bundles, 3 community workflows</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Offline use</td><td>Documented for air-gapped and firewalled sites, with self-hosted catalogs</td><td><span class="ev s">Source</span></td></tr>
+</table></div></div>
+
+<h3 style="margin-top:20px">How a change moves through it</h3>
+<div class="panel scroll"><div><table>
+<tr><th>Step</th><th>Command</th><th>What it produces</th></tr>
+<tr><td>Once per project</td><td><code>constitution</code></td><td>The project's standing rules</td></tr>
+<tr><td>1</td><td><code>specify</code>, then optional <code>clarify</code></td><td><code>spec.md</code>: what and why</td></tr>
+<tr><td>2</td><td><code>plan</code></td><td><code>plan.md</code>: the technical approach</td></tr>
+<tr><td>3</td><td><code>tasks</code>, then optional <code>analyze</code> and <code>checklist</code></td><td><code>tasks.md</code>, plus a report of inconsistencies</td></tr>
+<tr><td>4</td><td><code>implement</code></td><td>Code and tests</td></tr>
+<tr><td>5</td><td><code>converge</code></td><td>Compares the code with the spec, plan and tasks, and adds any unbuilt work as new tasks. Repeat steps 4 and 5 until it reports "Converged"</td></tr>
+</table></div><p class="src">All <span class="ev s">Source</span>. The developer runs each command in the coding agent's chat and reviews the result before the next one.</p></div>
+
+<h3 style="margin-top:20px">What it has beyond the basic flow</h3>
+<ul>
+<li><b>Two more processes.</b> Bug fixing (assess, fix, test, with a verdict of verified, partial or failed) and idea assessment (ending in go, needs clarification, or kill). <span class="ev s">Source</span></li>
+<li><b>Workflows.</b> YAML definitions chain commands, shell tasks and human review gates into runs that can pause and resume. The bundled workflow puts a gate after the specification and after the plan. <span class="ev s">Source</span></li>
+<li><b>Four ways to customise.</b> Presets change templates and wording. Extensions add commands and hooks. Workflows automate. Bundles package a setup for a team or role. <span class="ev s">Source</span></li>
+<li><b>Governed catalogs.</b> An organisation can host a private catalog of approved add-ons. Microsoft's developer blog recommends giving it priority over the community catalog. <span class="ev s">Source</span> <span class="ev x">Search</span></li>
+<li><b>Model Context Protocol server.</b> Experimental, local only, read-only: four tools that list artifacts and workflows. <span class="ev s">Source</span></li>
+</ul>
+
+<h3 style="margin-top:20px">Multi-repo</h3>
+<div class="panel scroll"><div><table>
+<tr><th>Option</th><th>What it does</th><th>Limits</th><th>Evidence</th></tr>
+<tr><td>Core</td><td>A guide for monorepos: several Spec Kit projects inside one repository</td><td>Nothing for separate repositories. No shared or inherited constitution: "you need to maintain that wiring yourself"</td><td><span class="ev s">Source</span></td></tr>
+<tr><td><code>multi-repo</code> extension, v0.7.1, last commit 11 Nov 2026</td><td>One central specs repository. A <code>workspace.yml</code> file lists member repositories and their dependencies. Tasks are split per repository and dispatched in dependency order. Each repository runs its own verification commands, and contract checks run after producers. A review gate shows the verification report. A failed run can resume</td><td>Its own README: verification "cannot tell a meaningful suite from a trivial one"; rules without a command are "applied by the agent alone"; commands run with the user's privileges</td><td><span class="ev s">Source</span></td></tr>
+<tr><td><code>multi-repo-branching</code> preset, v1.0.0, last commit April 2026</td><td>Finds child repositories and submodules, and adds tasks to create matching feature branches</td><td>Branches only. No dispatch or verification</td><td><span class="ev s">Source</span></td></tr>
+<tr><td><code>multi-repo-sync</code> extension, v1.0.0</td><td>Creates the feature branch in affected sub-repositories through hooks</td><td>Branches only</td><td><span class="ev s">Source</span></td></tr>
+</table></div><p class="src">A request for first-class multi-repo support in the core (issue 4583) was reported as open. <span class="ev x">Search</span></p></div>
+
+<h3 style="margin-top:20px">Azure DevOps</h3>
+<p>The community bundle <b>Spec Kit for Azure DevOps</b> (<code>spec-kit-ado</code>, catalog version 0.3.2, repository at 0.4.0, last commit 12 November 2026) is the closest thing to our platform in the Spec Kit world. <span class="ev s">Source</span></p>
+<ul>
+<li>The developer pulls a story from Azure Boards. The agent writes the spec, plan, code and tests.</li>
+<li>Three approvals are built in: post questions to the story, create the Tasks, open the pull request. The agent shows the exact change and waits for a clear yes.</li>
+<li>Each acceptance criterion is tied to a named test in a per-story checklist, which is attached to the story when it closes.</li>
+<li>Optional sign-offs by a business owner, technical owner and QA. A person writes an approval comment on the story in Azure DevOps, and the comment includes a hash of the exact files signed. Who may sign is read from the target branch, so a feature branch cannot change it.</li>
+<li>It ships Azure Pipelines templates for a gate, a branch guard and a strict verification step.</li>
+<li>Limits it states itself: Azure Boards only (no Jira or GitHub Issues), a personal access token is required, and its checks are "guard rails for a team that reviews its pull requests, not a lock on a machine".</li>
+</ul>
+
+<h3 style="margin-top:20px">Gaps and risks</h3>
+<div class="panel scroll"><div><table>
+<tr><th>Gap</th><th>Fact</th><th>Evidence</th></tr>
+<tr><td>Spec drift</td><td>The core has "no dedicated command that automatically reconciles differences" between spec, plan and tasks. <code>analyze</code> only reports. <code>converge</code> only adds tasks. Reconciliation is left to the team or to community extensions (<code>sync</code>, <code>reconcile</code>, <code>refine</code>)</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Approval identity</td><td>A core gate is a prompt in a terminal, or a text value passed on the command line. The core documentation describes no approver identity, roles, separation of duties or audit log</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Gates can be removed</td><td>A community workflow named <code>yolo</code> runs the full cycle "without review gates"</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Add-on trust</td><td>Maintainers "do not review, audit, endorse, or support" community code. Users must vet it. Most add-ons have a single author</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Execution safety</td><td>A workflow shell step "runs a local command with your privileges. There is no capability sandbox"</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Who can use it</td><td>Every step runs in a terminal or an agent chat inside a repository. There is no screen for a product owner, release manager or auditor</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>After the pull request</td><td>The core covers nothing after implementation and convergence. Release, deployment and rollback are left to pipelines or community extensions (<code>ship</code>, <code>spec2cloud</code>)</td><td><span class="ev s">Source</span></td></tr>
+<tr><td>Process weight</td><td>Thoughtworks' review found the tools apply one heavy process to tasks of every size; one summary quotes "a sledgehammer for a nut" on a small bug</td><td><span class="ev x">Search</span></td></tr>
+<tr><td>Token cost</td><td>One informal test measured about 121,000 tokens for Spec Kit against about 58,000 for a lighter tool on the same task</td><td><span class="ev x">Search</span></td></tr>
+<tr><td>Interfaces between repositories</td><td>Critics say each repository can match its own spec while the interface between them still breaks. The <code>multi-repo</code> contract checks address part of this</td><td><span class="ev x">Search</span> <span class="ev s">Source</span></td></tr>
+</table></div></div>
+
+<h3 style="margin-top:20px">Does it improve outcomes?</h3>
+<div class="panel scroll"><div><table>
+<tr><th>Study</th><th>Finding</th><th>How much weight</th></tr>
+<tr><td>ESEM 2026 paper (B. Hill): 88,052 pull requests in 119 open-source repositories</td><td>Specification quality predicted neither defects (p = 0.164) nor rework (p = 0.860)</td><td>Peer reviewed. But it measured ordinary specification artifacts, mostly links to issues. No repository in the sample used an SDD tool, so Spec Kit itself is untested</td></tr>
+<tr><td>Uvik benchmark, 2026: 50 Python tickets</td><td>0.46 defects per merged ticket with spec workflows against 0.86 without. Spec Kit merged 40 of 50</td><td>Vendor-produced and small. Directional only</td></tr>
+<tr><td>OrangeLoops case study, 2026</td><td>Code generation was much faster, but stabilising, integration debugging and review still took four days</td><td>One project</td></tr>
+</table></div><p class="src">All <span class="ev x">Search</span>. We found no independent study that isolates the effect of Spec Kit on defects or delivery time.</p></div>
+</section>
+
+<section id="platform"><div class="eyebrow">Part 2</div><h2>The Unified Product Delivery Platform</h2>
+<p style="margin-top:10px">Our platform is a web console in which an AI agent takes a business change request through eight stages, and a named person approves each stage. Everything in this part describes the clickable prototype. It runs in the browser on demo data. No agent, pipeline, database or Azure service is connected. <span class="ev p">Prototype</span></p>
+
+<h3 style="margin-top:20px">Facts about the prototype</h3>
+<div class="panel scroll"><div><table>
+<tr><th>Item</th><th>Fact</th></tr>
+<tr><td>Status</td><td>Clickable prototype, 19 screens, React. No back end, no customers, no price</td></tr>
+<tr><td>Stages</td><td>Plan, Specify, Impact, Design, Build, Integrate, Validate, Release. The order is fixed</td></tr>
+<tr><td>Roles</td><td>9 roles against 17 permissions in an editable matrix. Platform Admin is locked</td></tr>
+<tr><td>Approvals</td><td>A named approver per stage, with a named backup. A requester cannot approve their own plan: it goes to a second approver</td></tr>
+<tr><td>Documents</td><td>Each plan, story, specification, impact assessment, design decision and completion report opens in place, with versions and a SHA-256 fingerprint</td></tr>
+<tr><td>Build</td><td>A separate Developer Agent in VS Code. The developer copies a prompt from the platform. The platform shows the branch, Boards task, pull request and completion report</td></tr>
+<tr><td>Release</td><td>Scheduling, freeze windows with exceptions, hold with a required reason, and rollback with a second confirmation</td></tr>
+<tr><td>Audit</td><td>One log of every decision, access and permission change, with CSV export</td></tr>
+<tr><td>Intended architecture</td><td>Azure SQL for records, Azure Blob for documents, Azure Boards, Repos and Pipelines</td></tr>
+<tr><td>Checks run on the prototype</td><td>172 automated click-through checks pass; accessibility scan clean on all 19 screens in light and dark mode</td></tr>
+</table></div><p class="src">All <span class="ev p">Prototype</span>. The checks prove the prototype behaves as designed. They say nothing about a production system.</p></div>
+
+<h3 style="margin-top:20px">Gaps and risks</h3>
+<div class="panel scroll"><div><table>
+<tr><th>Gap</th><th>Fact</th></tr>
+<tr><td>Nothing is built</td><td>Every agent action, pipeline result and document is simulated</td></tr>
+<tr><td>One fixed workflow</td><td>Eight stages for every change. No fast path for a low-risk change, and no bug-fix path. This is the same "one size" criticism made of spec-driven tools</td></tr>
+<tr><td>Copy-and-paste hand-off</td><td>The link between the platform and the coding agent is a prompt the developer copies by hand</td></tr>
+<tr><td>Multi-repo</td><td>The design shows impact across repositories and a pipeline result per repository. The prototype shows this as static data</td></tr>
+<tr><td>One ecosystem</td><td>Azure DevOps only. No Jira, ServiceNow or GitHub</td></tr>
+<tr><td>No model control</td><td>No choice of model, no version pinning, no record of which model wrote a document</td></tr>
+<tr><td>Evidence is not tamper-proof</td><td>Fingerprints are computed, but nothing is stored write-once or signed</td></tr>
+<tr><td>No extension model</td><td>Stages, templates and checks cannot be changed by the customer</td></tr>
+<tr><td>No outcome evidence</td><td>No pilot, no measurements</td></tr>
+</table></div><p class="src">All <span class="ev p">Prototype</span>. The full list of 12 open capabilities is in <code>review/panel/STATUS.md</code>.</p></div>
+</section>
+
+<section id="compare"><div class="eyebrow">Part 3</div><h2>Comparison</h2>
+<div class="note" style="margin-top:12px"><b>This compares a shipped tool with a design.</b> A row where the platform looks stronger means the design is stronger. Spec Kit's entries are things a team can install today.</div>
+<div class="panel scroll" style="margin-top:14px"><div><table>
+<tr><th>Dimension</th><th>Spec Kit</th><th>Our platform (prototype)</th><th>Stronger today</th></tr>
+<tr><td>Availability</td><td>Released, version 1.4.0, MIT, free <span class="ev s">Source</span></td><td>Prototype only <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Where people work</td><td>Terminal and agent chat, inside the repository <span class="ev s">Source</span></td><td>Browser console <span class="ev p">Prototype</span></td><td>Depends on role</td></tr>
+<tr><td>Roles served</td><td>Developers. With the Azure DevOps add-on, owners and QA sign off by comment in Azure DevOps <span class="ev s">Source</span></td><td>9 roles, each with its own view <span class="ev p">Prototype</span></td><td>Platform (design)</td></tr>
+<tr><td>Source of truth</td><td>Markdown files in Git <span class="ev s">Source</span></td><td>A platform record, with documents in Blob storage (intended) <span class="ev p">Prototype</span></td><td>Spec Kit: it exists and is versioned by Git</td></tr>
+<tr><td>Human approval</td><td>Core: terminal prompt, no identity. Add-on: hashed sign-off comments by named approvers <span class="ev s">Source</span></td><td>Named approver per stage, with backup and send-back note <span class="ev p">Prototype</span></td><td>Platform (design); add-on is close</td></tr>
+<tr><td>Separation of duties</td><td>Not in core. Add-on reads signers from the target branch <span class="ev s">Source</span></td><td>Enforced in the role matrix <span class="ev p">Prototype</span></td><td>Platform (design)</td></tr>
+<tr><td>Audit record</td><td>Git history, plus a per-story checklist in the add-on <span class="ev s">Source</span></td><td>One log across all changes, exportable <span class="ev p">Prototype</span></td><td>Platform (design)</td></tr>
+<tr><td>Multi-repo</td><td>Community extension: central specs, dependency-ordered dispatch, per-repo verification, contract checks <span class="ev s">Source</span></td><td>Impact view and per-repo pipeline results, static in the prototype <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Azure DevOps</td><td>Community bundle, human-gated, Boards with Azure Repos or GitHub <span class="ev s">Source</span></td><td>Designed around it; not connected <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Jira, Linear, GitHub Issues</td><td>Community extensions for each <span class="ev s">Source</span></td><td>None <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Choice of coding agent</td><td>43 <span class="ev s">Source</span></td><td>One standalone agent in VS Code <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Small changes and bugs</td><td>Separate bug-fix process; a "lean" preset <span class="ev s">Source</span></td><td>Same eight stages for everything <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Spec and code drifting apart</td><td><code>converge</code> finds unbuilt work; reconciling documents needs an add-on <span class="ev s">Source</span></td><td>Not addressed <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Integration and validation gates</td><td>Not in core; community gate extensions <span class="ev s">Source</span></td><td>Approval screens with pipeline and test results <span class="ev p">Prototype</span></td><td>Platform (design)</td></tr>
+<tr><td>Release, freeze, hold, rollback</td><td>Not in core <span class="ev s">Source</span></td><td>All four, with reasons recorded <span class="ev p">Prototype</span></td><td>Platform (design)</td></tr>
+<tr><td>Customisation</td><td>Presets, extensions, workflows, bundles, private catalogs <span class="ev s">Source</span></td><td>Role matrix and policies only <span class="ev p">Prototype</span></td><td>Spec Kit</td></tr>
+<tr><td>Supply-chain risk</td><td>Community add-ons are unaudited and mostly single-author <span class="ev s">Source</span></td><td>None yet, because nothing is installed <span class="ev p">Prototype</span></td><td>Neither</td></tr>
+<tr><td>Proof of better outcomes</td><td>No independent study of the tool <span class="ev x">Search</span></td><td>None <span class="ev p">Prototype</span></td><td>Neither</td></tr>
+</table></div></div>
+
+<div class="grid2" style="margin-top:16px">
+<div class="panel"><h3>Where Spec Kit is stronger</h3><ul>
+<li>It exists, is free, and is released several times a week.</li>
+<li>It works with almost any coding agent and tracker.</li>
+<li>Multi-repo and Azure DevOps already run, through add-ons.</li>
+<li>It can be shaped to a team's process without waiting for a vendor.</li>
+</ul></div>
+<div class="panel"><h3>Where the platform design is stronger</h3><ul>
+<li>People who never open a terminal can read, question and approve.</li>
+<li>Who may approve what is enforced in one place, not per repository.</li>
+<li>One audit record covers the change from request to rollback.</li>
+<li>It covers the stages after the pull request, where a bank's controls sit.</li>
+</ul></div></div>
+<p class="src">Both panels <span class="ev x">Our view</span>, drawn from the table above.</p>
+</section>
+
+<section id="means"><h2>What to do</h2><ul style="margin-top:10px">
+<li><b>Stop positioning the platform against Spec Kit.</b> The claims "no multi-repo", "no gates" and "stops at implementation" are out of date and a technical buyer will check them.</li>
+<li><b>Position the platform as the governance layer above a spec-driven engine.</b> The Developer Agent step could run Spec Kit in the repository, and the platform could hold the approvals, roles and audit record.</li>
+<li><b>Pilot <code>spec-kit-ado</code> on one real story.</b> It is the cheapest way to learn how far free tooling already goes for an Azure DevOps bank, and what is still missing for auditors and business approvers.</li>
+<li><b>Fix the weaknesses we share.</b> Add a fast path for low-risk changes and a bug-fix path, so the platform is not open to the same "too heavy" criticism.</li>
+<li><b>Replace copy-and-paste with a real connection.</b> Spec Kit's workflow runs, verdict inputs and experimental MCP server are the natural points to connect to.</li>
+<li><b>Vet before use.</b> Any community add-on needs a code review and a pinned version in a private catalog before it touches a bank's repositories.</li>
+</ul><p class="src">All <span class="ev x">Our view</span>.</p></section>
+
+<section id="corrections"><h2>Corrections to our earlier reports</h2>
+<div class="panel scroll" style="margin-top:12px"><div><table>
+<tr><th>We said</th><th>What the source shows</th></tr>
+<tr><td>Spec Kit is not multi-repo; teams use workarounds</td><td>A maintained community extension does central specs, ordered dispatch and per-repo verification. The core has monorepo guidance only</td></tr>
+<tr><td>Spec Kit stops at implementation</td><td>The core now adds <code>converge</code>, bug fixing and idea assessment. Release is still outside the core</td></tr>
+<tr><td>Spec Kit has no approval gates</td><td>Workflows have human review gates. The Azure DevOps add-on adds named, hashed sign-offs</td></tr>
+<tr><td>We are ahead on Azure DevOps</td><td>A community bundle already connects Boards, Repos and Pipelines with human approval. Ours is not connected</td></tr>
+</table></div><p class="src">The affected files are <code>review/panel/compare.md</code>, <code>review/panel/market-agentic-sdlc.md</code>, and the stakeholder report and video of 12 November.</p></div></section>
+
+<section id="method"><h2>Method and sources</h2><ul style="margin-top:10px">
+<li><b>Source reading.</b> We cloned four public repositories on 13 November 2026 and read their documentation, catalogs and templates. Counts come from the catalog files. We did not install or run Spec Kit, so behaviour is as documented, not as observed.</li>
+<li><b>Search.</b> Studies and commentary come from web search summaries. We could not open the original pages. Check any figure before quoting it outside the team.</li>
+<li><b>Not checked.</b> GitHub stars, download numbers, the current state of issue 4583, and the quality or maintenance of add-ons other than the three we read.</li>
+<li><b>Kiro and other spec-driven tools</b> are out of scope here. They are covered in the earlier market report.</li>
+</ul>
+<h3 style="margin-top:18px">Sources read in full</h3><ul>
+<li><a href="https://github.com/github/spec-kit">github/spec-kit</a>, commit 2ee2b1e of 12 November 2026: README, CHANGELOG, <code>docs/</code>, <code>templates/</code>, and all catalog files</li>
+<li><a href="https://github.com/joaopaschuino/spec-kit-multirepo">joaopaschuino/spec-kit-multirepo</a>: README</li>
+<li><a href="https://github.com/sakitA/spec-kit-preset-multi-repo-branching">sakitA/spec-kit-preset-multi-repo-branching</a>: README</li>
+<li><a href="https://github.com/praveenlavu/spec-kit-ado">praveenlavu/spec-kit-ado</a>: README and <code>rules/</code></li>
+</ul>
+<h3 style="margin-top:18px">Sources from search summaries</h3><ul>
+<li><a href="https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.ESEM.2026.84">Hill, "Specification Artifacts in Open-Source Pull Request Workflows Do Not Reduce Defects", ESEM 2026</a></li>
+<li><a href="https://uvik.net/blog/spec-driven-development-benchmark/">Uvik, Spec-Driven Development Benchmark 2026</a></li>
+<li><a href="https://orangeloops.com/2026/05/spec-driven-development-with-ai-a-spec-kit-claude-code-case-study/">OrangeLoops, Spec Kit and Claude Code case study</a></li>
+<li><a href="https://www.martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html">Böckeler, "Understanding Spec-Driven-Development: Kiro, spec-kit, and Tessl"</a></li>
+<li><a href="https://developer.microsoft.com/blog/from-spec-first-to-enterprise-ready-extending-github-spec-kit/">Microsoft, "From Spec-First to Enterprise-Ready: Extending GitHub Spec Kit"</a></li>
+<li><a href="https://medium.com/it-chronicles/is-your-safe-choice-burning-your-budget-1cfddf8782e4">"Spec Driven Development Is Wasting Tokens"</a> (token comparison)</li>
+<li><a href="https://hackernoon.com/spec-driven-development-has-a-blind-spot-the-seams">"Spec-driven development has a blind spot: the seams"</a></li>
+<li><a href="https://github.com/github/spec-kit/issues/4583">Spec Kit issue 4583, multi-repo support</a></li>
+</ul></section>
+</div>
